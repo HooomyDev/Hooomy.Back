@@ -39,6 +39,7 @@ public class RequestController(IMapper mapper) : BaseController
         return Ok(vm);
     }
 
+    [HttpPost("create")]
     public async Task<ActionResult<Guid>> Create([FromBody] CreateRequestDto dto)
     {
         var command = mapper.Map<CreateRequestCommand>(dto);
@@ -49,7 +50,7 @@ public class RequestController(IMapper mapper) : BaseController
         return Ok(requestId);
     }
 
-    [HttpPut]
+    [HttpPut("update")]
     public async Task<ActionResult> Update([FromBody] UpdateRequestDto dto)
     {
         var command = mapper.Map<UpdateRequestCommand>(dto);
@@ -60,7 +61,7 @@ public class RequestController(IMapper mapper) : BaseController
         return NoContent();
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("delete/{id}")]
     public async Task<ActionResult> Delete(Guid id)
     {
         var command = new DeleteRequestCommand
