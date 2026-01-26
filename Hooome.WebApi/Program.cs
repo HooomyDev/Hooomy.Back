@@ -3,6 +3,7 @@ using Hooome.Application.Common.Mappings;
 using Hooome.Application.Interfaces;
 using Hooome.Persistance;
 using Hooome.WebApi.Middleware;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,6 +28,19 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddAuthentication(config =>
+{
+    config.DefaultAuthenticateScheme =
+        JwtBearerDefaults.AuthenticationScheme;
+    config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+    .AddJwtBearer("Bearer", options =>
+    {
+        options.Authority = "https://localhost:5001/";
+        options.Audience = "HooomeWebAPI";
+        options.RequireHttpsMetadata = false;
+    });
+
 var app = builder.Build();
 
 using var scope = app.Services.CreateScope();
@@ -44,5 +58,7 @@ app.UseRouting();
 app.UseHttpsRedirection();
 app.MapControllers();
 app.UseCors("AllowAll");
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.Run();

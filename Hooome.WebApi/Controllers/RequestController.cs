@@ -5,6 +5,7 @@ using Hooome.Application.Requests.Commands.UpdateRequest;
 using Hooome.Application.Requests.Queries.GetRequestDetails;
 using Hooome.Application.Requests.Queries.GetRequestList;
 using Hooome.WebApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hooome.WebApi.Controllers;
@@ -13,6 +14,7 @@ namespace Hooome.WebApi.Controllers;
 public class RequestController(IMapper mapper) : BaseController
 {
     [HttpGet]
+    [Authorize]
     public async Task<ActionResult<RequestListVm>> Get()
     {
         var query = new GetRequestListQuery
@@ -26,6 +28,7 @@ public class RequestController(IMapper mapper) : BaseController
     }
 
     [HttpGet("{id}")]
+    [Authorize]
     public async Task<ActionResult<RequestDetailsVm>> Get(Guid id)
     {
         var query = new GetRequestDetailsQuery
@@ -40,6 +43,7 @@ public class RequestController(IMapper mapper) : BaseController
     }
 
     [HttpPost("create")]
+    [Authorize]
     public async Task<ActionResult<Guid>> Create([FromBody] CreateRequestDto dto)
     {
         var command = mapper.Map<CreateRequestCommand>(dto);
@@ -51,6 +55,7 @@ public class RequestController(IMapper mapper) : BaseController
     }
 
     [HttpPut("update")]
+    [Authorize]
     public async Task<ActionResult> Update([FromBody] UpdateRequestDto dto)
     {
         var command = mapper.Map<UpdateRequestCommand>(dto);
@@ -62,6 +67,7 @@ public class RequestController(IMapper mapper) : BaseController
     }
 
     [HttpDelete("delete/{id}")]
+    [Authorize]
     public async Task<ActionResult> Delete(Guid id)
     {
         var command = new DeleteRequestCommand
