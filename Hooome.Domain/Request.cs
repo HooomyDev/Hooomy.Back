@@ -10,4 +10,6 @@ public class Request
     public string Address { get; set; } = string.Empty;
     public RequestStatus Status { get; set; } = RequestStatus.Unknown;
     public RequestCategory Category { get; set; } = RequestCategory.Other;
+    public DateTime? CreatedAt {  get; set; }
+    public DateTime? UpdatedAt { get; set; }
 }
