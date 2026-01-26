@@ -1,0 +1,57 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36408.4 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{715EABEC-B17C-4B16-BDF5-B7D929181A84}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{26F04943-C998-4714-83EF-F12B3EEC5756}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{5BC10C9C-60A6-4CE1-8EA2-A8509529C64F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hooome.Domain", "Hooome.Domain\Hooome.Domain.csproj", "{D3A80428-627A-4474-9093-F74B0DA2FAB8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hooome.Application", "Hooome.Application\Hooome.Application.csproj", "{884569D7-D8D7-4D4C-A557-04D421E3B9D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hooome.Persistance", "Hooomy.Persistance\Hooome.Persistance.csproj", "{BC4B322B-6C04-4D1B-A5CF-CB5519336483}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hooome.WebApi", "Hooome.WebApi\Hooome.WebApi.csproj", "{E1D77A9A-8C28-4C65-8BF8-29EE7FA57FF4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D3A80428-627A-4474-9093-F74B0DA2FAB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3A80428-627A-4474-9093-F74B0DA2FAB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3A80428-627A-4474-9093-F74B0DA2FAB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3A80428-627A-4474-9093-F74B0DA2FAB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{884569D7-D8D7-4D4C-A557-04D421E3B9D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{884569D7-D8D7-4D4C-A557-04D421E3B9D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{884569D7-D8D7-4D4C-A557-04D421E3B9D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{884569D7-D8D7-4D4C-A557-04D421E3B9D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC4B322B-6C04-4D1B-A5CF-CB5519336483}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC4B322B-6C04-4D1B-A5CF-CB5519336483}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC4B322B-6C04-4D1B-A5CF-CB5519336483}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC4B322B-6C04-4D1B-A5CF-CB5519336483}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1D77A9A-8C28-4C65-8BF8-29EE7FA57FF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1D77A9A-8C28-4C65-8BF8-29EE7FA57FF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1D77A9A-8C28-4C65-8BF8-29EE7FA57FF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1D77A9A-8C28-4C65-8BF8-29EE7FA57FF4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D3A80428-627A-4474-9093-F74B0DA2FAB8} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{884569D7-D8D7-4D4C-A557-04D421E3B9D6} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{BC4B322B-6C04-4D1B-A5CF-CB5519336483} = {715EABEC-B17C-4B16-BDF5-B7D929181A84}
+		{E1D77A9A-8C28-4C65-8BF8-29EE7FA57FF4} = {5BC10C9C-60A6-4CE1-8EA2-A8509529C64F}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A7873785-CD01-4439-AC42-2AE55E4E5E6C}
+	EndGlobalSection
+EndGlobal

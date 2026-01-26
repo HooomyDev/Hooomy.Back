@@ -1,0 +1,6 @@
+@Hooome.WebApi_HostAddress = http://localhost:5274
+
+GET {{Hooome.WebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
