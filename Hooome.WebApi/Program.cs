@@ -2,6 +2,7 @@ using Hooome.Application;
 using Hooome.Application.Common.Mappings;
 using Hooome.Application.Interfaces;
 using Hooome.Persistance;
+using Hooome.WebApi.Middleware;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -38,6 +39,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseCustomExceptionHandler();
 app.UseRouting();
 app.UseHttpsRedirection();
 app.MapControllers();
