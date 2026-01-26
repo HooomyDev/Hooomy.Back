@@ -1,23 +1,46 @@
+using Hooome.Application;
+using Hooome.Application.Common.Mappings;
+using Hooome.Application.Interfaces;
+using Hooome.Persistance;
+using System.Reflection;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddAutoMapper(config =>
+{
+    config.AddProfile(new AssemblyMappingProfile(Assembly.GetExecutingAssembly()));
+    config.AddProfile(new AssemblyMappingProfile(typeof(IHooomeDbContext).Assembly));
+});
+builder.Services.AddApplication();
+builder.Services.AddPersistence(builder.Configuration);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyHeader();
+        policy.AllowAnyMethod();
+        policy.AllowAnyOrigin();
+    });
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+using var scope = app.Services.CreateScope();
+var context = scope.ServiceProvider.GetRequiredService<HooomeDbContext>();
+DbInitializer.Initialize(context);
+
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
+app.UseRouting();
 app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
 app.MapControllers();
+app.UseCors("AllowAll");
 
 app.Run();
