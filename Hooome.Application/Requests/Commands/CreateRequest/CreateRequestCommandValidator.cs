@@ -1,0 +1,15 @@
+﻿using FluentValidation;
+
+namespace Hooome.Application.Requests.Commands.CreateRequest;
+
+public class CreateRequestCommandValidator 
+    : AbstractValidator<CreateRequestCommand>
+{
+    public CreateRequestCommandValidator()
+    {
+        RuleFor(c => c.Address).NotEmpty().MaximumLength(250);
+        RuleFor(c => c.Description).NotEmpty().MaximumLength(300);
+        RuleFor(c => c.Category).NotEmpty();
+        RuleFor(c => c.UserId).NotEqual(Guid.Empty);
+    }
+}
