@@ -2,20 +2,19 @@
 using Hooome.Domain;
 using Hooome.Persistance.EntityTypeConfiguration;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Hooome.Persistance;
 
-public sealed class HooomeDbContext : DbContext, IHooomeDbContext
+public sealed class HooomeDbContext(DbContextOptions<HooomeDbContext> options) 
+    : DbContext(options), IHooomeDbContext
 {
     public DbSet<Request> Requests { get; set; }
-
-    public HooomeDbContext(DbContextOptions<HooomeDbContext> options)
-        : base(options){ }
+    public DbSet<FavoriteAddress> FavoriteAddresses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ApplyConfiguration(new RequestTypeConfiguration());
+        builder.ApplyConfiguration(new FavoriteAddressTypeConfiguration());
         base.OnModelCreating(builder);
     }
 }
