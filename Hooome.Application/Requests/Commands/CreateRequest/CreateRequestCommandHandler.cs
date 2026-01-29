@@ -15,6 +15,7 @@ public class CreateRequestCommandHandler(IHooomeDbContext dbContext)
         {
             Id = Guid.NewGuid(),
             UserID = request.UserId,
+            Title = request.Title,
             Description = request.Description,
             Address = request.Address,
             Category = request.Category,
