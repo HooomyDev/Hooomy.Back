@@ -20,26 +20,28 @@ builder.Services.AddPersistence(builder.Configuration);
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
+    options.AddPolicy("FrontendPolicy", policy =>
     {
-        policy.AllowAnyHeader();
-        policy.AllowAnyMethod();
-        policy.AllowAnyOrigin();
+        policy.WithOrigins("http://localhost:3000")  
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
     });
 });
 
-builder.Services.AddAuthentication(config =>
+
+builder.Services.AddAuthentication(options =>
 {
-    config.DefaultAuthenticateScheme =
-        JwtBearerDefaults.AuthenticationScheme;
-    config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-    .AddJwtBearer("Bearer", options =>
-    {
-        options.Authority = "https://localhost:5001/";
-        options.Audience = "HooomeWebAPI";
-        options.RequireHttpsMetadata = false;
-    });
+.AddJwtBearer(options =>
+{
+    options.Authority = "https://localhost:5001/";
+    options.Audience = "HooomeWebApi";           
+    options.RequireHttpsMetadata = false;
+});
+
 
 builder.Services.AddSwaggerGen();
 
@@ -64,9 +66,9 @@ app.UseSwaggerUI(config =>
 app.UseCustomExceptionHandler();
 app.UseRouting();
 app.UseHttpsRedirection();
-app.MapControllers();
-app.UseCors("AllowAll");
+app.UseCors("FrontendPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapControllers();
 
 app.Run();
