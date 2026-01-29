@@ -10,6 +10,7 @@ public class RequestTypeConfiguration : IEntityTypeConfiguration<Request>
     {
         builder.HasKey(r => r.Id);
         builder.HasIndex(r => r.Id).IsUnique();
+        builder.Property(r => r.Title).IsRequired().HasMaxLength(150);
         builder.Property(r => r.Address).IsRequired().HasMaxLength(250);
         builder.Property(r => r.Description).HasMaxLength(300);
         builder.Property(r => r.Status).IsRequired();
