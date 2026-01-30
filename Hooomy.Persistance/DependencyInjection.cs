@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Runtime.CompilerServices;
 
 namespace Hooome.Persistance;
 
@@ -17,7 +16,11 @@ public static class DependencyInjection
 
         services.AddDbContext<HooomeDbContext>(options =>
         {
-            options.UseMySql(connectionString, serverVersion);
+            options.UseMySql(
+                connectionString, 
+                serverVersion, 
+                mySqlOptions => mySqlOptions.EnableStringComparisonTranslations()
+            );
         });
 
         services.AddScoped<IHooomeDbContext>(provider =>

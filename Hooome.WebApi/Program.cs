@@ -3,6 +3,7 @@ using Hooome.Application.Common.Mappings;
 using Hooome.Application.Interfaces;
 using Hooome.Persistance;
 using Hooome.WebApi.Middleware;
+using Hooome.WebApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Reflection;
 
@@ -17,6 +18,7 @@ builder.Services.AddAutoMapper(config =>
 });
 builder.Services.AddApplication();
 builder.Services.AddPersistence(builder.Configuration);
+builder.Services.AddScoped<DataSeedStreetsService>();
 
 builder.Services.AddCors(options =>
 {
@@ -51,6 +53,8 @@ using var scope = app.Services.CreateScope();
 var context = scope.ServiceProvider.GetRequiredService<HooomeDbContext>();
 DbInitializer.Initialize(context);
 
+var seedService = scope.ServiceProvider.GetRequiredService<DataSeedStreetsService>();
+await seedService.SeedData(CancellationToken.None);
 
 if (app.Environment.IsDevelopment())
 {
