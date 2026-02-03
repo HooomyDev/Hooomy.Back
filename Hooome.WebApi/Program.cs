@@ -5,12 +5,13 @@ using Hooome.Persistance;
 using Hooome.WebApi.Middleware;
 using Hooome.WebApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.OpenApi.Models;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddAutoMapper(config =>
 {
     config.AddProfile(new AssemblyMappingProfile(Assembly.GetExecutingAssembly()));
@@ -45,7 +46,15 @@ builder.Services.AddAuthentication(options =>
 });
 
 
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Hooome API",
+        Version = "v1"
+    });
+});
+
 
 var app = builder.Build();
 
@@ -56,17 +65,13 @@ DbInitializer.Initialize(context);
 var seedService = scope.ServiceProvider.GetRequiredService<DataSeedStreetsService>();
 await seedService.SeedData(CancellationToken.None);
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
 app.UseSwagger();
 app.UseSwaggerUI(config =>
 {
     config.RoutePrefix = string.Empty;
-    config.SwaggerEndpoint("swagger/v1/swagger.json", "Hooome API");
+    config.SwaggerEndpoint("/swagger/v1/swagger.json", "Hooome API");
 });
+
 app.UseCustomExceptionHandler();
 app.UseRouting();
 app.UseHttpsRedirection();
