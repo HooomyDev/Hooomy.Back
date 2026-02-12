@@ -2,6 +2,7 @@
 using Hooome.Application.Works.Commands.CreateWork;
 using Hooome.Application.Works.Queries.GetWorkList;
 using Hooome.WebApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hooome.WebApi.Controllers;
@@ -10,6 +11,7 @@ namespace Hooome.WebApi.Controllers;
 public class WorkController(IMapper mapper) : BaseController
 {
     [HttpGet]
+    [Authorize]
     public async Task<ActionResult<GetWorkListVm>> Get()
     {
         var query = new GetWorkListQuery
@@ -23,6 +25,7 @@ public class WorkController(IMapper mapper) : BaseController
     }
 
     [HttpPost("create")]
+    [Authorize]
     public async Task<ActionResult<Guid>> Create([FromBody] CreateWorkDto dto)
     {
         var command = mapper.Map<CreateWorkCommand>(dto);
