@@ -10,11 +10,28 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Hooome.WebApi.Controllers;
 
+/// <summary>
+/// Manages request operations including retrieval, creation, updating, and deletion
+/// </summary>
 [Route("api/requests")]
 public class RequestController(IMapper mapper) : BaseController
 {
+    /// <summary>
+    /// Retrieves all requests for the current user
+    /// </summary>
+    /// <remarks>
+    /// Sample request:
+    /// 
+    ///     GET /api/requests
+    /// 
+    /// </remarks>
+    /// <returns>List of requests belonging to the current user</returns>
+    /// <response code="200">Returns the list of requests</response>
+    /// <response code="401">If user is unauthorized</response>
     [HttpGet]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<RequestListVm>> Get()
     {
         var query = new GetRequestListQuery
@@ -27,8 +44,25 @@ public class RequestController(IMapper mapper) : BaseController
         return Ok(vm);
     }
 
+    /// <summary>
+    /// Retrieves detailed information about a specific request
+    /// </summary>
+    /// <remarks>
+    /// Sample request:
+    /// 
+    ///     GET /api/requests/3fa85f64-5717-4562-b3fc-2c963f66afa6
+    /// 
+    /// </remarks>
+    /// <param name="id">The unique identifier of the request (GUID)</param>
+    /// <returns>Detailed information about the requested request</returns>
+    /// <response code="200">Returns the request details</response>
+    /// <response code="401">If user is unauthorized</response>
+    /// <response code="404">If request with specified ID is not found</response>
     [HttpGet("{id}")]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<RequestDetailsVm>> Get(Guid id)
     {
         var query = new GetRequestDetailsQuery
@@ -42,8 +76,31 @@ public class RequestController(IMapper mapper) : BaseController
         return Ok(vm);
     }
 
+    /// <summary>
+    /// Creates a new request
+    /// </summary>
+    /// <remarks>
+    /// Sample request:
+    /// 
+    ///     POST /api/requests/create
+    ///     {
+    ///         "title": "Sample Request",
+    ///         "description": "This is a sample request description",
+    ///         "priority": "High",
+    ///         "dueDate": "2024-12-31T00:00:00Z"
+    ///     }
+    /// 
+    /// </remarks>
+    /// <param name="dto">The request creation data transfer object</param>
+    /// <returns>The unique identifier of the created request</returns>
+    /// <response code="200">Returns the ID of the created request</response>
+    /// <response code="400">If the request data is invalid</response>
+    /// <response code="401">If user is unauthorized</response>
     [HttpPost("create")]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<Guid>> Create([FromBody] CreateRequestDto dto)
     {
         var command = mapper.Map<CreateRequestCommand>(dto);
@@ -54,20 +111,64 @@ public class RequestController(IMapper mapper) : BaseController
         return Ok(requestId);
     }
 
+    /// <summary>
+    /// Updates an existing request
+    /// </summary>
+    /// <remarks>
+    /// Sample request:
+    /// 
+    ///     PUT /api/requests/update
+    ///     {
+    ///         "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    ///         "title": "Updated Request Title",
+    ///         "description": "Updated description",
+    ///         "priority": "Low",
+    ///         "status": "InProgress",
+    ///         "dueDate": "2025-01-15T00:00:00Z"
+    ///     }
+    /// 
+    /// </remarks>
+    /// <param name="dto">The request update data transfer object</param>
+    /// <returns>No content if successful</returns>
+    /// <response code="204">If the request was successfully updated</response>
+    /// <response code="400">If the update data is invalid</response>
+    /// <response code="401">If user is unauthorized</response>
+    /// <response code="404">If request with specified ID is not found</response>
     [HttpPut("update")]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Update([FromBody] UpdateRequestDto dto)
     {
         var command = mapper.Map<UpdateRequestCommand>(dto);
         command.UserId = UserId;
-    
+
         await Mediator.Send(command);
 
         return NoContent();
     }
 
+    /// <summary>
+    /// Deletes a specific request
+    /// </summary>
+    /// <remarks>
+    /// Sample request:
+    /// 
+    ///     DELETE /api/requests/delete/3fa85f64-5717-4562-b3fc-2c963f66afa6
+    /// 
+    /// </remarks>
+    /// <param name="id">The unique identifier of the request to delete (GUID)</param>
+    /// <returns>No content if successful</returns>
+    /// <response code="204">If the request was successfully deleted</response>
+    /// <response code="401">If user is unauthorized</response>
+    /// <response code="404">If request with specified ID is not found</response>
     [HttpDelete("delete/{id}")]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Delete(Guid id)
     {
         var command = new DeleteRequestCommand
