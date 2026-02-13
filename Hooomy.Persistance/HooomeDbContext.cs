@@ -1,7 +1,7 @@
 ﻿using Hooome.Application.Interfaces;
 using Hooome.Domain;
-using Hooome.Persistance.EntityTypeConfiguration;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace Hooome.Persistance;
 
@@ -12,13 +12,11 @@ public sealed class HooomeDbContext(DbContextOptions<HooomeDbContext> options)
     public DbSet<FavoriteAddress> FavoriteAddresses { get; set; }
     public DbSet<Street> Streets { get; set; }
     public DbSet<Work> Works { get; set; }
+    public DbSet<Complaint> Complaints { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        builder.ApplyConfiguration(new RequestTypeConfiguration());
-        builder.ApplyConfiguration(new FavoriteAddressTypeConfiguration());
-        builder.ApplyConfiguration(new StreetTypeConfiguration());
-        builder.ApplyConfiguration(new WorkEntityTypeConfiguration());
+        builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         base.OnModelCreating(builder);
     }
 }

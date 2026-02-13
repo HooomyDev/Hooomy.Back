@@ -9,6 +9,7 @@ public interface IHooomeDbContext
     DbSet<FavoriteAddress> FavoriteAddresses { get; set; }
     DbSet<Street> Streets { get; set; }
     DbSet<Work> Works { get; set; }
+    DbSet<Complaint> Complaints { get; set; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }
