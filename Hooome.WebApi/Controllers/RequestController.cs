@@ -2,6 +2,7 @@
 using Hooome.Application.Requests.Commands.CreateRequest;
 using Hooome.Application.Requests.Commands.DeleteRequest;
 using Hooome.Application.Requests.Commands.UpdateRequest;
+using Hooome.Application.Requests.Queries.GetRequestCount;
 using Hooome.Application.Requests.Queries.GetRequestDetails;
 using Hooome.Application.Requests.Queries.GetRequestList;
 using Hooome.WebApi.Models;
@@ -74,6 +75,44 @@ public class RequestController(IMapper mapper) : BaseController
         var vm = await Mediator.Send(query);
 
         return Ok(vm);
+    }
+
+    /// <summary>
+    /// Retrieves the total count of requests in the system
+    /// </summary>
+    /// <remarks>
+    /// This endpoint provides administrative insights by returning the total number of requests.
+    /// It can be used for dashboard metrics, reporting, or monitoring purposes.
+    /// 
+    /// Sample request:
+    /// 
+    ///     GET /api/requests/count
+    /// 
+    /// Sample response:
+    /// 
+    ///     {
+    ///         "totalCount": 1542,
+    ///         "timestamp": "2024-01-15T10:30:45Z"
+    ///     }
+    /// 
+    /// </remarks>
+    /// <returns>The total number of requests in the system</returns>
+    /// <response code="200">Returns the total count of requests</response>
+    /// <response code="401">If user is unauthorized</response>
+    /// <response code="403">If user is not an admin</response>
+    /// <response code="500">If there was an internal server error</response>
+    [HttpGet("count")]
+    [Authorize(Roles = "Admin")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<int>> GetCount()
+    {
+        var query = new GetRequestCountQuery();
+
+        var count = await Mediator.Send(query);
+
+        return Ok(count);
     }
 
     /// <summary>
