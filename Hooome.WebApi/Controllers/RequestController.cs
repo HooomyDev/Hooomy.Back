@@ -3,6 +3,7 @@ using Hooome.Application.Requests.Commands.CreateRequest;
 using Hooome.Application.Requests.Commands.DeleteRequest;
 using Hooome.Application.Requests.Commands.UpdateRequest;
 using Hooome.Application.Requests.Queries.GetRequestCount;
+using Hooome.Application.Requests.Queries.GetRequestDailyStatistics;
 using Hooome.Application.Requests.Queries.GetRequestDetails;
 using Hooome.Application.Requests.Queries.GetRequestList;
 using Hooome.WebApi.Models;
@@ -113,6 +114,19 @@ public class RequestController(IMapper mapper) : BaseController
         var count = await Mediator.Send(query);
 
         return Ok(count);
+    }
+
+    [HttpGet("statistic")]
+    public async Task<ActionResult<RequestDailyStatisticVm>> Get([FromQuery] int period)
+    {
+        var query = new GetRequestDailyStatisticQuery
+        {
+            Period = (RequestsPeriod)period
+        };
+
+        var statistic = await Mediator.Send(query);
+
+        return Ok(statistic);
     }
 
     /// <summary>
