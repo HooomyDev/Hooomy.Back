@@ -12,6 +12,6 @@ public class Request
     public RequestStatus Status { get; set; } = RequestStatus.Unknown;
     public RequestCategory Category { get; set; } = RequestCategory.Other;
     public string PhotoUrl { get; set; } = string.Empty;
-    public DateTime? CreatedAt {  get; set; }
+    public DateTime CreatedAt {  get; set; }
     public DateTime? UpdatedAt { get; set; }
 }
