@@ -2,7 +2,7 @@
 
 public enum WorkSeriousness
 {
-    Unkwown,
+    Unknown,
     Info,
     Warn
 }

@@ -10,6 +10,11 @@ public interface IHooomeDbContext
     DbSet<Street> Streets { get; set; }
     DbSet<Work> Works { get; set; }
     DbSet<Complaint> Complaints { get; set; }
+    DbSet<Company> Companies { get; set; }
+    DbSet<RequestComment> RequestComments { get; set; }
+    DbSet<Poll> Polls { get; set; }
+    DbSet<PollOption> PollOptions { get; set; }
+    DbSet<PollVote> PollVotes { get; set; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

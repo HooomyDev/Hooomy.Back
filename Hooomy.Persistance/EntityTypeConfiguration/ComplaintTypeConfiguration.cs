@@ -43,6 +43,10 @@ public class ComplaintTypeConfiguration : IEntityTypeConfiguration<Complaint>
             .HasForeignKey(c => c.RequestId)
             .OnDelete(DeleteBehavior.SetNull);
 
+        builder.HasOne(c => c.Company)
+            .WithMany()
+            .HasForeignKey(c => c.CompanyId);
+
         builder.HasIndex(c => c.UserId);
 
         builder.HasIndex(c => c.Type);

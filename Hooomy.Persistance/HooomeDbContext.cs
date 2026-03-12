@@ -13,6 +13,11 @@ public sealed class HooomeDbContext(DbContextOptions<HooomeDbContext> options)
     public DbSet<Street> Streets { get; set; }
     public DbSet<Work> Works { get; set; }
     public DbSet<Complaint> Complaints { get; set; }
+    public DbSet<Company> Companies { get; set; }
+    public DbSet<RequestComment> RequestComments { get; set; }
+    public DbSet<Poll> Polls { get; set; }
+    public DbSet<PollOption> PollOptions { get; set; }
+    public DbSet<PollVote> PollVotes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

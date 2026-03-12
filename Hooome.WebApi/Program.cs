@@ -5,6 +5,7 @@ using Hooome.Persistance;
 using Hooome.WebApi.Middleware;
 using Hooome.WebApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Events;
@@ -50,6 +51,7 @@ try
     builder.Services.AddApplication();
     builder.Services.AddPersistence(builder.Configuration);
     builder.Services.AddScoped<DataSeedStreetsService>();
+    builder.Services.AddScoped<DataSeeder>();
 
     // CORS
     builder.Services.AddCors(options =>
@@ -63,17 +65,21 @@ try
         });
     });
 
-    // JWT Authentication
-    builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.Authority = builder.Configuration["Jwt:Authority"] ?? "https://localhost:5001/";
-        options.Audience = builder.Configuration["Jwt:Audience"] ?? "HooomeWebApi";
-        options.RequireHttpsMetadata = false; // В продакшене должно быть true!
+        options.Authority = "http://hooome-identity:8080"; // Use service name in Docker
+        options.Audience = "HooomeWebApi";
+        options.RequireHttpsMetadata = false;
+
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateAudience = true,
+            ValidAudience = "HooomeWebApi",
+            ValidateIssuer = true,
+            ValidIssuer = "http://hooome-identity:8080", // Match the actual issuer
+            ValidateLifetime = true
+        };
 
         options.Events = new JwtBearerEvents
         {
@@ -147,8 +153,11 @@ try
         var context = scope.ServiceProvider.GetRequiredService<HooomeDbContext>();
         DbInitializer.Initialize(context);
 
-        var seedService = scope.ServiceProvider.GetRequiredService<DataSeedStreetsService>();
-        await seedService.SeedData(CancellationToken.None);
+        var seedStreetService = scope.ServiceProvider.GetRequiredService<DataSeedStreetsService>();
+        await seedStreetService.SeedData(CancellationToken.None);
+
+        var seeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
+        await seeder.SeedAllDataAsync(context);
     }
 
     // Swagger - всегда включен для разработки

@@ -16,7 +16,6 @@ public class Complaint
     public Guid? RequestId { get; set; }
     public Request? Request { get; set; }
 
-    //public Guid? CompanyId { get; set; }
-    //TODO: Implement entity Company
-    //public Company? Company { get; set; }
+    public Guid? CompanyId { get; set; }
+    public Company? Company { get; set; }
 }
