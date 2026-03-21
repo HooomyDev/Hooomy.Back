@@ -34,6 +34,9 @@ public class CustomExceptionHandlerMiddleware(RequestDelegate next)
             case NotFoundException:
                 code = HttpStatusCode.NotFound;
                 break;
+            case AlreadyExistException:
+                code = HttpStatusCode.Conflict;
+                break;
         }
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)code;
