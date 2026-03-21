@@ -1,4 +1,5 @@
-﻿using Hooome.Application.Companies.Queries.GetCompanyList;
+﻿using Hooome.Application.Companies.Queries.GetCompanyDetails;
+using Hooome.Application.Companies.Queries.GetCompanyList;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hooome.WebApi.Controllers;
@@ -7,12 +8,25 @@ namespace Hooome.WebApi.Controllers;
 public class CompanyController : BaseController
 {
     [HttpGet]
-    public async Task<ActionResult<CompanyListVm>> Get()
+    public async Task<ActionResult<CompanyListVm>> GetAll()
     {
         var query = new GetCompanyListQuery();
 
         var companies = await Mediator.Send(query);
 
         return Ok(companies);
+    }
+
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<CompanyDetailsVm>> Get(Guid id)
+    {
+        var query = new GetCompanyDetailsQuery()
+        {
+            CompanyId = id
+        };
+
+        var company = await Mediator.Send(query);
+
+        return Ok(company);
     }
 }
