@@ -21,17 +21,16 @@ public class GetChatListQueryHandler(IHooomeDbContext dbContext, IMapper mapper)
             CompanyName = x.Company.Name,
             CreatedAt = x.CreatedAt,
             UpdatedAt = x.UpdatedAt,
-            LastMessageContent = dbContext.Messages
-                .Where(m => m.ChatId == x.Id)
+            LastMessageContent = x.Messages
                 .OrderByDescending(m => m.CreatedAt)
                 .Select(m => m.Content)
                 .FirstOrDefault()
                     ?? "Сообщений пока нет, напишите первым!",
-            LastMessageSentAt = dbContext.Messages
-                    .Where(m => m.ChatId == x.Id)
+            LastMessageSentAt = x.Messages
                     .OrderByDescending(m => m.CreatedAt)
                     .Select(m => m.CreatedAt)
-                    .FirstOrDefault()
+                    .FirstOrDefault(),
+            UnreadCount = x.Messages.Where(x => !x.IsRead).Count(),
         })
             .OrderByDescending(x => x.LastMessageSentAt ?? x.UpdatedAt)
             .ToListAsync(cancellationToken);

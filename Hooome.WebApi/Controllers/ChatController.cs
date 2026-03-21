@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Hooome.Application.Chats.Commands.CreateChat;
+using Hooome.Application.Chats.Queries.GetChatDetailsQuery;
 using Hooome.Application.Chats.Queries.GetChatList;
 using Hooome.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -22,6 +23,20 @@ public class ChatController(IMapper mapper) : BaseController
         var chats = await Mediator.Send(query);
 
         return Ok(chats);
+    }
+
+    [HttpGet("{companyId:guid}")]
+    public async Task<ActionResult<ChatDetailsVm>> GetDetails(Guid companyId)
+    {
+        var query = new GetChatDetailsQuery()
+        {
+            ResidentId = UserId,
+            CompanyId = companyId
+        };
+
+        var chat = await Mediator.Send(query);
+
+        return Ok(chat);
     }
 
     [HttpPost("create")]
