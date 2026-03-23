@@ -15,6 +15,7 @@ public class CreateChatCommandHandler(IHooomeDbContext dbContext)
             Id = Guid.NewGuid(),
             CompanyId = request.CompanyId,
             ResidentId = request.ResidentId,
+            ResidentName = request.ResidentName,
             Status = Domain.Enums.ChatStatus.Active,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = null,
