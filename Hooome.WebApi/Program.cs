@@ -2,6 +2,7 @@ using Hooome.Application;
 using Hooome.Application.Common.Mappings;
 using Hooome.Application.Interfaces;
 using Hooome.Persistance;
+using Hooome.WebApi.Hubs;
 using Hooome.WebApi.Middleware;
 using Hooome.WebApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -36,6 +37,14 @@ try
 
     // Добавляем Serilog
     builder.Host.UseSerilog();
+
+    builder.Services.AddStackExchangeRedisCache(options =>
+    {
+        var connection = builder.Configuration.GetConnectionString("Redis");
+        options.Configuration = connection;
+    });
+
+    builder.Services.AddSignalR();
 
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
@@ -195,6 +204,7 @@ try
     });
 
     app.MapControllers();
+    app.MapHub<ChatHub>("/chat-hub");
 
     Log.Information("Hooome API started successfully");
     app.Run();
