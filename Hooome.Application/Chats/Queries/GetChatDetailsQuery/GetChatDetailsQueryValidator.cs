@@ -8,6 +8,6 @@ public class GetChatDetailsQueryValidator
     public GetChatDetailsQueryValidator()
     {
         RuleFor(x => x.ResidentId).NotEqual(Guid.Empty);
-        RuleFor(x => x.CompanyId).NotEqual(Guid.Empty);
+        RuleFor(x => x.ChatId).NotEqual(Guid.Empty);
     }
 }

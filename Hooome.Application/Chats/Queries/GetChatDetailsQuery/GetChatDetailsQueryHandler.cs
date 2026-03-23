@@ -12,13 +12,12 @@ public class GetChatDetailsQueryHandler(IHooomeDbContext dbContext)
     public async Task<ChatDetailsVm> Handle(GetChatDetailsQuery request, CancellationToken cancellationToken)
     {
         var chatVm = await dbContext.Chats
-            .Where(x => x.ResidentId == request.ResidentId && x.CompanyId == request.CompanyId)
+            .Where(x => x.Id == request.ChatId)
             .Select(x => new ChatDetailsVm
             {
                 Id = x.Id,
-                ResidentId = x.ResidentId,
-                CompanyId = x.CompanyId,
                 CompanyName = x.Company.Name,
+                ResidentName = x.ResidentName,
                 Status = x.Status,
                 CreatedAt = x.CreatedAt,
                 UpdatedAt = x.UpdatedAt,
@@ -34,7 +33,7 @@ public class GetChatDetailsQueryHandler(IHooomeDbContext dbContext)
             })
             .FirstOrDefaultAsync(cancellationToken) 
                 ?? throw new NotFoundException(nameof(Chat), 
-                    $"ResidentId: {request.ResidentId}, CompanyId: {request.CompanyId}");
+                    $"ResidentId: {request.ResidentId}, ChatId: {request.ChatId}");
 
         return chatVm;
     }

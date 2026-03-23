@@ -6,9 +6,8 @@ namespace Hooome.Application.Chats.Queries.GetChatDetailsQuery;
 public class ChatDetailsVm
 {
     public Guid Id { get; set; }
-    public Guid ResidentId { get; set; }
-    public Guid CompanyId { get; set; }
     public string CompanyName { get; set; } = null!;
+    public string ResidentName { get; set; } = null!;
     public ChatStatus Status { get; set; } = ChatStatus.Unknown;
     public ICollection<Message> Messages { get; set; } = [];
 
