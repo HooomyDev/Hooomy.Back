@@ -1,11 +1,10 @@
-﻿using AutoMapper;
-using Hooome.Application.Interfaces;
+﻿using Hooome.Application.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hooome.Application.Chats.Queries.GetChatList;
 
-public class GetChatListQueryHandler(IHooomeDbContext dbContext, IMapper mapper)
+public class GetChatListQueryHandler(IHooomeDbContext dbContext)
     : IRequestHandler<GetChatListQuery, ChatListVm>
 {
     public async Task<ChatListVm> Handle(GetChatListQuery request, CancellationToken cancellationToken)
