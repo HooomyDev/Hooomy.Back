@@ -86,12 +86,25 @@ try
             ValidateAudience = true,
             ValidAudience = "HooomeWebApi",
             ValidateIssuer = true,
-            ValidIssuer = "http://hooome-identity:8080", // Match the actual issuer
+            ValidIssuer = "http://hooome-identity:8080",
             ValidateLifetime = true
         };
 
         options.Events = new JwtBearerEvents
         {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+                var path = context.HttpContext.Request.Path;
+
+                if (!string.IsNullOrEmpty(accessToken) &&
+                    path.StartsWithSegments("/chat-hub"))
+                {
+                    context.Token = accessToken;
+                }
+
+                return Task.CompletedTask;
+            },
             OnAuthenticationFailed = context =>
             {
                 Log.Error("Authentication failed: {Error}", context.Exception.Message);
@@ -101,6 +114,13 @@ try
             {
                 Log.Debug("Token validated for {User}", context.Principal?.Identity?.Name);
                 return Task.CompletedTask;
+            },
+            OnChallenge = context =>
+            {
+                context.HandleResponse();
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                context.Response.ContentType = "application/json";
+                return context.Response.WriteAsync("{\"error\": \"Unauthorized\"}");
             }
         };
     });
