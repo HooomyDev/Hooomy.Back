@@ -4,5 +4,6 @@ public enum MessageType
 {
     Unknown,
     Text,
-    Photo
+    Photo,
+    System
 }
