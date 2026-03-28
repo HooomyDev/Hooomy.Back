@@ -26,9 +26,31 @@ public class PollTypeConfiguration : IEntityTypeConfiguration<Poll>
             .IsRequired()
             .HasDefaultValue(true);
 
+        builder.Property(p => p.Type)
+            .IsRequired()
+            .HasConversion<int>();
+
         builder.Property(p => p.CreatedAt)
             .IsRequired();
 
         builder.HasIndex(p => p.IsActive);
+
+        builder.Property(p => p.CompanyId)
+            .IsRequired();
+
+        builder.HasMany(p => p.Options)
+           .WithOne(po => po.Poll)
+           .HasForeignKey(po => po.PollId)
+           .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(p => p.Votes)
+             .WithOne(pv => pv.Poll)
+             .HasForeignKey(pv => pv.PollId)
+             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(p => p.Company)
+            .WithMany(c => c.Polls)
+            .HasForeignKey(p => p.CompanyId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

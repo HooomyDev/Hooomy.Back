@@ -11,9 +11,6 @@ public class PollVoteTypeConfiguration : IEntityTypeConfiguration<PollVote>
         builder.HasKey(pv => pv.Id);
         builder.HasIndex(pv => pv.Id).IsUnique();
 
-        builder.HasIndex(pv => new { pv.PollId, pv.UserId })
-            .IsUnique();
-
         builder.Property(pv => pv.PollId)
             .IsRequired();
 
@@ -27,12 +24,12 @@ public class PollVoteTypeConfiguration : IEntityTypeConfiguration<PollVote>
             .IsRequired();
 
         builder.HasOne(pv => pv.Poll)
-            .WithMany()
+            .WithMany(p => p.Votes) 
             .HasForeignKey(pv => pv.PollId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade); 
 
         builder.HasOne(pv => pv.Option)
-            .WithMany()
+            .WithMany(o => o.Votes) 
             .HasForeignKey(pv => pv.OptionId)
             .OnDelete(DeleteBehavior.Restrict);
     }

@@ -33,5 +33,10 @@ public class CompanyTypeConfiguration : IEntityTypeConfiguration<Company>
 
         builder.Property(c => c.CreatedAt)
             .IsRequired();
+
+        builder.HasMany(c => c.Polls)
+            .WithOne(p => p.Company)
+            .HasForeignKey(p => p.CompanyId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

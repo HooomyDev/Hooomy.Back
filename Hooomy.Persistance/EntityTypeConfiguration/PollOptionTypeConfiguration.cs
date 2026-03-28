@@ -21,9 +21,14 @@ public class PollOptionTypeConfiguration : IEntityTypeConfiguration<PollOption>
         builder.Property(po => po.CreatedAt)
             .IsRequired();
 
-        builder.HasOne<Poll>()
-            .WithMany()
+        builder.HasOne(po => po.Poll)
+            .WithMany(p => p.Options)
             .HasForeignKey(po => po.PollId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(po => po.Votes)
+            .WithOne(pv => pv.Option)
+            .HasForeignKey(pv => pv.OptionId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
