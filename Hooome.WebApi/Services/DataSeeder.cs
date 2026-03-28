@@ -326,6 +326,8 @@ public class DataSeeder
     {
         if (await context.Polls.AnyAsync()) return;
 
+        var company = await context.Companies.OrderByDescending(x => x.Name).FirstAsync();
+
         var polls = new List<Poll>
         {
             new()
@@ -335,7 +337,9 @@ public class DataSeeder
                 Description = "Как вы оцениваете качество уборки в вашем подъезде?",
                 CreatedBy = Guid.NewGuid(),
                 IsActive = true,
-                CreatedAt = DateTime.Now.AddDays(-20)
+                CreatedAt = DateTime.Now.AddDays(-20),
+                CompanyId = company.Id,
+                Type = PollType.One
             },
             new()
             {
@@ -344,7 +348,9 @@ public class DataSeeder
                 Description = "Что нужно улучшить в вашем дворе в первую очередь?",
                 CreatedBy = Guid.NewGuid(),
                 IsActive = true,
-                CreatedAt = DateTime.Now.AddDays(-18)
+                CreatedAt = DateTime.Now.AddDays(-18),
+                CompanyId = company.Id,
+                Type = PollType.One
             },
             new()
             {
@@ -353,7 +359,9 @@ public class DataSeeder
                 Description = "Оцените работу вашей управляющей компании за последний месяц",
                 CreatedBy = Guid.NewGuid(),
                 IsActive = true,
-                CreatedAt = DateTime.Now.AddDays(-15)
+                CreatedAt = DateTime.Now.AddDays(-15),
+                CompanyId = company.Id,
+                Type = PollType.One
             },
             new()
             {
@@ -362,7 +370,9 @@ public class DataSeeder
                 Description = "Достаточно ли освещен ваш двор в темное время суток?",
                 CreatedBy = Guid.NewGuid(),
                 IsActive = true,
-                CreatedAt = DateTime.Now.AddDays(-12)
+                CreatedAt = DateTime.Now.AddDays(-12),
+                CompanyId = company.Id,
+                Type = PollType.One
             },
             new()
             {
@@ -371,7 +381,9 @@ public class DataSeeder
                 Description = "Устраивает ли вас график вывоза мусора?",
                 CreatedBy = Guid.NewGuid(),
                 IsActive = true,
-                CreatedAt = DateTime.Now.AddDays(-10)
+                CreatedAt = DateTime.Now.AddDays(-10),
+                CompanyId = company.Id,
+                Type = PollType.One
             },
             new()
             {
@@ -380,7 +392,9 @@ public class DataSeeder
                 Description = "Нужна ли новая детская площадка в вашем дворе?",
                 CreatedBy = Guid.NewGuid(),
                 IsActive = false,
-                CreatedAt = DateTime.Now.AddDays(-25)
+                CreatedAt = DateTime.Now.AddDays(-25),
+                CompanyId = company.Id,
+                Type = PollType.One
             },
             new()
             {
@@ -389,7 +403,9 @@ public class DataSeeder
                 Description = "Как решить проблему с парковкой во дворе?",
                 CreatedBy = Guid.NewGuid(),
                 IsActive = true,
-                CreatedAt = DateTime.Now.AddDays(-8)
+                CreatedAt = DateTime.Now.AddDays(-8),
+                CompanyId = company.Id,
+                Type = PollType.Several
             },
             new()
             {
@@ -398,7 +414,9 @@ public class DataSeeder
                 Description = "Какие деревья и кустарники вы хотели бы видеть во дворе?",
                 CreatedBy = Guid.NewGuid(),
                 IsActive = true,
-                CreatedAt = DateTime.Now.AddDays(-5)
+                CreatedAt = DateTime.Now.AddDays(-5),
+                CompanyId = company.Id,
+                Type = PollType.One
             },
             new()
             {
@@ -407,7 +425,9 @@ public class DataSeeder
                 Description = "Что нуждается в капитальном ремонте в первую очередь?",
                 CreatedBy = Guid.NewGuid(),
                 IsActive = true,
-                CreatedAt = DateTime.Now.AddDays(-3)
+                CreatedAt = DateTime.Now.AddDays(-3),
+                CompanyId = company.Id,
+                Type = PollType.One
             },
             new()
             {
@@ -416,7 +436,9 @@ public class DataSeeder
                 Description = "Устраивает ли вас работа общественного транспорта в районе?",
                 CreatedBy = Guid.NewGuid(),
                 IsActive = false,
-                CreatedAt = DateTime.Now.AddDays(-30)
+                CreatedAt = DateTime.Now.AddDays(-30),
+                CompanyId = company.Id,
+                Type = PollType.One
             }
         };
 
