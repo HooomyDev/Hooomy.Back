@@ -1,4 +1,6 @@
-﻿namespace Hooome.Domain;
+﻿using System.Collections;
+
+namespace Hooome.Domain;
 
 public class Company
 {
@@ -10,4 +12,6 @@ public class Company
     public string Address { get; set; } = null!;
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime? UpdatedAt { get; set; }
+
+    public ICollection<Poll> Polls { get; set; } = [];
 }

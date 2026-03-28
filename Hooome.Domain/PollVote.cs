@@ -9,6 +9,6 @@ public class PollVote
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime? UpdatedAt { get; set; }
 
-    public Poll Poll { get; set; }
-    public PollOption Option { get; set; }
+    public Poll Poll { get; set; } = null!;
+    public PollOption Option { get; set; } = null!;
 }
