@@ -1,5 +1,5 @@
-﻿using Hooome.Application.Companies.Queries.GetCompanyDetails;
-using Hooome.Application.Companies.Queries.GetCompanyList;
+﻿using Hooome.Application.CQRS.Companies.Queries.GetCompanyDetails;
+using Hooome.Application.CQRS.Companies.Queries.GetCompanyList;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hooome.WebApi.Controllers;

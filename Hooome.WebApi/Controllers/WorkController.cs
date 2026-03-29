@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Hooome.Application.Works.Commands.CreateWork;
-using Hooome.Application.Works.Queries.GetWorkList;
+using Hooome.Application.CQRS.Works.Commands.CreateWork;
+using Hooome.Application.CQRS.Works.Queries.GetWorkList;
 using Hooome.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

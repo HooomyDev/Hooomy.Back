@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using Hooome.Application.Chats.Commands.CreateChat;
-using Hooome.Application.Chats.Queries.GetChatDetailsQuery;
-using Hooome.Application.Chats.Queries.GetChatForCompany;
-using Hooome.Application.Chats.Queries.GetChatList;
+using Hooome.Application.CQRS.Chats.Commands.CreateChat;
+using Hooome.Application.CQRS.Chats.Queries.GetChatDetailsQuery;
+using Hooome.Application.CQRS.Chats.Queries.GetChatForCompany;
+using Hooome.Application.CQRS.Chats.Queries.GetChatList;
 using Hooome.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

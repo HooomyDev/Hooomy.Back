@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
-using Hooome.Application.Complaints.Commands.CreateComplaint;
-using Hooome.Application.Complaints.Commands.DeleteComplaint;
-using Hooome.Application.Complaints.Commands.UpdateComplaint;
-using Hooome.Application.Complaints.Queries.GetComplaintCount;
-using Hooome.Application.Complaints.Queries.GetComplaintDetails;
-using Hooome.Application.Complaints.Queries.GetComplaintList;
+using Hooome.Application.CQRS.Complaints.Commands.CreateComplaint;
+using Hooome.Application.CQRS.Complaints.Commands.DeleteComplaint;
+using Hooome.Application.CQRS.Complaints.Commands.UpdateComplaint;
+using Hooome.Application.CQRS.Complaints.Queries.GetComplaintCount;
+using Hooome.Application.CQRS.Complaints.Queries.GetComplaintDetails;
+using Hooome.Application.CQRS.Complaints.Queries.GetComplaintList;
 using Hooome.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

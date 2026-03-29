@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Hooome.Application.Common.Mappings;
-using Hooome.Application.Complaints.Commands.CreateComplaint;
+using Hooome.Application.CQRS.Complaints.Commands.CreateComplaint;
 using Hooome.Domain.Enums;
 
 namespace Hooome.WebApi.Models;

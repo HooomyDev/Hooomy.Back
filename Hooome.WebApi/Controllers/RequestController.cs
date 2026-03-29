@@ -132,18 +132,6 @@ public class RequestController(IMapper mapper) : BaseController
     /// <summary>
     /// Creates a new request
     /// </summary>
-    /// <remarks>
-    /// Sample request:
-    /// 
-    ///     POST /api/requests/create
-    ///     {
-    ///         "title": "Sample Request",
-    ///         "description": "This is a sample request description",
-    ///         "priority": "High",
-    ///         "dueDate": "2024-12-31T00:00:00Z"
-    ///     }
-    /// 
-    /// </remarks>
     /// <param name="dto">The request creation data transfer object</param>
     /// <returns>The unique identifier of the created request</returns>
     /// <response code="200">Returns the ID of the created request</response>

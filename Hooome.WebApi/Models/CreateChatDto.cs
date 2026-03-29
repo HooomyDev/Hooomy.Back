@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Hooome.Application.Chats.Commands.CreateChat;
 using Hooome.Application.Common.Mappings;
+using Hooome.Application.CQRS.Chats.Commands.CreateChat;
 
 namespace Hooome.WebApi.Models;
 

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Hooome.Application.Common.Mappings;
-using Hooome.Application.Messages.Commands.CreateMessage;
+using Hooome.Application.CQRS.Messages.Commands.CreateMessage;
 using Hooome.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Caching.Distributed;

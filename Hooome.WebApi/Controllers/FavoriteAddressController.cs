@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using Hooome.Application.FavoriteAddresses.Commands.CreateFavoriteAddress;
-using Hooome.Application.FavoriteAddresses.Commands.DeleteFavoriteAddress;
-using Hooome.Application.FavoriteAddresses.Commands.UpdateFavoriteAddress;
-using Hooome.Application.FavoriteAddresses.Queries.GetFavoriteAddressList;
+using Hooome.Application.CQRS.FavoriteAddresses.Commands.CreateFavoriteAddress;
+using Hooome.Application.CQRS.FavoriteAddresses.Commands.DeleteFavoriteAddress;
+using Hooome.Application.CQRS.FavoriteAddresses.Commands.UpdateFavoriteAddress;
+using Hooome.Application.CQRS.FavoriteAddresses.Queries.GetFavoriteAddressList;
 using Hooome.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

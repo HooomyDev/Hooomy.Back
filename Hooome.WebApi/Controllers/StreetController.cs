@@ -1,4 +1,4 @@
-﻿using Hooome.Application.Streets.Queries.GetStreetList;
+﻿using Hooome.Application.CQRS.Streets.Queries.GetStreetList;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hooome.WebApi.Controllers;

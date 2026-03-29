@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Hooome.Application.Common.Mappings;
-using Hooome.Application.FavoriteAddresses.Commands.CreateFavoriteAddress;
+using Hooome.Application.CQRS.FavoriteAddresses.Commands.CreateFavoriteAddress;
 
 namespace Hooome.WebApi.Models;
 

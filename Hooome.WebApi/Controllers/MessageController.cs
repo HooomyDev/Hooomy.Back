@@ -1,4 +1,4 @@
-﻿using Hooome.Application.Messages.Queries.GetMessageList;
+﻿using Hooome.Application.CQRS.Messages.Queries.GetMessageList;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
