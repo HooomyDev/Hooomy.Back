@@ -1,7 +1,7 @@
 ﻿using Hooome.Domain.Enums;
 using MediatR;
 
-namespace Hooome.Application.Requests.Commands.CreateRequest;
+namespace Hooome.Application.CQRS.Requests.Commands.CreateRequest;
 
 public class CreateRequestCommand : IRequest<Guid>
 {
@@ -10,5 +10,4 @@ public class CreateRequestCommand : IRequest<Guid>
     public string Description { get; set; } = null!;
     public string Address { get; set; } = null!; 
     public RequestCategory Category { get; set; }
-    public string PhotoUrl { get; set; } = string.Empty;
 }

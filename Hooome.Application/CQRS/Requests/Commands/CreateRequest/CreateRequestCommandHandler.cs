@@ -2,7 +2,7 @@
 using Hooome.Domain;
 using MediatR;
 
-namespace Hooome.Application.Requests.Commands.CreateRequest;
+namespace Hooome.Application.CQRS.Requests.Commands.CreateRequest;
 
 public class CreateRequestCommandHandler(IHooomeDbContext dbContext) 
     : IRequestHandler<CreateRequestCommand, Guid>

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using Hooome.Application.Requests.Commands.CreateRequest;
+using Hooome.Application.CQRS.Requests.Commands.CreateRequest;
+using Hooome.Application.CQRS.Requests.Queries.GetRequestCateryList;
 using Hooome.Application.Requests.Commands.DeleteRequest;
 using Hooome.Application.Requests.Commands.UpdateRequest;
 using Hooome.Application.Requests.Queries.GetRequestCount;
@@ -127,6 +128,16 @@ public class RequestController(IMapper mapper) : BaseController
         var statistic = await Mediator.Send(query);
 
         return Ok(statistic);
+    }
+
+    [HttpGet("categories")]
+    public async Task<ActionResult<RequestCategoryListVm>> GetCategories()
+    {
+        var query = new GetRequestCategoryListQuery();
+
+        var categories = await Mediator.Send(query); 
+
+        return Ok(categories);
     }
 
     /// <summary>

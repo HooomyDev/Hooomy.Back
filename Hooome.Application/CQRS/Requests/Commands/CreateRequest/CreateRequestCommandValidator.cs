@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Hooome.Application.Requests.Commands.CreateRequest;
+namespace Hooome.Application.CQRS.Requests.Commands.CreateRequest;
 
 public class CreateRequestCommandValidator 
     : AbstractValidator<CreateRequestCommand>
@@ -12,6 +12,5 @@ public class CreateRequestCommandValidator
         RuleFor(c => c.Description).NotEmpty().MaximumLength(300);
         RuleFor(c => c.Category).NotEmpty();
         RuleFor(c => c.UserId).NotEqual(Guid.Empty);
-        RuleFor(c => c.PhotoUrl).MaximumLength(200);
     }
 }
