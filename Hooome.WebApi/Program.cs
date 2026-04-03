@@ -6,6 +6,8 @@ using Hooome.WebApi.Hubs;
 using Hooome.WebApi.Middleware;
 using Hooome.WebApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -34,6 +36,9 @@ try
     Log.Information("Starting Hooome Web API");
 
     var builder = WebApplication.CreateBuilder(args);
+
+    var webRootPath = builder.Configuration["WebRootPath"];
+    builder.Environment.WebRootPath = Path.Combine(Directory.GetCurrentDirectory(), webRootPath ?? "static");
 
     // Добавляем Serilog
     builder.Host.UseSerilog();
@@ -170,9 +175,19 @@ try
         c.IncludeXmlComments(xmlPath);
     });
 
+    builder.Services.Configure<FormOptions>(options =>
+    {
+        options.ValueLengthLimit = int.MaxValue;
+        options.MultipartBodyLengthLimit = 100 * 1024 * 1024; 
+        options.MultipartHeadersLengthLimit = int.MaxValue;
+    });
+
     // Current User Service
     builder.Services.AddSingleton<ICurrentUserService, CurrentUserService>();
     builder.Services.AddHttpContextAccessor();
+
+    // Image Service
+    builder.Services.AddScoped<IImageService, ImageService>();
 
     var app = builder.Build();
 
@@ -225,6 +240,12 @@ try
 
     app.MapControllers();
     app.MapHub<ChatHub>("/chat-hub");
+
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "static")),
+    });
 
     Log.Information("Hooome API started successfully");
     app.Run();
