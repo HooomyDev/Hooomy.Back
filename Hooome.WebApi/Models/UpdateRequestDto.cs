@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Hooome.Application.Common.Mappings;
-using Hooome.Application.Requests.Commands.UpdateRequest;
+using Hooome.Application.CQRS.Requests.Commands.UpdateRequest;
 using Hooome.Domain.Enums;
 
 namespace Hooome.WebApi.Models;

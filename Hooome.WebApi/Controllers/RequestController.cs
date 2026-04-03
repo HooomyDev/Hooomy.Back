@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using Hooome.Application.CQRS.Requests.Commands.CreateRequest;
+using Hooome.Application.CQRS.Requests.Commands.UpdateRequest;
+using Hooome.Application.CQRS.Requests.Commands.UploadImages;
 using Hooome.Application.CQRS.Requests.Queries.GetRequestCateryList;
-using Hooome.Application.Requests.Commands.DeleteRequest;
-using Hooome.Application.Requests.Commands.UpdateRequest;
+using Hooome.Application.CQRS.Requests.Queries.GetRequestDetails;
 using Hooome.Application.Requests.Queries.GetRequestCount;
 using Hooome.Application.Requests.Queries.GetRequestDailyStatistics;
-using Hooome.Application.Requests.Queries.GetRequestDetails;
 using Hooome.Application.Requests.Queries.GetRequestList;
 using Hooome.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -148,8 +148,8 @@ public class RequestController(IMapper mapper) : BaseController
     /// <response code="200">Returns the ID of the created request</response>
     /// <response code="400">If the request data is invalid</response>
     /// <response code="401">If user is unauthorized</response>
-    [HttpPost("create")]
     [Authorize]
+    [HttpPost("create")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -161,6 +161,22 @@ public class RequestController(IMapper mapper) : BaseController
         var requestId = await Mediator.Send(command);
 
         return Ok(requestId);
+    }
+
+    [Authorize]
+    [HttpPost("{requestId:guid}/upload-images")]
+    public async Task<ActionResult> UploadImages(Guid requestId, [FromForm] List<IFormFile> files)
+    {
+        var command = new UploadImagesCommand()
+        {
+            RequestId = requestId,
+            UserId = UserId,
+            Files = files
+        };
+
+        await Mediator.Send(command);
+
+        return NoContent();
     }
 
     /// <summary>

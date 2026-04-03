@@ -14,4 +14,6 @@ public class Request
     public string PhotoUrl { get; set; } = string.Empty;
     public DateTime CreatedAt {  get; set; }
     public DateTime? UpdatedAt { get; set; }
+
+    public ICollection<Image> Images { get; set; } = [];
 }
