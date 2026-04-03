@@ -15,5 +15,11 @@ public class RequestTypeConfiguration : IEntityTypeConfiguration<Request>
         builder.Property(r => r.Description).HasMaxLength(300);
         builder.Property(r => r.Status).IsRequired();
         builder.Property(r => r.Category).IsRequired();
+
+        builder.HasMany(r => r.Images)
+            .WithOne(i => i.Request)
+            .HasForeignKey(i => i.RequestId)
+            .OnDelete(DeleteBehavior.Cascade);
+
     }
 }

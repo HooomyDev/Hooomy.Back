@@ -17,6 +17,7 @@ public interface IHooomeDbContext
     DbSet<PollVote> PollVotes { get; set; }
     DbSet<Chat> Chats { get; set; }
     DbSet<Message> Messages { get; set; }
+    DbSet<Image> Images { get; set; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }
