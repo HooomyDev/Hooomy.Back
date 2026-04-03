@@ -3,13 +3,14 @@ using Hooome.Application.Common.Exceptions;
 using Hooome.Application.Interfaces;
 using Hooome.Domain;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
-namespace Hooome.Application.Requests.Queries.GetRequestDetails;
+namespace Hooome.Application.CQRS.Requests.Queries.GetRequestDetails;
 
 public class GetRequestDetailsQueryHandler(IHooomeDbContext dbContext, IMapper mapper)
     : IRequestHandler<GetRequestDetailsQuery, RequestDetailsVm>
 {
-    public async Task<RequestDetailsVm> Handle(GetRequestDetailsQuery request, 
+    public async Task<RequestDetailsVm> Handle(GetRequestDetailsQuery request,
         CancellationToken cancellationToken)
     {
         var entity = await dbContext.Requests
@@ -20,6 +21,13 @@ public class GetRequestDetailsQueryHandler(IHooomeDbContext dbContext, IMapper m
             throw new NotFoundException(nameof(Request), request.Id);
         }
 
-        return mapper.Map<RequestDetailsVm>(entity);
+        var requestDetails = mapper.Map<RequestDetailsVm>(entity);
+
+        requestDetails.ImagesUrls = await dbContext.Images
+            .Where(i => i.RequestId == request.Id)
+            .Select(i => $"{i.FilePath}")
+            .ToListAsync(cancellationToken);
+
+        return requestDetails;
     }
 }

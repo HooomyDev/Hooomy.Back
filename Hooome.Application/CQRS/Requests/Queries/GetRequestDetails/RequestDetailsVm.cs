@@ -3,7 +3,7 @@ using Hooome.Application.Common.Mappings;
 using Hooome.Domain;
 using Hooome.Domain.Enums;
 
-namespace Hooome.Application.Requests.Queries.GetRequestDetails;
+namespace Hooome.Application.CQRS.Requests.Queries.GetRequestDetails;
 
 public class RequestDetailsVm : IMapWith<Request>
 {
@@ -13,7 +13,7 @@ public class RequestDetailsVm : IMapWith<Request>
     public string Address { get; set; } = null!;
     public RequestStatus Status { get; set; } = RequestStatus.Unknown;
     public RequestCategory Category { get; set; } = RequestCategory.Other;
-    public string PhotoUrl { get; set; } = string.Empty;
+    public IList<string> ImagesUrls { get; set; } = [];
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 

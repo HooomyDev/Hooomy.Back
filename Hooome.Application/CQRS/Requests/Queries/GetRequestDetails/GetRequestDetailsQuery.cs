@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Hooome.Application.Requests.Queries.GetRequestDetails;
+namespace Hooome.Application.CQRS.Requests.Queries.GetRequestDetails;
 
 public class GetRequestDetailsQuery : IRequest<RequestDetailsVm>
 {
