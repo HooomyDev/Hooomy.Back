@@ -13,6 +13,5 @@ public class UpdateRequestCommandValidator
         RuleFor(c => c.Category).NotEmpty();
         RuleFor(c => c.UserId).NotEqual(Guid.Empty);
         RuleFor(c => c.Id).NotEqual(Guid.Empty);
-        RuleFor(c => c.PhotoUrl).MaximumLength(250);
     }
 }

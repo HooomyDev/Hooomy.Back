@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Hooome.Application.CQRS.Requests.Commands.CreateRequest;
+using Hooome.Application.CQRS.Requests.Commands.DeleteRequest;
 using Hooome.Application.CQRS.Requests.Commands.UpdateRequest;
 using Hooome.Application.CQRS.Requests.Commands.UploadImages;
 using Hooome.Application.CQRS.Requests.Queries.GetRequestCateryList;
