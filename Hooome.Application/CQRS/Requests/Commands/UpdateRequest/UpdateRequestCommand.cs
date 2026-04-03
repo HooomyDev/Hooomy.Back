@@ -1,7 +1,7 @@
 ﻿using Hooome.Domain.Enums;
 using MediatR;
 
-namespace Hooome.Application.Requests.Commands.UpdateRequest;
+namespace Hooome.Application.CQRS.Requests.Commands.UpdateRequest;
 
 public class UpdateRequestCommand : IRequest
 {
@@ -12,5 +12,4 @@ public class UpdateRequestCommand : IRequest
     public string Address { get; set; } = null!;
     public RequestCategory Category { get; set; }
     public RequestStatus Status { get; set; }
-    public string PhotoUrl { get; set; } = string.Empty;
 }

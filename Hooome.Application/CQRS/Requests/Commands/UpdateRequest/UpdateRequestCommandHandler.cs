@@ -4,7 +4,7 @@ using Hooome.Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Hooome.Application.Requests.Commands.UpdateRequest;
+namespace Hooome.Application.CQRS.Requests.Commands.UpdateRequest;
 
 public class UpdateRequestCommandHandler(IHooomeDbContext dbContext) 
     : IRequestHandler<UpdateRequestCommand>

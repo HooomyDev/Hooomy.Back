@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Hooome.Application.Requests.Commands.DeleteRequest;
+namespace Hooome.Application.CQRS.Requests.Commands.DeleteRequest;
 
 public class DeleteRequestCommandValidator 
     : AbstractValidator<DeleteRequestCommand>

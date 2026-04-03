@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Hooome.Application.Requests.Commands.UpdateRequest;
+namespace Hooome.Application.CQRS.Requests.Commands.UpdateRequest;
 
 public class UpdateRequestCommandValidator
     : AbstractValidator<UpdateRequestCommand>

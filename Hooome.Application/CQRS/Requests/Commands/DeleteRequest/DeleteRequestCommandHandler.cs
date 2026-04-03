@@ -3,7 +3,7 @@ using Hooome.Application.Interfaces;
 using Hooome.Domain;
 using MediatR;
 
-namespace Hooome.Application.Requests.Commands.DeleteRequest;
+namespace Hooome.Application.CQRS.Requests.Commands.DeleteRequest;
 
 public class DeleteRequestCommandHandler(IHooomeDbContext dbContext) 
     : IRequestHandler<DeleteRequestCommand>
