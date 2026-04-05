@@ -7,8 +7,7 @@ namespace Hooome.WebApi.Models;
 public class CreateFavoriteAddressDto 
     : IMapWith<CreateFavoriteAddressCommand>
 {
-    public string Street { get; set; } = null!;
-    public int House { get; set; }
+    public Guid AddressId { get; set; }
     public string Pseudonym { get; set; } = null!;
 
     public void Mapping(Profile profile) 
