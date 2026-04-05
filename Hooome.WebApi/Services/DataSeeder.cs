@@ -1,8 +1,10 @@
-﻿using Hooome.Domain;
+﻿using EFCore.BulkExtensions;
+using Hooome.Domain;
 using Hooome.Domain.Enums;
 using Hooome.Persistance;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using System.Text;
 
 namespace Hooome.WebApi.Services;
 
@@ -12,15 +14,16 @@ public class DataSeeder
     {
         try
         {
-            var companies = await SeedCompaniesAsync(context);
-            var requests = await SeedRequestsAsync(context);
-            await SeedComplaintsAsync(context, companies, requests);
-            await SeedFavoriteAddressesAsync(context);
-            await SeedPollsAsync(context);
-            await SeedPollOptionsAsync(context);
-            await SeedPollVotesAsync(context);
-            await SeedRequestCommentsAsync(context, requests);
-            await SeedWorksAsync(context);
+            //var companies = await SeedCompaniesAsync(context);
+            //var requests = await SeedRequestsAsync(context);
+            //await SeedComplaintsAsync(context, companies, requests);
+            await SeedAddressesAsync(context);
+            //await SeedFavoriteAddressesAsync(context);
+            //await SeedPollsAsync(context);
+            //await SeedPollOptionsAsync(context);
+            //await SeedPollVotesAsync(context);
+            //await SeedRequestCommentsAsync(context, requests);
+            //await SeedWorksAsync(context);
 
             await context.SaveChangesAsync();
 
@@ -31,6 +34,42 @@ public class DataSeeder
             Log.Error($"Error adding data: {ex.Message}");
             throw;
         }
+    }
+
+    private static async Task SeedAddressesAsync(HooomeDbContext context)
+    {
+        if (context.Addresses.Any())
+            return;
+
+        var lines = await File.ReadAllLinesAsync("static/minsk_addresses.csv", Encoding.UTF8);
+        var addresses = new List<Address>();
+
+        foreach (var line in lines)
+        {
+            if (string.IsNullOrWhiteSpace(line))
+                continue;
+
+            var parts = line.Split(';');
+            if (parts.Length >= 2)
+            {
+                var street = parts[2].Trim('"');
+                var houseNumber = parts[1].Trim('"');
+
+                if (houseNumber.Length > 50)
+                    houseNumber = houseNumber[..50];
+
+                addresses.Add(new Address
+                {
+                    Id = Guid.NewGuid(),
+                    Street = street,
+                    HouseNumber = houseNumber
+                });
+            }
+        }
+
+        // Массовая вставка (один запрос)
+        await context.BulkInsertAsync(addresses);
+        Console.WriteLine($"Сохранено {addresses.Count} адресов");
     }
 
     private static async Task<List<Company>> SeedCompaniesAsync(HooomeDbContext context)
@@ -308,8 +347,6 @@ public class DataSeeder
                 {
                     Id = Guid.NewGuid(),
                     UserID = userId,
-                    Street = streets[random.Next(streets.Length)],
-                    House = random.Next(1, 120),
                     Pseudonym = pseudonyms[random.Next(pseudonyms.Length)] + (j > 0 ? $" {j + 1}" : ""),
                     CreatedAt = DateTime.Now.AddDays(-random.Next(1, 60)),
                     UpdatedAt = random.Next(2) == 0 ? DateTime.Now.AddDays(-random.Next(1, 30)) : null
@@ -632,8 +669,6 @@ public class DataSeeder
                 Id = Guid.NewGuid(),
                 Title = workTitles[random.Next(workTitles.Length)] + $" {i}",
                 Description = $"Плановые работы по адресу. Необходимо выполнить работы согласно графику.",
-                Street = streets[random.Next(streets.Length)],
-                House = random.Next(1, 100),
                 Category = categories[random.Next(categories.Length)],
                 Seriousness = seriousness,
                 PlannedStartTime = plannedStart,
