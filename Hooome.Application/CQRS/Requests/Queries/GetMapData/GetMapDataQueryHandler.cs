@@ -38,7 +38,7 @@ public class GetMapDataQueryHandler(
 
         if (request.Month > 0)
         {
-            query = query.Where(r => r.CreatedAt.Month == request.Month);
+            query = query.Where(r => r.CreatedAt.Month == request.Month && r.CreatedAt.Year == DateTime.Now.Year);
         }
 
         query = request.RequestStatus switch
