@@ -8,7 +8,7 @@ public class FavoriteAddressListDto : IMapWith<FavoriteAddress>
 {
     public Guid Id { get; set; }
     public string Street { get; set; } = null!;
-    public int House { get; set; }
+    public string House { get; set; } = null!;
     public string Pseudonym { get; set; } = null!;
 
     public void Mapping(Profile profile)

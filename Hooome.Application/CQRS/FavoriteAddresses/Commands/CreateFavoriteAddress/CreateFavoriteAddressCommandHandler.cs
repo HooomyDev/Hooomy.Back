@@ -1,4 +1,5 @@
-﻿using Hooome.Application.Interfaces;
+﻿using Hooome.Application.Common.Exceptions;
+using Hooome.Application.Interfaces;
 using Hooome.Domain;
 using MediatR;
 
@@ -10,12 +11,15 @@ public class CreateFavoriteAddressCommandHandler(IHooomeDbContext dbContext)
     public async Task<Guid> Handle(CreateFavoriteAddressCommand request, 
         CancellationToken cancellationToken)
     {
+        var address = await dbContext.Addresses
+            .FindAsync([request.AddressId], cancellationToken)
+            ?? throw new NotFoundException(nameof(Address), request.AddressId);
+
         var newFavoriteAddress = new FavoriteAddress
         {
             Id = Guid.NewGuid(),
             UserID = request.UserId,
-            Street = request.Street,
-            House = request.House,
+            AddressId = request.AddressId,
             Pseudonym = request.Pseudonym,
             CreatedAt = DateTime.Now,
             UpdatedAt = null,

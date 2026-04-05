@@ -11,7 +11,5 @@ public class FavoriteAddressTypeConfiguration
     {
         builder.HasKey(fa => fa.Id);
         builder.HasIndex(fa => fa.Id).IsUnique();
-        builder.Property(fa => fa.Street).HasMaxLength(100);
-        builder.Property(fa => fa.House).IsRequired();
     }
 }

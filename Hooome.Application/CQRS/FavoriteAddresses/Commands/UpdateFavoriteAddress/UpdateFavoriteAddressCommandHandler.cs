@@ -18,8 +18,6 @@ public class UpdateFavoriteAddressCommandHandler(IHooomeDbContext dbContext)
             throw new NotFoundException(nameof(FavoriteAddress), request.Id);
         }
 
-        entity.Street = request.Street;
-        entity.House = request.House;
         entity.Pseudonym = request.Pseudonym;
         entity.UpdatedAt = DateTime.Now;
 
