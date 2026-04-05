@@ -21,6 +21,7 @@ public sealed class HooomeDbContext(DbContextOptions<HooomeDbContext> options)
     public DbSet<Chat> Chats { get; set; }
     public DbSet<Message> Messages { get; set; }
     public DbSet<Image> Images { get; set; }
+    public DbSet<Address> Addresses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
