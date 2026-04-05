@@ -3,11 +3,13 @@ using Hooome.Application.CQRS.Requests.Commands.CreateRequest;
 using Hooome.Application.CQRS.Requests.Commands.DeleteRequest;
 using Hooome.Application.CQRS.Requests.Commands.UpdateRequest;
 using Hooome.Application.CQRS.Requests.Commands.UploadImages;
+using Hooome.Application.CQRS.Requests.Queries.GetMapData;
 using Hooome.Application.CQRS.Requests.Queries.GetRequestCateryList;
+using Hooome.Application.CQRS.Requests.Queries.GetRequestCount;
+using Hooome.Application.CQRS.Requests.Queries.GetRequestDailyStatistics;
 using Hooome.Application.CQRS.Requests.Queries.GetRequestDetails;
-using Hooome.Application.Requests.Queries.GetRequestCount;
-using Hooome.Application.Requests.Queries.GetRequestDailyStatistics;
-using Hooome.Application.Requests.Queries.GetRequestList;
+using Hooome.Application.CQRS.Requests.Queries.GetRequestList;
+using Hooome.Domain.Enums;
 using Hooome.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -249,5 +251,23 @@ public class RequestController(IMapper mapper) : BaseController
         await Mediator.Send(command);
 
         return NoContent();
+    }
+
+    [HttpGet("map")]
+    public async Task<ActionResult<MapDataVm>> GetClusters(
+        [FromQuery] int zoom = 12,
+        [FromQuery] int month = 0,
+        [FromQuery] RequestStatus status = RequestStatus.Unknown)
+    {
+        var query = new GetMapDataQuery()
+        {
+            ZoomLevel = zoom,
+            Month = month,
+            RequestStatus = status
+        };
+
+        var result = await Mediator.Send(query);
+
+        return Ok(result);
     }
 }

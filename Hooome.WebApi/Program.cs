@@ -188,6 +188,8 @@ try
     // Image Service
     builder.Services.AddScoped<IImageService, ImageService>();
 
+    builder.Services.AddScoped<IMapClusteringService, MapClusteringService>();
+
     var app = builder.Build();
 
     // Инициализация базы данных

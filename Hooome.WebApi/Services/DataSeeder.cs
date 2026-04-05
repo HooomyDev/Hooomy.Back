@@ -4,7 +4,9 @@ using Hooome.Domain.Enums;
 using Hooome.Persistance;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using System.Globalization;
 using System.Text;
+using System.Text.Json;
 
 namespace Hooome.WebApi.Services;
 
@@ -15,9 +17,9 @@ public class DataSeeder
         try
         {
             //var companies = await SeedCompaniesAsync(context);
-            //var requests = await SeedRequestsAsync(context);
             //await SeedComplaintsAsync(context, companies, requests);
             await SeedAddressesAsync(context);
+            var requests = await SeedRequestsAsync(context);
             //await SeedFavoriteAddressesAsync(context);
             //await SeedPollsAsync(context);
             //await SeedPollOptionsAsync(context);
@@ -44,32 +46,87 @@ public class DataSeeder
         var lines = await File.ReadAllLinesAsync("static/minsk_addresses.csv", Encoding.UTF8);
         var addresses = new List<Address>();
 
+        Console.WriteLine($"Start loading addresses");
+        // Используем InvariantCulture для парсинга чисел с точкой
+        var culture = System.Globalization.CultureInfo.InvariantCulture;
+
         foreach (var line in lines)
         {
             if (string.IsNullOrWhiteSpace(line))
+            {
                 continue;
+            }
 
             var parts = line.Split(';');
-            if (parts.Length >= 2)
+            if (parts.Length >= 5) // Теперь нужно минимум 5 колонок
             {
-                var street = parts[2].Trim('"');
-                var houseNumber = parts[1].Trim('"');
-
-                if (houseNumber.Length > 50)
-                    houseNumber = houseNumber[..50];
-
-                addresses.Add(new Address
+                try
                 {
-                    Id = Guid.NewGuid(),
-                    Street = street,
-                    HouseNumber = houseNumber
-                });
+                    var street = parts[2].Trim().Trim('"');
+                    var houseNumber = parts[1].Trim().Trim('"');
+
+                    // Парсим координаты с InvariantCulture
+                    decimal? latitude = null;
+                    decimal? longitude = null;
+
+                    if (parts.Length > 3 && !string.IsNullOrWhiteSpace(parts[3]))
+                    {
+                        var latString = parts[3].Trim().Trim('"');
+                        if (decimal.TryParse(latString, System.Globalization.NumberStyles.Any, culture, out decimal lat))
+                        {
+                            latitude = lat;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Не удалось распарсить широту: '{latString}'");
+                        }
+                    }
+
+                    if (parts.Length > 4 && !string.IsNullOrWhiteSpace(parts[4]))
+                    {
+                        var lonString = parts[4].Trim().Trim('"');
+                        if (decimal.TryParse(lonString, System.Globalization.NumberStyles.Any, culture, out decimal lon))
+                        {
+                            longitude = lon;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Не удалось распарсить долготу: '{lonString}'");
+                        }
+                    }
+
+                    // Очищаем улицу от символов %
+                    street = street.Replace('%', ' ').Replace("  ", " ").Trim();
+
+                    if (houseNumber.Length > 50)
+                        houseNumber = houseNumber[..50];
+
+                    addresses.Add(new Address
+                    {
+                        Id = Guid.NewGuid(),
+                        Street = street,
+                        HouseNumber = houseNumber,
+                        Latitude = latitude,
+                        Longitude = longitude,
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Ошибка обработки строки: {line}");
+                    Console.WriteLine($"Ошибка: {ex.Message}");
+                }
+            }
+
+            // Прогресс каждые 1000 строк
+            if (addresses.Count % 1000 == 0 && addresses.Count > 0)
+            {
+                Console.WriteLine($"Обработано {addresses.Count} адресов...");
             }
         }
 
         // Массовая вставка (один запрос)
         await context.BulkInsertAsync(addresses);
-        Console.WriteLine($"Сохранено {addresses.Count} адресов");
+        Console.WriteLine($"Saved {addresses.Count} addresses");
     }
 
     private static async Task<List<Company>> SeedCompaniesAsync(HooomeDbContext context)
@@ -199,76 +256,129 @@ public class DataSeeder
 
     private static async Task<List<Request>> SeedRequestsAsync(HooomeDbContext context)
     {
-        if (await context.Requests.AnyAsync()) return await context.Requests.ToListAsync();
+        if (await context.Requests.AnyAsync())
+            return await context.Requests.ToListAsync();
+
+        // Получаем существующие адреса из базы
+        var addresses = await context.Addresses.ToListAsync();
+        if (!addresses.Any())
+        {
+            Log.Warning("No addresses found. Run SeedAddressesAsync first.");
+            return new List<Request>();
+        }
 
         var categories = new[]
         {
-            RequestCategory.HotWaterSupply,
-            RequestCategory.ColdWaterSupply,
-            RequestCategory.PowerSupply,
-            RequestCategory.Heating,
-            RequestCategory.ElevatorMaintenance,
-            RequestCategory.RoofingWorks,
-            RequestCategory.Sewage,
-            RequestCategory.ApartmentBuildingSanitation,
-            RequestCategory.TerritorySanitation,
-            RequestCategory.StreetLighting,
-            RequestCategory.RoadsAndSidewalks
-        };
+        RequestCategory.HotWaterSupply,
+        RequestCategory.ColdWaterSupply,
+        RequestCategory.PowerSupply,
+        RequestCategory.Heating,
+        RequestCategory.ElevatorMaintenance,
+        RequestCategory.RoofingWorks,
+        RequestCategory.Sewage,
+        RequestCategory.ApartmentBuildingSanitation,
+        RequestCategory.TerritorySanitation,
+        RequestCategory.StreetLighting,
+        RequestCategory.RoadsAndSidewalks
+    };
 
         var statuses = new[]
         {
-            RequestStatus.Created,
-            RequestStatus.InProgress,
-            RequestStatus.Completed,
-            RequestStatus.Rejected
-        };
-
-        var addresses = new[]
-        {
-            "г. Минск, ул. Немига, 3, кв. 15",
-            "г. Минск, пр-т Победителей, 23, кв. 48",
-            "г. Минск, ул. Кальварийская, 12, кв. 7",
-            "г. Минск, ул. Притыцкого, 56, кв. 92",
-            "г. Минск, ул. Гурского, 34, кв. 23",
-            "г. Минск, ул. Матусевича, 45, кв. 67",
-            "г. Минск, ул. Рафиева, 78, кв. 12",
-            "г. Минск, ул. Лобанка, 89, кв. 34",
-            "г. Минск, ул. Шаранговича, 23, кв. 56",
-            "г. Минск, ул. Алибегова, 67, кв. 78",
-            "г. Минск, ул. Кунцевщина, 12, кв. 90",
-            "г. Минск, ул. Горецкого, 34, кв. 23"
-        };
+        RequestStatus.Created,
+        RequestStatus.InProgress,
+        RequestStatus.Completed,
+        RequestStatus.Rejected
+    };
 
         var requests = new List<Request>();
         var random = new Random();
 
-        for (int i = 1; i <= 15; i++)
+        // Создаём 50-100 заявок для разнообразия
+        var requestsCount = random.Next(50, 101);
+
+        for (int i = 1; i <= requestsCount; i++)
         {
+            // Выбираем случайный адрес из существующих
+            var address = addresses[random.Next(addresses.Count)];
             var category = categories[random.Next(categories.Length)];
             var status = statuses[random.Next(statuses.Length)];
-            var createdDate = DateTime.Now.AddDays(-random.Next(1, 45));
+            var createdDate = DateTime.Now.AddDays(-random.Next(1, 90));
+
+            // Некоторые заявки могут быть с фото, некоторые без
+            var hasPhoto = random.Next(3) == 0;
 
             requests.Add(new Request
             {
                 Id = Guid.NewGuid(),
-                UserID = Guid.NewGuid(),
-                Title = GetRequestTitle(category, i),
-                Description = GetRequestDescription(category, i),
-                Address = addresses[random.Next(addresses.Length)],
+                UserID = Guid.NewGuid(), // В реальном приложении нужно брать ID существующего пользователя
+                AddressId = address.Id,
+                Title = "asdasd",
+                Description = GetRequestDescription(category, address, i),
                 Status = status,
                 Category = category,
-                PhotoUrl = random.Next(3) == 0 ? $"https://example.com/photos/request{i}.jpg" : string.Empty,
+                PhotoUrl = hasPhoto ? $"https://example.com/photos/request_{DateTime.Now:yyyyMMdd}_{i}.jpg" : string.Empty,
                 CreatedAt = createdDate,
-                UpdatedAt = status != RequestStatus.Created ? createdDate.AddDays(random.Next(1, 10)) : null
+                UpdatedAt = status != RequestStatus.Created ? createdDate.AddDays(random.Next(1, 15)) : null
             });
+        }
+
+        // Добавляем несколько заявок на один адрес (для демонстрации кластеризации)
+        var popularAddress = addresses.FirstOrDefault();
+        if (popularAddress != null)
+        {
+            for (int i = 1; i <= 5; i++)
+            {
+                var category = categories[random.Next(categories.Length)];
+                var status = statuses[random.Next(statuses.Length)];
+                var createdDate = DateTime.Now.AddDays(-random.Next(1, 30));
+
+                requests.Add(new Request
+                {
+                    Id = Guid.NewGuid(),
+                    UserID = Guid.NewGuid(),
+                    AddressId = popularAddress.Id,
+                    Title = "asdasd",
+                    Description = $"Повторная заявка на адрес {popularAddress.Street}, {popularAddress.HouseNumber}. Проблема не решена с предыдущей заявки.",
+                    Status = status,
+                    Category = category,
+                    PhotoUrl = random.Next(2) == 0 ? $"https://example.com/photos/repeat_{DateTime.Now:yyyyMMdd}_{i}.jpg" : string.Empty,
+                    CreatedAt = createdDate,
+                    UpdatedAt = status != RequestStatus.Created ? createdDate.AddDays(random.Next(1, 7)) : null
+                });
+            }
         }
 
         await context.Requests.AddRangeAsync(requests);
         await context.SaveChangesAsync();
-        Log.Information($"Added {requests.Count} requests");
+
+        Log.Information($"Added {requests.Count} requests for {addresses.Count} addresses");
 
         return requests;
+    }
+
+    private static string GetRequestDescription(RequestCategory category, Address address, int index)
+    {
+        var baseDescription = category switch
+        {
+            RequestCategory.HotWaterSupply => $"По адресу {address.Street}, {address.HouseNumber} отсутствует горячая вода уже {new Random().Next(2, 7)} дня. Прошу принять меры.",
+            RequestCategory.ColdWaterSupply => $"Из крана течёт ржавая вода с примесями. Адрес: {address.Street}, {address.HouseNumber}.",
+            RequestCategory.PowerSupply => $"В доме {address.Street}, {address.HouseNumber} периодически отключается свет. Электрики не могут найти причину.",
+            RequestCategory.Heating => $"Батареи холодные при температуре на улице -{new Random().Next(5, 15)}°C. В квартире {index} температура опустилась до 16°C.",
+            RequestCategory.ElevatorMaintenance => $"Лифт в подъезде {new Random().Next(1, 5)} не работает уже 3 дня. Жильцам приходится подниматься пешком.",
+            RequestCategory.RoofingWorks => $"После дождя в квартире {index} на {new Random().Next(3, 9)} этаже потекла крыша. Требуется срочный ремонт.",
+            RequestCategory.Sewage => $"Забилась канализация в стояке. Вода поднимается на {new Random().Next(2, 5)} этаж.",
+            RequestCategory.ApartmentBuildingSanitation => $"Мусоропровод забит отходами, неприятный запах на всех этажах.",
+            RequestCategory.TerritorySanitation => $"Двор не убирают уже месяц, мусорные баки переполнены.",
+            RequestCategory.StreetLighting => $"Фонарь во дворе дома {address.Street}, {address.HouseNumber} не горит месяц. Темно и небезопасно.",
+            RequestCategory.RoadsAndSidewalks => $"Тротуар возле дома разбит, люди спотыкаются. Необходим ремонт.",
+            _ => $"Обращение жильца дома {address.Street}, {address.HouseNumber}. Требуется помощь ЖЭСа."
+        };
+
+        // Добавляем срочность для некоторых заявок
+        var urgentSuffixes = new[] { " Срочно!", " Требуется немедленное вмешательство!", "" };
+        var urgent = urgentSuffixes[new Random().Next(0, urgentSuffixes.Length)];
+
+        return baseDescription + urgent;
     }
 
     private static async Task SeedComplaintsAsync(HooomeDbContext context, List<Company> companies, List<Request> requests)
@@ -686,24 +796,6 @@ public class DataSeeder
     }
 
     // Вспомогательные методы
-    private static string GetRequestTitle(RequestCategory category, int index)
-    {
-        return category switch
-        {
-            RequestCategory.HotWaterSupply => $"Отсутствует горячая вода в квартире {index}",
-            RequestCategory.ColdWaterSupply => $"Холодная вода с ржавчиной",
-            RequestCategory.PowerSupply => $"Отключение электричества в подъезде",
-            RequestCategory.Heating => $"Холодные батареи в квартире",
-            RequestCategory.ElevatorMaintenance => $"Сломался лифт в подъезде",
-            RequestCategory.RoofingWorks => $"Течет крыша в районе подъезда",
-            RequestCategory.Sewage => $"Засор канализации в подвале",
-            RequestCategory.ApartmentBuildingSanitation => $"Мусор на лестничной клетке",
-            RequestCategory.TerritorySanitation => $"Не вывозят мусор с контейнерной площадки",
-            RequestCategory.StreetLighting => $"Не горит фонарь во дворе",
-            RequestCategory.RoadsAndSidewalks => $"Яма на дороге возле дома",
-            _ => $"Заявка №{index} по обслуживанию дома"
-        };
-    }
 
     private static string GetRequestDescription(RequestCategory category, int index)
     {
