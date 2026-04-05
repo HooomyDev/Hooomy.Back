@@ -15,11 +15,7 @@ public class WorkEntityTypeConfiguration : IEntityTypeConfiguration<Work>
         builder.Property(w => w.Description)
             .IsRequired()
             .HasMaxLength(1000);
-        builder.Property(w => w.Street)
-            .IsRequired()
-            .HasMaxLength(300);
-        builder.Property(w => w.House)
-            .IsRequired();
+
         builder.Property(w => w.Category).IsRequired();
         builder.Property(w => w.Seriousness).IsRequired();
         builder.Property(w => w.PlannedStartTime).IsRequired();
