@@ -64,7 +64,6 @@ try
     // Application и Persistence слои
     builder.Services.AddApplication();
     builder.Services.AddPersistence(builder.Configuration);
-    builder.Services.AddScoped<DataSeedStreetsService>();
     builder.Services.AddScoped<DataSeeder>();
 
     // CORS
@@ -196,9 +195,6 @@ try
     {
         var context = scope.ServiceProvider.GetRequiredService<HooomeDbContext>();
         DbInitializer.Initialize(context);
-
-        var seedStreetService = scope.ServiceProvider.GetRequiredService<DataSeedStreetsService>();
-        await seedStreetService.SeedData(CancellationToken.None);
 
         var seeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
         await seeder.SeedAllDataAsync(context);
