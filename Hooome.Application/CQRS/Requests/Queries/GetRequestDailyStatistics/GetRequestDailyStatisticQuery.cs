@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Hooome.Application.Requests.Queries.GetRequestDailyStatistics;
+namespace Hooome.Application.CQRS.Requests.Queries.GetRequestDailyStatistics;
 
 public class GetRequestDailyStatisticQuery : IRequest<RequestDailyStatisticVm>
 {

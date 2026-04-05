@@ -3,7 +3,7 @@ using Hooome.Application.Common.Mappings;
 using Hooome.Domain;
 using Hooome.Domain.Enums;
 
-namespace Hooome.Application.Requests.Queries.GetRequestList;
+namespace Hooome.Application.CQRS.Requests.Queries.GetRequestList;
 
 public class RequestListDto : IMapWith<Request>
 {

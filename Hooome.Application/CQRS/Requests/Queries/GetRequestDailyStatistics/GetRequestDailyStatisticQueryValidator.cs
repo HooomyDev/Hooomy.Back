@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Hooome.Application.Requests.Queries.GetRequestDailyStatistics;
+namespace Hooome.Application.CQRS.Requests.Queries.GetRequestDailyStatistics;
 
 public class GetRequestDailyStatisticQueryValidator
     : AbstractValidator<GetRequestDailyStatisticQuery>

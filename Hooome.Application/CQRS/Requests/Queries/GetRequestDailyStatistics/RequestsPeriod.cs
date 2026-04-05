@@ -1,4 +1,4 @@
-﻿namespace Hooome.Application.Requests.Queries.GetRequestDailyStatistics;
+﻿namespace Hooome.Application.CQRS.Requests.Queries.GetRequestDailyStatistics;
 
 public enum RequestsPeriod
 {

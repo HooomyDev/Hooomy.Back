@@ -2,7 +2,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Hooome.Application.Requests.Queries.GetRequestCount;
+namespace Hooome.Application.CQRS.Requests.Queries.GetRequestCount;
 
 public class GetRequestCountQueryHandler(IHooomeDbContext dbContext)
     : IRequestHandler<GetRequestCountQuery, int>

@@ -28,6 +28,12 @@ public class GetRequestDetailsQueryHandler(IHooomeDbContext dbContext, IMapper m
             .Select(i => $"{i.FilePath}")
             .ToListAsync(cancellationToken);
 
+        requestDetails.Address = await dbContext.Addresses
+            .Where(a => a.Id == entity.AddressId)
+            .Select(a => $"{a.Street}, {a.HouseNumber}")
+            .FirstOrDefaultAsync(cancellationToken)
+            ?? throw new NotFoundException(nameof(Address), entity.AddressId);
+
         return requestDetails;
     }
 }

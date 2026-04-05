@@ -3,7 +3,7 @@ using Hooome.Application.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Hooome.Application.Requests.Queries.GetRequestDailyStatistics;
+namespace Hooome.Application.CQRS.Requests.Queries.GetRequestDailyStatistics;
 
 public class GetRequestDailyStatisticQueryHandler(IHooomeDbContext dbContext)
     : IRequestHandler<GetRequestDailyStatisticQuery, RequestDailyStatisticVm>

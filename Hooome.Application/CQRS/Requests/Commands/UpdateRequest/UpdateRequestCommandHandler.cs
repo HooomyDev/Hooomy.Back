@@ -24,7 +24,7 @@ public class UpdateRequestCommandHandler(IHooomeDbContext dbContext)
 
         entity.Description = request.Description;
         entity.Category = request.Category;
-        entity.Address = request.Address;
+        entity.AddressId = request.AddressId;
         entity.Status = request.Status;
         entity.UpdatedAt = DateTime.Now;
 

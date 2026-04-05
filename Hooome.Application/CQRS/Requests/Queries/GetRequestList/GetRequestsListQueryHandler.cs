@@ -4,7 +4,7 @@ using Hooome.Application.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Hooome.Application.Requests.Queries.GetRequestList;
+namespace Hooome.Application.CQRS.Requests.Queries.GetRequestList;
 
 public class GetRequestsListQueryHandler(IHooomeDbContext dbContext, IMapper mapper) 
     : IRequestHandler<GetRequestListQuery, RequestListVm>

@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Hooome.Application.Requests.Queries.GetRequestList;
+namespace Hooome.Application.CQRS.Requests.Queries.GetRequestList;
 
 public class GetRequestListQueryValidator 
     : AbstractValidator<GetRequestListQuery>

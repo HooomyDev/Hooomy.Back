@@ -9,7 +9,7 @@ public class UpdateRequestCommand : IRequest
     public Guid UserId { get; set; }
     public string Title { get; set; } = null!;
     public string Description { get; set; } = null!;
-    public string Address { get; set; } = null!;
+    public Guid AddressId { get; set; }
     public RequestCategory Category { get; set; }
     public RequestStatus Status { get; set; }
 }
