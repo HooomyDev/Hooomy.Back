@@ -9,7 +9,7 @@ public class CreateRequestDto : IMapWith<CreateRequestCommand>
 {
     public string Title { get; set; } = null!;
     public string Description { get; set; } = null!;
-    public string Address { get; set; } = null!;
+    public Guid AddressId { get; set; }
     public RequestCategory Category { get; set; } = RequestCategory.Other;
 
     public void Mapping(Profile profile)

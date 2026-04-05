@@ -4,7 +4,7 @@ using Hooome.Application.CQRS.Requests.Commands.DeleteRequest;
 using Hooome.Application.CQRS.Requests.Commands.UpdateRequest;
 using Hooome.Application.CQRS.Requests.Commands.UploadImages;
 using Hooome.Application.CQRS.Requests.Queries.GetMapData;
-using Hooome.Application.CQRS.Requests.Queries.GetRequestCateryList;
+using Hooome.Application.CQRS.Requests.Queries.GetRequestCategoryList;
 using Hooome.Application.CQRS.Requests.Queries.GetRequestCount;
 using Hooome.Application.CQRS.Requests.Queries.GetRequestDailyStatistics;
 using Hooome.Application.CQRS.Requests.Queries.GetRequestDetails;
@@ -22,27 +22,19 @@ namespace Hooome.WebApi.Controllers;
 [Route("api/requests")]
 public class RequestController(IMapper mapper) : BaseController
 {
-    /// <summary>
-    /// Retrieves all requests for the current user
-    /// </summary>
-    /// <remarks>
-    /// Sample request:
-    /// 
-    ///     GET /api/requests
-    /// 
-    /// </remarks>
-    /// <returns>List of requests belonging to the current user</returns>
-    /// <response code="200">Returns the list of requests</response>
-    /// <response code="401">If user is unauthorized</response>
     [HttpGet]
-    [Authorize]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<RequestListVm>> Get()
+    public async Task<ActionResult<RequestListVm>> Get(
+        [FromQuery] DateTime? startDate,
+        [FromQuery] DateTime? endDate,
+        [FromQuery] RequestStatus requestStatus = RequestStatus.Unknown
+        )
     {
         var query = new GetRequestListQuery
         {
-            UserId = UserId
+            UserId = UserId,
+            StartDate = startDate,
+            EndDate = endDate,
+            RequestStatus = requestStatus
         };
 
         var vm = await Mediator.Send(query);
