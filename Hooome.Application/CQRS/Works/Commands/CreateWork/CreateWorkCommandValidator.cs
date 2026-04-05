@@ -14,13 +14,6 @@ public class CreateWorkCommandValidator : AbstractValidator<CreateWorkCommand>
             .NotEmpty()
             .MaximumLength(1000);
 
-        RuleFor(c => c.Street)
-            .NotEmpty()
-            .MaximumLength(200);
-
-        RuleFor(c => c.House)
-            .GreaterThan(0);
-
         RuleFor(c => c.Category)
             .IsInEnum();
         

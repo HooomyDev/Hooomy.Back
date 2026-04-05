@@ -11,15 +11,12 @@ public class GetWorkListQueryHandler(IHooomeDbContext dbContext, IMapper mapper)
 {
     public async Task<GetWorkListVm> Handle(GetWorkListQuery request, CancellationToken cancellationToken)
     {
-        var works = await (
-            from w in dbContext.Works
-            join a in dbContext.FavoriteAddresses
-                on new { w.Street, w.House } equals new { a.Street, a.House }
-            where a.UserID == request.UserId
-            select w
-        )
-        .ProjectTo<WorkListLookupDto>(mapper.ConfigurationProvider)
-        .ToListAsync(cancellationToken);
+        var works = await dbContext.Works
+            .Include(w => w.Address)
+                .ThenInclude(a => a.FavoriteAddresses)
+            .Where(w => w.Address.FavoriteAddresses.Any(fa => fa.UserID == request.UserId))
+            .ProjectTo<WorkListLookupDto>(mapper.ConfigurationProvider)
+            .ToListAsync(cancellationToken);
 
         return new GetWorkListVm { Works = works };
     }

@@ -9,8 +9,7 @@ public class WorkListLookupDto : IMapWith<Work>
 {
     public string Title { get; set; } = null!;
     public string Description { get; set; } = null!;
-    public string Street { get; set; } = null!;
-    public int House { get; set; }
+    public string Address { get; set; } = null!;
     public RequestCategory Category { get; set; }
     public WorkSeriousness Seriousness { get; set; }
     public DateTime PlannedStartTime { get; set; }
