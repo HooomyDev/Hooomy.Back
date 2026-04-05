@@ -11,8 +11,22 @@ public class GetRequestsListQueryHandler(IHooomeDbContext dbContext, IMapper map
 {
     public async Task<RequestListVm> Handle(GetRequestListQuery request, CancellationToken cancellationToken)
     {
-        var requests = await dbContext.Requests
+        var query = dbContext.Requests
+            .Include(r => r.Address)
             .Where(r => r.UserID == request.UserId)
+            .AsQueryable();
+
+        if(request.StartDate is not null)
+            query = query.Where(r => r.CreatedAt >= request.StartDate);
+        
+        if(request.EndDate is not null)
+            query = query.Where(r => r.CreatedAt <= request.EndDate.Value.Date.AddDays(1));
+
+        if(request.RequestStatus != Domain.Enums.RequestStatus.Unknown)
+            query = query.Where(r => r.Status == request.RequestStatus);
+
+        var requests = await query
+            .OrderByDescending(r => r.CreatedAt)
             .ProjectTo<RequestListDto>(mapper.ConfigurationProvider)
             .ToListAsync(cancellationToken);
 
