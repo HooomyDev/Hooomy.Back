@@ -8,12 +8,13 @@ public class Request
     public Guid Id { get; set; }
     public string Title { get; set; } = null!;
     public string Description { get; set; } = null!;
-    public string Address { get; set; } = null!;
+    public Guid AddressId { get; set; }
     public RequestStatus Status { get; set; } = RequestStatus.Unknown;
     public RequestCategory Category { get; set; } = RequestCategory.Other;
     public string PhotoUrl { get; set; } = string.Empty;
     public DateTime CreatedAt {  get; set; }
     public DateTime? UpdatedAt { get; set; }
 
+    public Address Address { get; set; } = null!;
     public ICollection<Image> Images { get; set; } = [];
 }

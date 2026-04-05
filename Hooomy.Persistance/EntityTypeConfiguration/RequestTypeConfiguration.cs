@@ -11,7 +11,6 @@ public class RequestTypeConfiguration : IEntityTypeConfiguration<Request>
         builder.HasKey(r => r.Id);
         builder.HasIndex(r => r.Id).IsUnique();
         builder.Property(r => r.Title).IsRequired().HasMaxLength(150);
-        builder.Property(r => r.Address).IsRequired().HasMaxLength(250);
         builder.Property(r => r.Description).HasMaxLength(300);
         builder.Property(r => r.Status).IsRequired();
         builder.Property(r => r.Category).IsRequired();
@@ -21,5 +20,9 @@ public class RequestTypeConfiguration : IEntityTypeConfiguration<Request>
             .HasForeignKey(i => i.RequestId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasOne(r => r.Address)
+            .WithMany(a => a.Requests)
+            .HasForeignKey(r => r.AddressId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

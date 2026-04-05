@@ -19,6 +19,7 @@ public class AddressTypeConfiguration : IEntityTypeConfiguration<Address>
             .IsRequired();
 
         builder.HasIndex(a => new { a.Street, a.HouseNumber });
+        builder.HasIndex(a => new { a.Latitude, a.Longitude });
 
         builder.HasMany(a => a.FavoriteAddresses)
             .WithOne(fa => fa.Address)
