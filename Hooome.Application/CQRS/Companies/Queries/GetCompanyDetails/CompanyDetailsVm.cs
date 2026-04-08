@@ -16,5 +16,9 @@ public class CompanyDetailsVm : IMapWith<Company>
     public DateTime? UpdatedAt { get; set; }
 
     public void Mapping(Profile profile)
-        => profile.CreateMap<Company, CompanyDetailsVm>();
+    {
+        profile.CreateMap<Company, CompanyDetailsVm>()
+            .ForMember(dest => dest.Address, 
+                opt => opt.MapFrom(src => $"{src.Address.Street}, {src.Address.HouseNumber}"));
+    }
 }
