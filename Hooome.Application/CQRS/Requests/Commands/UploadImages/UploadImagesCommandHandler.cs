@@ -15,6 +15,6 @@ public class UploadImagesCommandHandler(IImageService imageService, IHooomeDbCon
             .FirstOrDefaultAsync(x => x.UserID == request.UserId && request.RequestId == x.Id, cancellationToken)
             ?? throw new NotFoundException(nameof(Request), request.RequestId);
 
-        await imageService.SaveImages(request.Files, existsRequest.Id, cancellationToken);
+        await imageService.SaveImagesAsync(request.Files, "request", request.RequestId, cancellationToken);
     }
 }

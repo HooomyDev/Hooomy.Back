@@ -23,7 +23,7 @@ public class GetRequestDetailsQueryHandler(IHooomeDbContext dbContext, IMapper m
 
         var requestDetails = mapper.Map<RequestDetailsVm>(entity);
 
-        requestDetails.ImagesUrls = await dbContext.Images
+        requestDetails.ImagesUrls = await dbContext.RequestImages
             .Where(i => i.RequestId == request.Id)
             .Select(i => $"{i.FilePath}")
             .ToListAsync(cancellationToken);
