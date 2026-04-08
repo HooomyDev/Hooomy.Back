@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Hooome.Persistance.EntityTypeConfiguration;
 
-public class ImageTypeConfiguration : IEntityTypeConfiguration<Image>
+public class RequestImageTypeConfiguration : IEntityTypeConfiguration<RequestImage>
 {
-    public void Configure(EntityTypeBuilder<Image> builder)
+    public void Configure(EntityTypeBuilder<RequestImage> builder)
     {
         builder.HasKey(i => i.Id);
 
@@ -18,7 +18,13 @@ public class ImageTypeConfiguration : IEntityTypeConfiguration<Image>
             .IsRequired()
             .HasMaxLength(500);
 
-        builder.HasIndex(i => i.RequestId);
+        builder.Property(i => i.RequestId)
+            .IsRequired();
+
+        builder.HasOne(i => i.Request)
+            .WithMany(r => r.Images)
+            .HasForeignKey(i => i.RequestId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasIndex(i => i.IsMain);
     }

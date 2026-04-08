@@ -16,20 +16,13 @@ public class CompanyTypeConfiguration : IEntityTypeConfiguration<Company>
             .HasMaxLength(200);
 
         builder.Property(c => c.Phone)
-            .IsRequired()
             .HasMaxLength(20);
 
         builder.Property(c => c.Email)
-            .IsRequired()
             .HasMaxLength(100);
 
         builder.Property(c => c.WorkingHours)
-            .IsRequired()
             .HasMaxLength(100);
-
-        builder.Property(c => c.Address)
-            .IsRequired()
-            .HasMaxLength(250);
 
         builder.Property(c => c.CreatedAt)
             .IsRequired();
@@ -38,5 +31,15 @@ public class CompanyTypeConfiguration : IEntityTypeConfiguration<Company>
             .WithOne(p => p.Company)
             .HasForeignKey(p => p.CompanyId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(c => c.Address)
+            .WithMany(a => a.Companies)
+            .HasForeignKey(c => c.AddressId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        builder.HasOne(c => c.Logo)
+            .WithOne(i => i.Company)
+            .HasForeignKey<CompanyImage>(i => i.CompanyId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -20,7 +20,8 @@ public sealed class HooomeDbContext(DbContextOptions<HooomeDbContext> options)
     public DbSet<PollVote> PollVotes { get; set; }
     public DbSet<Chat> Chats { get; set; }
     public DbSet<Message> Messages { get; set; }
-    public DbSet<Image> Images { get; set; }
+    public DbSet<CompanyImage> CompanyImages { get; set; }
+    public DbSet<RequestImage> RequestImages { get; set; }
     public DbSet<Address> Addresses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)

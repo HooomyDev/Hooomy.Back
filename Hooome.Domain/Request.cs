@@ -16,5 +16,5 @@ public class Request
     public DateTime? UpdatedAt { get; set; }
 
     public Address Address { get; set; } = null!;
-    public ICollection<Image> Images { get; set; } = [];
+    public ICollection<RequestImage> Images { get; set; } = [];
 }

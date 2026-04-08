@@ -12,4 +12,5 @@ public class Address
     public ICollection<FavoriteAddress> FavoriteAddresses { get; set; } = [];
     public ICollection<Work> Works { get; set; } = [];
     public ICollection<Request> Requests { get; set; } = [];
+    public ICollection<Company> Companies { get; set; } = [];
 }
