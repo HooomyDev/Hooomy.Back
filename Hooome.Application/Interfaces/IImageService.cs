@@ -5,7 +5,7 @@ namespace Hooome.Application.Interfaces;
 
 public interface IImageService 
 {
-    Task SaveImage(IFormFile file);
-    Task<List<Image>> SaveImages(List<IFormFile> files, Guid requestId, CancellationToken cancellationToken);
+    Task<string> SaveImageAsync(IFormFile file, string entityType, Guid entityId, CancellationToken cancellationToken);
+    Task<List<object>> SaveImagesAsync(List<IFormFile> files, string entityType, Guid entityId, CancellationToken cancellationToken);
     bool ValidateImage(IFormFile file, out string error);
 }
