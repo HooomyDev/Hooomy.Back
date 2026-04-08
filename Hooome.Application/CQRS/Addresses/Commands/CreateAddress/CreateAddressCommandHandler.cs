@@ -1,4 +1,5 @@
-﻿using Hooome.Application.Interfaces;
+﻿using FluentValidation;
+using Hooome.Application.Interfaces;
 using Hooome.Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,9 @@ public class CreateAddressCommandHandler(IHooomeDbContext dbContext)
             return existingAddress.Id;
 
         var addressParts = request.Address.Split(',');
+
+        if (addressParts.Length != 2)
+            throw new ValidationException("Address must be like \"Street, HouseNumber\"");
 
         var newAddress = new Address
         {
