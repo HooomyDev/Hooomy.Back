@@ -9,6 +9,7 @@ using Hooome.Application.CQRS.Requests.Queries.GetRequestCount;
 using Hooome.Application.CQRS.Requests.Queries.GetRequestDailyStatistics;
 using Hooome.Application.CQRS.Requests.Queries.GetRequestDetails;
 using Hooome.Application.CQRS.Requests.Queries.GetRequestList;
+using Hooome.Application.CQRS.Requests.Queries.GetRequestListWithPagination;
 using Hooome.Domain.Enums;
 using Hooome.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -130,7 +131,7 @@ public class RequestController(IMapper mapper) : BaseController
     {
         var query = new GetRequestCategoryListQuery();
 
-        var categories = await Mediator.Send(query); 
+        var categories = await Mediator.Send(query);
 
         return Ok(categories);
     }
@@ -261,5 +262,27 @@ public class RequestController(IMapper mapper) : BaseController
         var result = await Mediator.Send(query);
 
         return Ok(result);
+    }
+
+    [HttpGet("administration")]
+    public async Task<ActionResult<RequestListWithPaginationVm>> GetRequests(
+        [FromQuery] string? title,
+        [FromQuery] int page = 1, 
+        [FromQuery] int pageSize = 10,
+        [FromQuery] RequestCategory category = RequestCategory.None,
+        [FromQuery] RequestStatus status = RequestStatus.Unknown)
+    {
+        var query = new GetRequestListWithPaginationQuery
+        {
+            Title = title,
+            Page = page,
+            PageSize = pageSize,
+            Category = category,
+            Status = status
+        };
+
+        var requests = await Mediator.Send(query);
+
+        return Ok(requests);
     }
 }
