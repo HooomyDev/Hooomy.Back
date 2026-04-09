@@ -21,7 +21,7 @@ public class GetRequestCategoryListQueryHandler
                     ?.Description
                 ?? category.ToString()
             })
-            .OrderByDescending(category => category.Code)
+            .OrderBy(category => category.Code)
             .ToList();
 
         return Task.FromResult(new RequestCategoryListVm

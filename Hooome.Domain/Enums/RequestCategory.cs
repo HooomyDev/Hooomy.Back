@@ -4,69 +4,72 @@ namespace Hooome.Domain.Enums;
 
 public enum RequestCategory
 {
+    [Description("Все")]
+    None = 0,
+
     [Description("Водоснабжение. Горячая вода")]
-    HotWaterSupply,
+    HotWaterSupply = 1,
 
     [Description("Электроснабжение")]
-    PowerSupply,
+    PowerSupply = 2,
 
     [Description("Бытовые услуги")]
-    DomesticServices,
+    DomesticServices = 3,
 
     [Description("Санитарное состояние многоквартирного дома")]
-    ApartmentBuildingSanitation,
+    ApartmentBuildingSanitation = 4,
 
     [Description("Отопление")]
-    Heating,
+    Heating = 5,
 
     [Description("Благоустройство территории")]
-    TerritoryImprovement,
+    TerritoryImprovement = 6,
 
     [Description("Водоснабжение")]
-    WaterSupply,
+    WaterSupply = 7,
 
     [Description("Общестроительные работы")]
-    GeneralConstruction,
+    GeneralConstruction = 8,
 
     [Description("Санитарное состояние территории")]
-    TerritorySanitation,
+    TerritorySanitation = 9,
 
     [Description("Техническое обслуживание ЗПУ")]
-    CivilDefenseShelterMaintenance,
+    CivilDefenseShelterMaintenance = 11,
 
     [Description("Другое")]
-    Other,
+    Other = 11,
 
     [Description("Техническое обслуживание лифта")]
-    ElevatorMaintenance,
+    ElevatorMaintenance = 12,
 
     [Description("Обращение с ТКО")]
-    SolidWasteManagement,
+    SolidWasteManagement = 13,
 
     [Description("Водоснабжение. Холодная вода")]
-    ColdWaterSupply,
+    ColdWaterSupply = 14,
 
     [Description("Канализация")]
-    Sewage,
+    Sewage = 15,
 
     [Description("Автомобильные дороги, тротуары")]
-    RoadsAndSidewalks,
+    RoadsAndSidewalks = 16,
 
     [Description("Кровельные работы")]
-    RoofingWorks,
+    RoofingWorks = 17,
 
     [Description("Уличное освещение")]
-    StreetLighting,
+    StreetLighting = 18,
 
     [Description("Общественные места (Парки, скверы)")]
-    PublicPlacesParksSquares,
+    PublicPlacesParksSquares = 19,
 
     [Description("Работы по ремонту стыков")]
-    JointRepairWorks,
+    JointRepairWorks = 20,
 
     [Description("Техническое обслуживание зданий и сооружений")]
-    BuildingMaintenance,
+    BuildingMaintenance = 21,
 
     [Description("Рекламные и информационные конструкции и объявления")]
-    AdvertisingAndInformationStructures
+    AdvertisingAndInformationStructures = 22
 }
