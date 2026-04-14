@@ -21,7 +21,7 @@ public class CreateFavoriteAddressCommandHandler(IHooomeDbContext dbContext)
             UserID = request.UserId,
             AddressId = request.AddressId,
             Pseudonym = request.Pseudonym,
-            CreatedAt = DateTime.Now,
+            CreatedAt = DateTime.UtcNow,
             UpdatedAt = null,
         };
 

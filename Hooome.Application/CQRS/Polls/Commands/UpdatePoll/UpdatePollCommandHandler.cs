@@ -21,6 +21,7 @@ public class UpdatePollCommandHandler(IHooomeDbContext dbContext)
         poll.Title = request.Title;
         poll.Description = request.Description;
         poll.IsActive = request.IsActive;
+        poll.UpdatedAt = DateTime.UtcNow;
 
         await dbContext.SaveChangesAsync(cancellationToken);
     }

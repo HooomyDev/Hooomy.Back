@@ -25,6 +25,7 @@ public class CreateCompanyCommandHandler(IHooomeDbContext dbContext)
             Email = request.Email ?? string.Empty,
             WorkingHours = request.WorkingHours ?? string.Empty,
             AddressId = request.AddressId,
+            CreatedAt = DateTime.UtcNow,
         };
         
         await dbContext.Companies.AddAsync(newCompany, cancellationToken);

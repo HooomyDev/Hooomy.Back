@@ -35,11 +35,6 @@ public class ChatConfiguration : IEntityTypeConfiguration<Chat>
         builder.HasIndex(c => c.Status)
             .HasDatabaseName("IX_Chats_Status");
 
-        builder.HasIndex(c => new { c.ResidentId, c.CompanyId, c.Status })
-            .HasDatabaseName("IX_Chats_Resident_Company_Status")
-            .IsUnique()
-            .HasFilter("[Status] = 1");
-
         builder.HasIndex(c => c.CreatedAt)
             .HasDatabaseName("IX_Chats_CreatedAt");
 

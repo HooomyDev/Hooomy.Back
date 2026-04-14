@@ -21,6 +21,7 @@ public class UpdateComplaintCommandHandler(IHooomeDbContext dbContext)
         entity.ShortDescription = request.ShortDescription;
         entity.Description = request.Description;
         entity.Status = request.Status;
+        entity.UpdatedAt = DateTime.UtcNow;
 
         await dbContext.SaveChangesAsync(cancellationToken);
     }

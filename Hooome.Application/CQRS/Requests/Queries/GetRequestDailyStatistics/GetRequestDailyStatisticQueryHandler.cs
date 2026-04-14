@@ -13,7 +13,7 @@ public class GetRequestDailyStatisticQueryHandler(IHooomeDbContext dbContext)
         CancellationToken cancellationToken)
     {
         var (startDate, endDate) = GetDateRange(request.Period);
-        var now = DateTime.Now.Date;
+        var now = DateTime.UtcNow.Date;
 
         var requests = await dbContext.Requests
             .Where(x => x.CreatedAt.Date >= startDate && x.CreatedAt.Date <= endDate)
@@ -93,7 +93,7 @@ public class GetRequestDailyStatisticQueryHandler(IHooomeDbContext dbContext)
 
     private static (DateTime startDate, DateTime endDate) GetDateRange(RequestsPeriod period)
     {
-        var now = DateTime.Now.Date;
+        var now = DateTime.UtcNow.Date;
 
         return period switch
         {

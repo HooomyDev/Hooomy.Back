@@ -19,7 +19,7 @@ public class UpdateFavoriteAddressCommandHandler(IHooomeDbContext dbContext)
         }
 
         entity.Pseudonym = request.Pseudonym;
-        entity.UpdatedAt = DateTime.Now;
+        entity.UpdatedAt = DateTime.UtcNow;
 
         await dbContext.SaveChangesAsync(cancellationToken);
     }
