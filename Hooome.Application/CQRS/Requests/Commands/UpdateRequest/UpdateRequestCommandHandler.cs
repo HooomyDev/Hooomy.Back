@@ -26,7 +26,7 @@ public class UpdateRequestCommandHandler(IHooomeDbContext dbContext)
         entity.Category = request.Category;
         entity.AddressId = request.AddressId;
         entity.Status = request.Status;
-        entity.UpdatedAt = DateTime.Now;
+        entity.UpdatedAt = DateTime.UtcNow;
 
         await _dbContext.SaveChangesAsync(cancellationToken);
     }

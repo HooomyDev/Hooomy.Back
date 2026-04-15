@@ -25,7 +25,7 @@ public class CreateRequestCommandHandler(IHooomeDbContext dbContext)
             AddressId = request.AddressId,
             Category = request.Category,
             Status = Domain.Enums.RequestStatus.Created,
-            CreatedAt = DateTime.Now,
+            CreatedAt = DateTime.UtcNow,
             UpdatedAt = null
         };
 

@@ -18,7 +18,7 @@ public class CreateComplaintCommandHandler(IHooomeDbContext dbContext)
             Description = request.Description,
             Type = request.Type,
             Status = ComplaintStatus.AcceptedForReview,
-            CreatedAt = DateTime.Now,
+            CreatedAt = DateTime.UtcNow,
             UpdatedAt = null,
             RequestId = request.Type == ComplaintType.Request ? request.RequestId : null
         };

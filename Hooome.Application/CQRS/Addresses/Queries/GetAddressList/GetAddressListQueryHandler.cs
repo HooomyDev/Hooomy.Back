@@ -12,7 +12,7 @@ public class GetAddressListQueryHandler(IHooomeDbContext dbContext, IMapper mapp
     public async Task<AddressListVm> Handle(GetAddressListQuery request, CancellationToken cancellationToken)
     {
         var addresses = await dbContext.Addresses
-                .Where(s => s.Street.Contains(request.Query, StringComparison.CurrentCultureIgnoreCase))
+                .Where(a => EF.Functions.ILike(a.Street, $"%{request.Query}%"))
                 .OrderBy(s => s.Street)
                 .Take(15)
                 .ProjectTo<AddressListLookupDto>(mapper.ConfigurationProvider)

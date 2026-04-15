@@ -19,7 +19,7 @@ public class CreateWorkCommandHandler(IHooomeDbContext dbContext)
             Seriousness = request.Seriousness,
             PlannedStartTime = request.PlannedStartTime,
             PlannedEndTime = request.PlannedEndTime,
-            CreatedAt = DateTime.Now,
+            CreatedAt = DateTime.UtcNow,
             UpdatedAt = null
         };
 

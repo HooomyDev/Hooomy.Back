@@ -4,9 +4,7 @@ using Hooome.Domain.Enums;
 using Hooome.Persistance;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using System.Globalization;
 using System.Text;
-using System.Text.Json;
 
 namespace Hooome.WebApi.Services;
 
@@ -182,7 +180,7 @@ public class DataSeeder
             var address = addresses[random.Next(addresses.Count)];
             var category = categories[random.Next(categories.Length)];
             var status = statuses[random.Next(statuses.Length)];
-            var createdDate = DateTime.Now.AddDays(-random.Next(1, 90));
+            var createdDate = DateTime.UtcNow.AddDays(-random.Next(1, 90));
 
             // Некоторые заявки могут быть с фото, некоторые без
             var hasPhoto = random.Next(3) == 0;
@@ -196,7 +194,7 @@ public class DataSeeder
                 Description = GetRequestDescription(category, address, i),
                 Status = status,
                 Category = category,
-                PhotoUrl = hasPhoto ? $"https://example.com/photos/request_{DateTime.Now:yyyyMMdd}_{i}.jpg" : string.Empty,
+                PhotoUrl = hasPhoto ? $"https://example.com/photos/request_{DateTime.UtcNow:yyyyMMdd}_{i}.jpg" : string.Empty,
                 CreatedAt = createdDate,
                 UpdatedAt = status != RequestStatus.Created ? createdDate.AddDays(random.Next(1, 15)) : null
             });
@@ -210,7 +208,7 @@ public class DataSeeder
             {
                 var category = categories[random.Next(categories.Length)];
                 var status = statuses[random.Next(statuses.Length)];
-                var createdDate = DateTime.Now.AddDays(-random.Next(1, 30));
+                var createdDate = DateTime.UtcNow.AddDays(-random.Next(1, 30));
 
                 requests.Add(new Request
                 {
@@ -221,7 +219,7 @@ public class DataSeeder
                     Description = $"Повторная заявка на адрес {popularAddress.Street}, {popularAddress.HouseNumber}. Проблема не решена с предыдущей заявки.",
                     Status = status,
                     Category = category,
-                    PhotoUrl = random.Next(2) == 0 ? $"https://example.com/photos/repeat_{DateTime.Now:yyyyMMdd}_{i}.jpg" : string.Empty,
+                    PhotoUrl = random.Next(2) == 0 ? $"https://example.com/photos/repeat_{DateTime.UtcNow:yyyyMMdd}_{i}.jpg" : string.Empty,
                     CreatedAt = createdDate,
                     UpdatedAt = status != RequestStatus.Created ? createdDate.AddDays(random.Next(1, 7)) : null
                 });
@@ -287,8 +285,8 @@ public class DataSeeder
                 Status = statuses[random.Next(statuses.Length)],
                 RequestId = hasRequest ? requests[random.Next(requests.Count)].Id : null,
                 CompanyId = hasCompany ? companies[random.Next(companies.Count)].Id : null,
-                CreatedAt = DateTime.Now.AddDays(-random.Next(1, 30)),
-                UpdatedAt = random.Next(2) == 0 ? DateTime.Now.AddDays(-random.Next(1, 15)) : null
+                CreatedAt = DateTime.UtcNow.AddDays(-random.Next(1, 30)),
+                UpdatedAt = random.Next(2) == 0 ? DateTime.UtcNow.AddDays(-random.Next(1, 15)) : null
             });
         }
 
@@ -338,8 +336,8 @@ public class DataSeeder
                     Id = Guid.NewGuid(),
                     UserID = userId,
                     Pseudonym = pseudonyms[random.Next(pseudonyms.Length)] + (j > 0 ? $" {j + 1}" : ""),
-                    CreatedAt = DateTime.Now.AddDays(-random.Next(1, 60)),
-                    UpdatedAt = random.Next(2) == 0 ? DateTime.Now.AddDays(-random.Next(1, 30)) : null
+                    CreatedAt = DateTime.UtcNow.AddDays(-random.Next(1, 60)),
+                    UpdatedAt = random.Next(2) == 0 ? DateTime.UtcNow.AddDays(-random.Next(1, 30)) : null
                 });
             }
         }
@@ -364,7 +362,7 @@ public class DataSeeder
                 Description = "Как вы оцениваете качество уборки в вашем подъезде?",
                 CreatedBy = Guid.NewGuid(),
                 IsActive = true,
-                CreatedAt = DateTime.Now.AddDays(-20),
+                CreatedAt = DateTime.UtcNow.AddDays(-20),
                 CompanyId = company.Id,
                 Type = PollType.One
             },
@@ -375,7 +373,7 @@ public class DataSeeder
                 Description = "Что нужно улучшить в вашем дворе в первую очередь?",
                 CreatedBy = Guid.NewGuid(),
                 IsActive = true,
-                CreatedAt = DateTime.Now.AddDays(-18),
+                CreatedAt = DateTime.UtcNow.AddDays(-18),
                 CompanyId = company.Id,
                 Type = PollType.One
             },
@@ -386,7 +384,7 @@ public class DataSeeder
                 Description = "Оцените работу вашей управляющей компании за последний месяц",
                 CreatedBy = Guid.NewGuid(),
                 IsActive = true,
-                CreatedAt = DateTime.Now.AddDays(-15),
+                CreatedAt = DateTime.UtcNow.AddDays(-15),
                 CompanyId = company.Id,
                 Type = PollType.One
             },
@@ -397,7 +395,7 @@ public class DataSeeder
                 Description = "Достаточно ли освещен ваш двор в темное время суток?",
                 CreatedBy = Guid.NewGuid(),
                 IsActive = true,
-                CreatedAt = DateTime.Now.AddDays(-12),
+                CreatedAt = DateTime.UtcNow.AddDays(-12),
                 CompanyId = company.Id,
                 Type = PollType.One
             },
@@ -408,7 +406,7 @@ public class DataSeeder
                 Description = "Устраивает ли вас график вывоза мусора?",
                 CreatedBy = Guid.NewGuid(),
                 IsActive = true,
-                CreatedAt = DateTime.Now.AddDays(-10),
+                CreatedAt = DateTime.UtcNow.AddDays(-10),
                 CompanyId = company.Id,
                 Type = PollType.One
             },
@@ -419,7 +417,7 @@ public class DataSeeder
                 Description = "Нужна ли новая детская площадка в вашем дворе?",
                 CreatedBy = Guid.NewGuid(),
                 IsActive = false,
-                CreatedAt = DateTime.Now.AddDays(-25),
+                CreatedAt = DateTime.UtcNow.AddDays(-25),
                 CompanyId = company.Id,
                 Type = PollType.One
             },
@@ -430,7 +428,7 @@ public class DataSeeder
                 Description = "Как решить проблему с парковкой во дворе?",
                 CreatedBy = Guid.NewGuid(),
                 IsActive = true,
-                CreatedAt = DateTime.Now.AddDays(-8),
+                CreatedAt = DateTime.UtcNow.AddDays(-8),
                 CompanyId = company.Id,
                 Type = PollType.Several
             },
@@ -441,7 +439,7 @@ public class DataSeeder
                 Description = "Какие деревья и кустарники вы хотели бы видеть во дворе?",
                 CreatedBy = Guid.NewGuid(),
                 IsActive = true,
-                CreatedAt = DateTime.Now.AddDays(-5),
+                CreatedAt = DateTime.UtcNow.AddDays(-5),
                 CompanyId = company.Id,
                 Type = PollType.One
             },
@@ -452,7 +450,7 @@ public class DataSeeder
                 Description = "Что нуждается в капитальном ремонте в первую очередь?",
                 CreatedBy = Guid.NewGuid(),
                 IsActive = true,
-                CreatedAt = DateTime.Now.AddDays(-3),
+                CreatedAt = DateTime.UtcNow.AddDays(-3),
                 CompanyId = company.Id,
                 Type = PollType.One
             },
@@ -463,7 +461,7 @@ public class DataSeeder
                 Description = "Устраивает ли вас работа общественного транспорта в районе?",
                 CreatedBy = Guid.NewGuid(),
                 IsActive = false,
-                CreatedAt = DateTime.Now.AddDays(-30),
+                CreatedAt = DateTime.UtcNow.AddDays(-30),
                 CompanyId = company.Id,
                 Type = PollType.One
             }
@@ -646,7 +644,7 @@ public class DataSeeder
 
         for (int i = 1; i <= 15; i++)
         {
-            var plannedStart = DateTime.Now.AddDays(random.Next(1, 30));
+            var plannedStart = DateTime.UtcNow.AddDays(random.Next(1, 30));
             var seriousness = random.Next(3) switch
             {
                 0 => WorkSeriousness.Info,
@@ -665,8 +663,8 @@ public class DataSeeder
                 PlannedEndTime = plannedStart.AddDays(random.Next(1, 14)),
                 FactStartTime = random.Next(2) == 0 ? plannedStart.AddHours(-random.Next(1, 5)) : (DateTime?)null,
                 FactEndTime = random.Next(2) == 0 ? plannedStart.AddDays(random.Next(1, 7)) : (DateTime?)null,
-                CreatedAt = DateTime.Now.AddDays(-random.Next(1, 20)),
-                UpdatedAt = random.Next(2) == 0 ? DateTime.Now.AddDays(-random.Next(1, 10)) : null
+                CreatedAt = DateTime.UtcNow.AddDays(-random.Next(1, 20)),
+                UpdatedAt = random.Next(2) == 0 ? DateTime.UtcNow.AddDays(-random.Next(1, 10)) : null
             });
         }
 
