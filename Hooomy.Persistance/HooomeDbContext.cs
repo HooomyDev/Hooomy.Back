@@ -1,6 +1,9 @@
 ﻿using Hooome.Application.Interfaces;
 using Hooome.Domain;
+using Hooome.Domain.Interfaces;
+using Hooome.Persistance.Extensions;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace Hooome.Persistance;
@@ -27,6 +30,7 @@ public sealed class HooomeDbContext(DbContextOptions<HooomeDbContext> options)
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        builder.ApplySoftDeleteFilters();
         base.OnModelCreating(builder);
     }
 }
