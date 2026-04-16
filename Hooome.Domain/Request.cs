@@ -1,8 +1,9 @@
 ﻿using Hooome.Domain.Enums;
+using Hooome.Domain.Interfaces;
 
 namespace Hooome.Domain;
 
-public class Request
+public class Request : ISoftDeletable
 {
     public Guid UserID { get; set; }
     public Guid Id { get; set; }
@@ -14,6 +15,9 @@ public class Request
     public string PhotoUrl { get; set; } = string.Empty;
     public DateTime CreatedAt {  get; set; }
     public DateTime? UpdatedAt { get; set; }
+
+    public bool IsDeleted { get; set; } = false;
+    public DateTime? DeletedAt { get; set; }
 
     public Address Address { get; set; } = null!;
     public ICollection<RequestImage> Images { get; set; } = [];
