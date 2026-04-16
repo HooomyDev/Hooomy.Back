@@ -15,6 +15,13 @@ public class RequestTypeConfiguration : IEntityTypeConfiguration<Request>
         builder.Property(r => r.Status).IsRequired();
         builder.Property(r => r.Category).IsRequired();
 
+        builder.Property(r => r.IsDeleted)
+            .IsRequired()
+            .HasDefaultValue(false);
+
+        builder.Property(r => r.DeletedAt)
+            .IsRequired(false);
+
         builder.HasMany(r => r.Images)
             .WithOne(i => i.Request)
             .HasForeignKey(i => i.RequestId)
