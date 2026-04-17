@@ -1,9 +1,8 @@
 ﻿using Hooome.Domain.Enums;
-using Hooome.Domain.Interfaces;
 
 namespace Hooome.Domain;
 
-public class Request : ISoftDeletable
+public class Request
 {
     public Guid UserID { get; set; }
     public Guid Id { get; set; }

@@ -1,8 +1,6 @@
-﻿using Hooome.Domain.Interfaces;
+﻿namespace Hooome.Domain;
 
-namespace Hooome.Domain;
-
-public class RequestComment : ISoftDeletable
+public class RequestComment
 {
     public Guid Id { get; set; }
     public Guid RequestId { get; set; }

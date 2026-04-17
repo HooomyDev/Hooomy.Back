@@ -1,8 +1,6 @@
-﻿using Hooome.Domain.Interfaces;
+﻿namespace Hooome.Domain;
 
-namespace Hooome.Domain;
-
-public class RequestImage : ISoftDeletable
+public class RequestImage
 {
     public Guid Id { get; set; }
     public string FileName { get; set; } = null!;

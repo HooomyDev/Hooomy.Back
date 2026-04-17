@@ -52,7 +52,7 @@ public class RequestRepository(HooomeDbContext dbContext)
         var query = _dbContext.Requests
             .Where(r => r.CreatedAt.Date >= startDate.Date &&
                        r.CreatedAt.Date <= endDate.Date &&
-                       !r.IsDeleted);
+                       !r.IsDeleted && !r.IsDeleted);
 
         return groupType switch
         {
