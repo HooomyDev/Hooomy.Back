@@ -10,5 +10,8 @@ public class RequestComment
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime? UpdatedAt { get; set; }
 
-    public Request Request { get; set; }
+    public bool IsDeleted { get; set; } = false;
+    public DateTime? DeletedAt { get; set; }
+
+    public Request Request { get; set; } = null!;
 }

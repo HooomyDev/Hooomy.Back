@@ -43,20 +43,6 @@ public class RequestController(IMapper mapper) : BaseController
         return Ok(vm);
     }
 
-    /// <summary>
-    /// Retrieves detailed information about a specific request
-    /// </summary>
-    /// <remarks>
-    /// Sample request:
-    /// 
-    ///     GET /api/requests/3fa85f64-5717-4562-b3fc-2c963f66afa6
-    /// 
-    /// </remarks>
-    /// <param name="id">The unique identifier of the request (GUID)</param>
-    /// <returns>Detailed information about the requested request</returns>
-    /// <response code="200">Returns the request details</response>
-    /// <response code="401">If user is unauthorized</response>
-    /// <response code="404">If request with specified ID is not found</response>
     [HttpGet("{id}")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -75,30 +61,6 @@ public class RequestController(IMapper mapper) : BaseController
         return Ok(vm);
     }
 
-    /// <summary>
-    /// Retrieves the total count of requests in the system
-    /// </summary>
-    /// <remarks>
-    /// This endpoint provides administrative insights by returning the total number of requests.
-    /// It can be used for dashboard metrics, reporting, or monitoring purposes.
-    /// 
-    /// Sample request:
-    /// 
-    ///     GET /api/requests/count
-    /// 
-    /// Sample response:
-    /// 
-    ///     {
-    ///         "totalCount": 1542,
-    ///         "timestamp": "2024-01-15T10:30:45Z"
-    ///     }
-    /// 
-    /// </remarks>
-    /// <returns>The total number of requests in the system</returns>
-    /// <response code="200">Returns the total count of requests</response>
-    /// <response code="401">If user is unauthorized</response>
-    /// <response code="403">If user is not an admin</response>
-    /// <response code="500">If there was an internal server error</response>
     [HttpGet("count")]
     [Authorize(Roles = "Admin")]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -136,14 +98,6 @@ public class RequestController(IMapper mapper) : BaseController
         return Ok(categories);
     }
 
-    /// <summary>
-    /// Creates a new request
-    /// </summary>
-    /// <param name="dto">The request creation data transfer object</param>
-    /// <returns>The unique identifier of the created request</returns>
-    /// <response code="200">Returns the ID of the created request</response>
-    /// <response code="400">If the request data is invalid</response>
-    /// <response code="401">If user is unauthorized</response>
     [Authorize]
     [HttpPost("create")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -175,29 +129,6 @@ public class RequestController(IMapper mapper) : BaseController
         return NoContent();
     }
 
-    /// <summary>
-    /// Updates an existing request
-    /// </summary>
-    /// <remarks>
-    /// Sample request:
-    /// 
-    ///     PUT /api/requests/update
-    ///     {
-    ///         "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    ///         "title": "Updated Request Title",
-    ///         "description": "Updated description",
-    ///         "priority": "Low",
-    ///         "status": "InProgress",
-    ///         "dueDate": "2025-01-15T00:00:00Z"
-    ///     }
-    /// 
-    /// </remarks>
-    /// <param name="dto">The request update data transfer object</param>
-    /// <returns>No content if successful</returns>
-    /// <response code="204">If the request was successfully updated</response>
-    /// <response code="400">If the update data is invalid</response>
-    /// <response code="401">If user is unauthorized</response>
-    /// <response code="404">If request with specified ID is not found</response>
     [HttpPut("update")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -214,20 +145,6 @@ public class RequestController(IMapper mapper) : BaseController
         return NoContent();
     }
 
-    /// <summary>
-    /// Deletes a specific request
-    /// </summary>
-    /// <remarks>
-    /// Sample request:
-    /// 
-    ///     DELETE /api/requests/delete/3fa85f64-5717-4562-b3fc-2c963f66afa6
-    /// 
-    /// </remarks>
-    /// <param name="id">The unique identifier of the request to delete (GUID)</param>
-    /// <returns>No content if successful</returns>
-    /// <response code="204">If the request was successfully deleted</response>
-    /// <response code="401">If user is unauthorized</response>
-    /// <response code="404">If request with specified ID is not found</response>
     [HttpDelete("delete/{id}")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status204NoContent)]

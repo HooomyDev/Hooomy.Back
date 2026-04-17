@@ -6,16 +6,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hooome.Application.CQRS.Requests.Commands.UpdateRequest;
 
-public class UpdateRequestCommandHandler(IHooomeDbContext dbContext) 
+public class UpdateRequestCommandHandler(IRequestRepository requestRepo) 
     : IRequestHandler<UpdateRequestCommand>
 {
-    private readonly IHooomeDbContext _dbContext = dbContext;
-
     public async Task Handle(UpdateRequestCommand request, 
         CancellationToken cancellationToken)
     {
-        var entity = await _dbContext.Requests
-            .FindAsync([request.Id], cancellationToken);
+        var entity = await requestRepo.GetById(request.Id, cancellationToken);
 
         if (entity == null || entity.UserID != request.UserId)
         {
@@ -28,6 +25,6 @@ public class UpdateRequestCommandHandler(IHooomeDbContext dbContext)
         entity.Status = request.Status;
         entity.UpdatedAt = DateTime.UtcNow;
 
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await requestRepo.Update(entity, cancellationToken);
     }
 }

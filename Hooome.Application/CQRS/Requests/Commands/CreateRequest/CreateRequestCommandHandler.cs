@@ -5,15 +5,14 @@ using MediatR;
 
 namespace Hooome.Application.CQRS.Requests.Commands.CreateRequest;
 
-public class CreateRequestCommandHandler(IHooomeDbContext dbContext) 
+public class CreateRequestCommandHandler(
+    IRepository<Address> addressRepo, 
+    IRequestRepository requestRepo)
     : IRequestHandler<CreateRequestCommand, Guid>
 {
-    private readonly IHooomeDbContext _dbContext = dbContext;
-
     public async Task<Guid> Handle(CreateRequestCommand request, CancellationToken cancellationToken)
     {
-        var address = await _dbContext.Addresses
-            .FindAsync([request.AddressId], cancellationToken)
+        var address = await addressRepo.GetById(request.AddressId, cancellationToken)
             ?? throw new NotFoundException(nameof(Address), request.AddressId);
 
         var newRequest = new Request
@@ -29,8 +28,7 @@ public class CreateRequestCommandHandler(IHooomeDbContext dbContext)
             UpdatedAt = null
         };
 
-        await _dbContext.Requests.AddAsync(newRequest, cancellationToken);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await requestRepo.Create(newRequest, cancellationToken);
 
         return newRequest.Id;
     }

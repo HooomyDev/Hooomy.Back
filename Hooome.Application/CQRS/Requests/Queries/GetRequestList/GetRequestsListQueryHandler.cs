@@ -6,30 +6,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hooome.Application.CQRS.Requests.Queries.GetRequestList;
 
-public class GetRequestsListQueryHandler(IHooomeDbContext dbContext, IMapper mapper) 
+public class GetRequestsListQueryHandler(IRequestRepository requestRepo, IMapper mapper) 
     : IRequestHandler<GetRequestListQuery, RequestListVm>
 {
     public async Task<RequestListVm> Handle(GetRequestListQuery request, CancellationToken cancellationToken)
     {
-        var query = dbContext.Requests
-            .Include(r => r.Address)
-            .Where(r => r.UserID == request.UserId)
-            .AsQueryable();
+        var requests = await requestRepo.GetFilteredRequests(
+            userId: request.UserId,
+            startDate: request.StartDate,
+            endDate: request.EndDate,
+            status: request.RequestStatus,
+            cancellationToken: cancellationToken);
 
-        if(request.StartDate is not null)
-            query = query.Where(r => r.CreatedAt >= request.StartDate);
-        
-        if(request.EndDate is not null)
-            query = query.Where(r => r.CreatedAt <= request.EndDate.Value.Date.AddDays(1));
+        var requestsDtos = mapper.Map<List<RequestListDto>>(requests);
 
-        if(request.RequestStatus != Domain.Enums.RequestStatus.Unknown)
-            query = query.Where(r => r.Status == request.RequestStatus);
-
-        var requests = await query
-            .OrderByDescending(r => r.CreatedAt)
-            .ProjectTo<RequestListDto>(mapper.ConfigurationProvider)
-            .ToListAsync(cancellationToken);
-
-        return new RequestListVm { Requests = requests };
+        return new RequestListVm { Requests = requestsDtos };
     }
 }

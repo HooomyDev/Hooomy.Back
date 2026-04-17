@@ -15,6 +15,9 @@ public class Request
     public DateTime CreatedAt {  get; set; }
     public DateTime? UpdatedAt { get; set; }
 
+    public bool IsDeleted { get; set; } = false;
+    public DateTime? DeletedAt { get; set; }
+
     public Address Address { get; set; } = null!;
     public ICollection<RequestImage> Images { get; set; } = [];
 }
