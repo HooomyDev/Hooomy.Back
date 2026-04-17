@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Hooome.Application.CQRS.Requests.Commands.CreateRequest;
 using Hooome.Application.CQRS.Requests.Commands.DeleteRequest;
-using Hooome.Application.CQRS.Requests.Commands.SoftDeleteRequest;
 using Hooome.Application.CQRS.Requests.Commands.UpdateRequest;
 using Hooome.Application.CQRS.Requests.Commands.UploadImages;
 using Hooome.Application.CQRS.Requests.Queries.GetMapData;
@@ -154,20 +153,6 @@ public class RequestController(IMapper mapper) : BaseController
     public async Task<ActionResult> Delete(Guid id)
     {
         var command = new DeleteRequestCommand
-        {
-            Id = id,
-            UserId = UserId
-        };
-
-        await Mediator.Send(command);
-
-        return NoContent();
-    }
-
-    [HttpDelete("soft-delete/{id:guid}")]
-    public async Task<ActionResult> SoftDelete(Guid id)
-    {
-        var command = new SoftDeleteRequestCommand
         {
             Id = id,
             UserId = UserId

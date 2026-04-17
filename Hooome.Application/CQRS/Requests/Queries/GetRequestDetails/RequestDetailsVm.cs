@@ -17,6 +17,12 @@ public class RequestDetailsVm : IMapWith<Request>
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 
-    public void Mapping(Profile profile) 
-        => profile.CreateMap<Request, RequestDetailsVm>();
+    public void Mapping(Profile profile)
+    {
+        profile.CreateMap<Request, RequestDetailsVm>()
+            .ForMember(dest => dest.Address,
+                opt => opt.MapFrom(src => $"{src.Address.Street}, {src.Address.HouseNumber}"))
+            .ForMember(dest => dest.ImagesUrls,
+                opt => opt.MapFrom(src => src.Images.Where(i => !i.IsDeleted).Select(i => i.FilePath).ToList()));
+    }
 }
