@@ -190,6 +190,8 @@ try
 
     builder.Services.AddScoped<IMapClusteringService, MapClusteringService>();
 
+    builder.Services.AddScoped<IChatModerationService, ChatModerationService>();
+
     var app = builder.Build();
 
     // Инициализация базы данных

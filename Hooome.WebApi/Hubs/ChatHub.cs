@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
-using Hooome.Application.Common.Mappings;
 using Hooome.Application.CQRS.Messages.Commands.CreateMessage;
+using Hooome.Application.Interfaces;
 using Hooome.Domain.Enums;
+using Hooome.WebApi.Models;
+using Hooome.WebApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Caching.Distributed;
 using System.Text.Json;
@@ -14,7 +16,7 @@ public interface IChatClient
 }
 
 [Authorize]
-public class ChatHub(IDistributedCache cache, IMapper mapper) : BaseHub<IChatClient>
+public class ChatHub(IDistributedCache cache, IMapper mapper, IChatModerationService moderationService) : BaseHub<IChatClient>
 {
     public async Task JoinChat(UserConnection connection)
     {
@@ -51,6 +53,8 @@ public class ChatHub(IDistributedCache cache, IMapper mapper) : BaseHub<IChatCli
 
         if(connection is not null)
         {
+            messageDto.Content = moderationService.Filter(messageDto.Content);
+
             var chatName = connection.ChatId.ToString();
 
             var command = mapper.Map<CreateMessageCommand>(messageDto);
@@ -94,18 +98,4 @@ public class ChatHub(IDistributedCache cache, IMapper mapper) : BaseHub<IChatCli
                 .ReceiveMessage("system", message);
         }
     }
-}
-
-public record UserConnection(string UserName, Guid ChatId);
-
-public class CreateMessageDto : IMapWith<CreateMessageCommand>
-{
-    public Guid ChatId { get; set; }
-    public SenderType SenderType { get; set; }
-    public string SenderName { get; set; } = null!;
-    public MessageType MessageType { get; set; }
-    public string Content { get; set; } = null!;
-
-    public void Mapping(Profile profile)
-        => profile.CreateMap<CreateMessageDto, CreateMessageCommand>();
 }
