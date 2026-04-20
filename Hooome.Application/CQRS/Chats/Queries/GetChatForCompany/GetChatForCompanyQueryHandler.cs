@@ -1,37 +1,19 @@
-﻿using Hooome.Application.CQRS.Chats.Queries.GetChatList;
+﻿using AutoMapper;
+using Hooome.Application.CQRS.Chats.Queries.GetChatList;
 using Hooome.Application.Interfaces;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Hooome.Application.CQRS.Chats.Queries.GetChatForCompany;
 
-public class GetChatForCompanyQueryHandler(IHooomeDbContext dbContext)
+public class GetChatForCompanyQueryHandler(IChatRepository chatRepo, IMapper mapper)
     : IRequestHandler<GetChatForCompanyQuery, ChatListForCompanyVm>
 {
     public async Task<ChatListForCompanyVm> Handle(GetChatForCompanyQuery request, CancellationToken cancellationToken)
     {
-        var chats = await dbContext.Chats
-            .Where(x => x.CompanyId == request.CompanyId)
-            .Select(x => new ChatListLookupDto
-            {
-                Id = x.Id,
-                CompanyName = x.ResidentName,
-                CreatedAt = x.CreatedAt,
-                UpdatedAt = x.UpdatedAt,
-                LastMessageContent = x.Messages
-                .OrderByDescending(m => m.CreatedAt)
-                .Select(m => m.Content)
-                .FirstOrDefault()
-                    ?? "Сообщений пока нет, напишите первым!",
-                LastMessageSentAt = x.Messages
-                    .OrderByDescending(m => m.CreatedAt)
-                    .Select(m => m.CreatedAt)
-                    .FirstOrDefault(),
-                UnreadCount = x.Messages.Where(x => !x.IsRead).Count(),
-            })
-            .OrderByDescending(x => x.LastMessageSentAt ?? x.UpdatedAt)
-            .ToListAsync(cancellationToken);
+        var chats = await chatRepo.GetAllByCompanyId(request.CompanyId, cancellationToken);
 
-        return new ChatListForCompanyVm { Chats =  chats };
+        var chatDtos = mapper.Map<List<ChatListLookupDto>>(chats);
+
+        return new ChatListForCompanyVm { Chats =  chatDtos };
     }
 }

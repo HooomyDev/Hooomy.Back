@@ -22,6 +22,7 @@ public static class DependencyInjection
 
         services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
         services.AddScoped<IRequestRepository, RequestRepository>();
+        services.AddScoped<IChatRepository, ChatRepository>();
 
         return services;
     }

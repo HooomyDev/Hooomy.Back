@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Hooome.Application.CQRS.Chats.Commands.CreateChat;
 
-public class CreateChatCommandHandler(IHooomeDbContext dbContext)
+public class CreateChatCommandHandler(IChatRepository chatRepo)
     : IRequestHandler<CreateChatCommand, Guid>
 {
     public async Task<Guid> Handle(CreateChatCommand request, CancellationToken cancellationToken)
@@ -21,16 +21,15 @@ public class CreateChatCommandHandler(IHooomeDbContext dbContext)
             UpdatedAt = null,
         };
 
-        var isChatExist = dbContext.Chats
-            .Any(x => x.CompanyId == newChat.CompanyId && x.ResidentId == request.ResidentId);
+        var isChatExist = await chatRepo
+            .IsChatExist(request.CompanyId, request.ResidentId, cancellationToken);
 
         if(isChatExist)
         {
             throw new AlreadyExistException("Chat already exists");
         }
 
-        await dbContext.Chats.AddAsync(newChat, cancellationToken);
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await chatRepo.Create(newChat, cancellationToken);
 
         return newChat.Id;
     }
