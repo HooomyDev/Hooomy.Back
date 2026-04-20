@@ -9,6 +9,12 @@ public class BaseRepository<T>(HooomeDbContext dbContext)
     protected readonly DbSet<T> _dbSet = dbContext.Set<T>();
     protected readonly HooomeDbContext _dbContext  = dbContext;
 
+    public virtual async Task<bool> IsExist(Guid id, CancellationToken cancellationToken = default)
+    {
+        var entity = await _dbSet.FindAsync([id], cancellationToken);
+        return entity is not null;
+    }
+
     public virtual async Task Create(T entity, CancellationToken cancellationToken = default)
     {
         await _dbSet.AddAsync(entity, cancellationToken);
