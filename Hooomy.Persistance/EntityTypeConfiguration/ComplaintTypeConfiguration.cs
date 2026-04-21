@@ -12,9 +12,6 @@ public class ComplaintTypeConfiguration : IEntityTypeConfiguration<Complaint>
     {
         builder.HasKey(c => c.Id);
 
-        builder.Property(c => c.UserId)
-            .IsRequired();
-
         builder.Property(c => c.ShortDescription)
             .IsRequired()
             .HasMaxLength(200);
@@ -37,26 +34,5 @@ public class ComplaintTypeConfiguration : IEntityTypeConfiguration<Complaint>
             .IsRequired();
 
         builder.Property(c => c.UpdatedAt);
-
-        builder.HasOne(c => c.Request)
-            .WithMany() 
-            .HasForeignKey(c => c.RequestId)
-            .OnDelete(DeleteBehavior.SetNull);
-
-        builder.HasOne(c => c.Company)
-            .WithMany()
-            .HasForeignKey(c => c.CompanyId);
-
-        builder.HasIndex(c => c.UserId);
-
-        builder.HasIndex(c => c.Type);
-
-        builder.HasIndex(c => c.Status);
-
-        builder.HasIndex(c => c.CreatedAt);
-
-        builder.HasIndex(c => new { c.Type, c.Status });
-
-        builder.HasIndex(c => new { c.UserId, c.Status });
     }
 }

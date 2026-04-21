@@ -263,7 +263,7 @@ public class DataSeeder
     {
         if (await context.Complaints.AnyAsync()) return;
 
-        var types = new[] { ComplaintType.Request, ComplaintType.Management, ComplaintType.Hooome };
+        var types = new[] { ComplaintType.Request, ComplaintType.Company, ComplaintType.Hooome };
         var statuses = new[] { ComplaintStatus.AcceptedForReview, ComplaintStatus.OnReview, ComplaintStatus.Closed };
         var random = new Random();
 
@@ -273,18 +273,15 @@ public class DataSeeder
         {
             var type = types[random.Next(types.Length)];
             var hasRequest = type == ComplaintType.Request && random.Next(2) == 0;
-            var hasCompany = type == ComplaintType.Management && random.Next(2) == 0;
+            var hasCompany = type == ComplaintType.Company && random.Next(2) == 0;
 
             complaints.Add(new Complaint
             {
                 Id = Guid.NewGuid(),
-                UserId = Guid.NewGuid(),
                 ShortDescription = GetComplaintShortDescription(i),
                 Description = GetComplaintDescription(i),
                 Type = type,
                 Status = statuses[random.Next(statuses.Length)],
-                RequestId = hasRequest ? requests[random.Next(requests.Count)].Id : null,
-                CompanyId = hasCompany ? companies[random.Next(companies.Count)].Id : null,
                 CreatedAt = DateTime.UtcNow.AddDays(-random.Next(1, 30)),
                 UpdatedAt = random.Next(2) == 0 ? DateTime.UtcNow.AddDays(-random.Next(1, 15)) : null
             });

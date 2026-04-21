@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Hooome.Persistance.Migrations
 {
     [DbContext(typeof(HooomeDbContext))]
-    [Migration("20260413150505_initial")]
-    partial class initial
+    [Migration("20260421133410_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -190,9 +190,6 @@ namespace Hooome.Persistance.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("CompanyId")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -200,9 +197,6 @@ namespace Hooome.Persistance.Migrations
                         .IsRequired()
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)");
-
-                    b.Property<Guid?>("RequestId")
-                        .HasColumnType("uuid");
 
                     b.Property<string>("ShortDescription")
                         .IsRequired()
@@ -224,26 +218,7 @@ namespace Hooome.Persistance.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.HasIndex("CreatedAt");
-
-                    b.HasIndex("RequestId");
-
-                    b.HasIndex("Status");
-
-                    b.HasIndex("Type");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("Type", "Status");
-
-                    b.HasIndex("UserId", "Status");
 
                     b.ToTable("Complaints");
                 });
@@ -471,10 +446,18 @@ namespace Hooome.Persistance.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(300)
                         .HasColumnType("character varying(300)");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("PhotoUrl")
                         .IsRequired()
@@ -513,6 +496,12 @@ namespace Hooome.Persistance.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("PhotoUrl")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -548,6 +537,9 @@ namespace Hooome.Persistance.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("FileName")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -560,6 +552,9 @@ namespace Hooome.Persistance.Migrations
 
                     b.Property<long>("FileSize")
                         .HasColumnType("bigint");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsMain")
                         .HasColumnType("boolean");
@@ -675,22 +670,6 @@ namespace Hooome.Persistance.Migrations
                         .IsRequired();
 
                     b.Navigation("Company");
-                });
-
-            modelBuilder.Entity("Hooome.Domain.Complaint", b =>
-                {
-                    b.HasOne("Hooome.Domain.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId");
-
-                    b.HasOne("Hooome.Domain.Request", "Request")
-                        .WithMany()
-                        .HasForeignKey("RequestId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Company");
-
-                    b.Navigation("Request");
                 });
 
             modelBuilder.Entity("Hooome.Domain.FavoriteAddress", b =>

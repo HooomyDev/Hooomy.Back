@@ -13,14 +13,12 @@ public class CreateComplaintCommandHandler(IHooomeDbContext dbContext)
         var newComplaint = new Complaint
         {
             Id = Guid.NewGuid(),
-            UserId = request.UserId,
             ShortDescription = request.ShortDescription,
             Description = request.Description,
             Type = request.Type,
             Status = ComplaintStatus.AcceptedForReview,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = null,
-            RequestId = request.Type == ComplaintType.Request ? request.RequestId : null
         };
 
         await dbContext.Complaints.AddAsync(newComplaint, cancellationToken);

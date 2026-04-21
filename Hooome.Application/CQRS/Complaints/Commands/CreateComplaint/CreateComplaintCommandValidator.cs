@@ -8,10 +8,6 @@ public class CreateComplaintCommandValidator
 {
     public CreateComplaintCommandValidator()
     {
-        RuleFor(v => v.UserId)
-            .NotEmpty()
-            .NotEqual(Guid.Empty);
-
         RuleFor(v => v.ShortDescription)
             .NotEmpty()
             .MaximumLength(200);
@@ -23,9 +19,5 @@ public class CreateComplaintCommandValidator
         RuleFor(v => v.Type)
             .IsInEnum()
             .NotEqual(ComplaintType.Unknown);
-
-        RuleFor(v => v.RequestId)
-            .NotEmpty()
-            .When(v => v.Type == ComplaintType.Request);
     }
 }

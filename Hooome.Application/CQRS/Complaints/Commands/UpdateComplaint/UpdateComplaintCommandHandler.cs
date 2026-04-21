@@ -11,15 +11,15 @@ public class UpdateComplaintCommandHandler(IHooomeDbContext dbContext)
     public async Task Handle(UpdateComplaintCommand request, CancellationToken cancellationToken)
     {
         var entity = await dbContext.Complaints
-            .FindAsync([request.Id], cancellationToken);
+            .FindAsync([request.Id], cancellationToken) 
+            ?? throw new NotFoundException(nameof(Request), request.Id);
 
-        if (entity == null || entity.UserId != request.UserId)
-        {
-            throw new NotFoundException(nameof(Request), request.Id);
-        }
+        if (!string.IsNullOrEmpty(request.ShortDescription))
+            entity.ShortDescription = request.ShortDescription;
 
-        entity.ShortDescription = request.ShortDescription;
-        entity.Description = request.Description;
+        if (!string.IsNullOrEmpty(request.Description))
+            entity.Description = request.Description;
+
         entity.Status = request.Status;
         entity.UpdatedAt = DateTime.UtcNow;
 

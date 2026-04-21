@@ -10,6 +10,7 @@ public class ChatDetailsVm : IMapWith<Chat>
     public Guid Id { get; set; }
     public Guid CompanyId { get; set; }
     public string CompanyName { get; set; } = null!;
+    public Guid ResidentId { get; set; }    
     public string ResidentName { get; set; } = null!;
     public ChatStatus Status { get; set; } = ChatStatus.Unknown;
     public ICollection<MessageVm> Messages { get; set; } = [];

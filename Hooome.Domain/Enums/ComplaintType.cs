@@ -3,7 +3,8 @@
 public enum ComplaintType
 {
     Unknown, 
+    Resident,
+    Company,
     Request,
-    Management,
     Hooome
 }

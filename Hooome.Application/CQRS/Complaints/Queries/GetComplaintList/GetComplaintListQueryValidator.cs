@@ -7,6 +7,5 @@ public class GetComplaintListQueryValidator
 {
     public GetComplaintListQueryValidator()
     {
-        RuleFor(c => c.UserId).NotEqual(Guid.Empty);
     }
 }
