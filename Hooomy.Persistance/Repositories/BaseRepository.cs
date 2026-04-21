@@ -7,7 +7,7 @@ public class BaseRepository<T>(HooomeDbContext dbContext)
     : IRepository<T> where T : class
 {
     protected readonly DbSet<T> _dbSet = dbContext.Set<T>();
-    protected readonly HooomeDbContext _dbContext  = dbContext;
+    protected readonly HooomeDbContext _dbContext = dbContext;
 
     public virtual async Task<bool> IsExist(Guid id, CancellationToken cancellationToken = default)
     {
@@ -20,7 +20,7 @@ public class BaseRepository<T>(HooomeDbContext dbContext)
         await _dbSet.AddAsync(entity, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
-    
+
     public virtual async Task Update(T entity, CancellationToken cancellationToken = default)
     {
         _dbSet.Update(entity);
@@ -41,5 +41,10 @@ public class BaseRepository<T>(HooomeDbContext dbContext)
     public virtual async Task<T?> GetById(Guid id, CancellationToken cancellationToken = default)
     {
         return await _dbSet.FindAsync([id], cancellationToken);
+    }
+
+    public virtual async Task<int> Count(CancellationToken cancellationToken = default)
+    {
+        return await _dbSet.CountAsync(cancellationToken);
     }
 }

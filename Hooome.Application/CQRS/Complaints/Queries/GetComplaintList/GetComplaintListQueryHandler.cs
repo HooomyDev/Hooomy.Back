@@ -1,38 +1,22 @@
 ﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using FluentValidation;
 using Hooome.Application.Interfaces;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Hooome.Application.CQRS.Complaints.Queries.GetComplaintList;
 
-public class GetComplaintListQueryHandler(IHooomeDbContext dbContext, IMapper mapper)
+public class GetComplaintListQueryHandler(IComplaintRepository complaintRepo, IMapper mapper)
     : IRequestHandler<GetComplaintListQuery, ComplaintListVm>
 {
     public async Task<ComplaintListVm> Handle(GetComplaintListQuery request, CancellationToken cancellationToken)
     {
-        var query = dbContext.Complaints.AsQueryable();
+        var complaints = await complaintRepo.GetAllWithFilters(
+            request.Status,
+            request.Type,
+            request.ShortDescription ?? "",
+            cancellationToken);
 
-        if (request.Status != Domain.Enums.ComplaintStatus.Unknown)
-        {
-            query = query.Where(c => c.Status == request.Status);
-        }
+        var complaintDtos = mapper.Map<List<ComplaintListLookupDto>>(complaints);
 
-        if (request.Type != Domain.Enums.ComplaintType.Unknown)
-        {
-            query = query.Where(c => c.Type == request.Type);
-        }
-
-        if (!string.IsNullOrWhiteSpace(request.ShortDescription))
-        {
-            query = query.Where(c => c.ShortDescription.Contains(request.ShortDescription));
-        }
-
-        var complaints = await query
-            .ProjectTo<ComplaintListLookupDto>(mapper.ConfigurationProvider)
-            .ToListAsync(cancellationToken);
-
-        return new ComplaintListVm { Complaints = complaints };
+        return new ComplaintListVm { Complaints = complaintDtos };
     }
 }

@@ -38,7 +38,6 @@ public class ComplaintsController(IMapper mapper) : BaseController
     {
         var query = new GetComplaintDetailsQuery
         {
-            UserId = UserId,
             Id = id
         };
 

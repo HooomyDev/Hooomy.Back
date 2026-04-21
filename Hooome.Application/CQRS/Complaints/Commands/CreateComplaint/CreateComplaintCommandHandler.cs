@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Hooome.Application.CQRS.Complaints.Commands.CreateComplaint;
 
-public class CreateComplaintCommandHandler(IHooomeDbContext dbContext)
+public class CreateComplaintCommandHandler(IComplaintRepository complaintRepo)
     : IRequestHandler<CreateComplaintCommand, Guid>
 {
     public async Task<Guid> Handle(CreateComplaintCommand request, CancellationToken cancellationToken)
@@ -21,8 +21,7 @@ public class CreateComplaintCommandHandler(IHooomeDbContext dbContext)
             UpdatedAt = null,
         };
 
-        await dbContext.Complaints.AddAsync(newComplaint, cancellationToken);
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await complaintRepo.Create(newComplaint, cancellationToken);
 
         return newComplaint.Id;
     }
