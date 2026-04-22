@@ -5,24 +5,23 @@ using MediatR;
 
 namespace Hooome.Application.CQRS.Complaints.Commands.UpdateComplaint;
 
-public class UpdateComplaintCommandHandler(IHooomeDbContext dbContext)
+public class UpdateComplaintCommandHandler(IComplaintRepository complaintRepo)
     : IRequestHandler<UpdateComplaintCommand>
 {
     public async Task Handle(UpdateComplaintCommand request, CancellationToken cancellationToken)
     {
-        var entity = await dbContext.Complaints
-            .FindAsync([request.Id], cancellationToken);
+        var entity = await complaintRepo.GetById(request.Id, cancellationToken)
+         ?? throw new NotFoundException(nameof(Complaint), request.Id);
 
-        if (entity == null || entity.UserId != request.UserId)
-        {
-            throw new NotFoundException(nameof(Request), request.Id);
-        }
+        if (!string.IsNullOrWhiteSpace(request.ShortDescription))
+            entity.ShortDescription = request.ShortDescription.Trim();
 
-        entity.ShortDescription = request.ShortDescription;
-        entity.Description = request.Description;
+        if (!string.IsNullOrWhiteSpace(request.Description))
+            entity.Description = request.Description.Trim();
+
         entity.Status = request.Status;
         entity.UpdatedAt = DateTime.UtcNow;
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await complaintRepo.Update(entity, cancellationToken);
     }
 }

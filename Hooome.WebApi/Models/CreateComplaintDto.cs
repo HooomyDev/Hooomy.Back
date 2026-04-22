@@ -7,7 +7,6 @@ namespace Hooome.WebApi.Models;
 
 public class CreateComplaintDto : IMapWith<CreateComplaintCommand>
 {
-    public Guid UserId { get; set; }
     public string ShortDescription { get; set; } = null!;
     public string Description { get; set; } = null!;
     public ComplaintType Type { get; set; } = ComplaintType.Unknown;

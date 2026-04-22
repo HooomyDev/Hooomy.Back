@@ -8,7 +8,6 @@ public class UpdateComplaintCommandValidator
 {
     public UpdateComplaintCommandValidator()
     {
-        RuleFor(c => c.UserId).NotEqual(Guid.Empty);
         RuleFor(c => c.Id).NotEqual(Guid.Empty);
 
         RuleFor(v => v.ShortDescription)

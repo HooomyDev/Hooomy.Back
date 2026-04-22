@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Hooome.Persistance.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -24,6 +24,23 @@ namespace Hooome.Persistance.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Addresses", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Complaints",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ShortDescription = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Description = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
+                    Status = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false, defaultValue: "Unknown"),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Complaints", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -98,7 +115,9 @@ namespace Hooome.Persistance.Migrations
                     Category = table.Column<int>(type: "integer", nullable: false),
                     PhotoUrl = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -209,37 +228,6 @@ namespace Hooome.Persistance.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Complaints",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ShortDescription = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    Description = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: false),
-                    Type = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
-                    Status = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false, defaultValue: "Unknown"),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    RequestId = table.Column<Guid>(type: "uuid", nullable: true),
-                    CompanyId = table.Column<Guid>(type: "uuid", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Complaints", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Complaints_Companies_CompanyId",
-                        column: x => x.CompanyId,
-                        principalTable: "Companies",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Complaints_Requests_RequestId",
-                        column: x => x.RequestId,
-                        principalTable: "Requests",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "RequestComments",
                 columns: table => new
                 {
@@ -249,7 +237,9 @@ namespace Hooome.Persistance.Migrations
                     Text = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
                     PhotoUrl = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -271,7 +261,9 @@ namespace Hooome.Persistance.Migrations
                     FilePath = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     FileSize = table.Column<long>(type: "bigint", nullable: false),
                     IsMain = table.Column<bool>(type: "boolean", nullable: false),
-                    RequestId = table.Column<Guid>(type: "uuid", nullable: false)
+                    RequestId = table.Column<Guid>(type: "uuid", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -415,46 +407,6 @@ namespace Hooome.Persistance.Migrations
                 name: "IX_CompanyImages_IsMain",
                 table: "CompanyImages",
                 column: "IsMain");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Complaints_CompanyId",
-                table: "Complaints",
-                column: "CompanyId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Complaints_CreatedAt",
-                table: "Complaints",
-                column: "CreatedAt");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Complaints_RequestId",
-                table: "Complaints",
-                column: "RequestId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Complaints_Status",
-                table: "Complaints",
-                column: "Status");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Complaints_Type",
-                table: "Complaints",
-                column: "Type");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Complaints_Type_Status",
-                table: "Complaints",
-                columns: new[] { "Type", "Status" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Complaints_UserId",
-                table: "Complaints",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Complaints_UserId_Status",
-                table: "Complaints",
-                columns: new[] { "UserId", "Status" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_FavoriteAddresses_AddressId",
