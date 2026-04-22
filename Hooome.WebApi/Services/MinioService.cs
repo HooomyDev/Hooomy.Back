@@ -1,13 +1,16 @@
 ﻿using Hooome.Application.Interfaces;
 using Hooome.Domain.Enums;
 using Hooome.WebApi.Models;
+using Microsoft.Extensions.Caching.Distributed;
 using Minio;
 using Minio.DataModel.Args;
 using Serilog;
 
 namespace Hooome.WebApi.Services;
 
-public class MinioService(IMinioClient minioClient,
+public class MinioService(
+    IMinioClient minioClient,
+    IDistributedCache cache, 
     Dictionary<ImageType, BucketConfig> buckets,
     IConfiguration configuration)
     : IMinioService
@@ -65,15 +68,30 @@ public class MinioService(IMinioClient minioClient,
         }
     }
 
-    public string GetUrl(ImageType type, string imageName)
+    public async Task<string> GetUrl(ImageType type, string imageName)
     {
+        var cacheKey = $"minio_url_{type}_{imageName}";
+
+        var cachedUrl = await cache.GetStringAsync(cacheKey);
+        if(!string.IsNullOrEmpty(cachedUrl))
+        {
+            return cachedUrl;
+        }
+
         var bucket = GetBucket(type);
 
         var endpoint = configuration["MinIO:ExternalEndpoint"];
         var useSSL = bool.Parse(configuration["MinIO:UseSSL"] ?? "false");
         var protocol = useSSL ? "https" : "http";
 
-        return $"{protocol}://{endpoint}/{bucket.Name}/{imageName}";
+        var url = $"{protocol}://{endpoint}/{bucket.Name}/{imageName}";
+
+        await cache.SetStringAsync(cacheKey, url, new DistributedCacheEntryOptions
+        {
+            AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1)
+        });
+
+        return url;
     }
 
     private async Task EnsureBucketExist(string bucketName)

@@ -27,7 +27,7 @@ public class GetRequestDetailsQueryHandler(IRequestRepository requestRepo,
         var imageUrls = new List<string>();
         foreach (var image in requestImages)
         {
-            var url = minioService.GetUrl(ImageType.Request, image.FileName);
+            var url = await minioService.GetUrl(ImageType.Request, image.FileName);
 
             imageUrls.Add(url);
         }

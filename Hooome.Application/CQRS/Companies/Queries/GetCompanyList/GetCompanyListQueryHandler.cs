@@ -23,7 +23,7 @@ public class GetCompanyListQueryHandler(ICompanyRepository companyRepo,
 
             if (companyLogo is not null)
             {
-                company.LogoUrl = minioService.GetUrl(ImageType.Company, companyLogo.FileName);
+                company.LogoUrl = await minioService.GetUrl(ImageType.Company, companyLogo.FileName);
             }
         }
 
