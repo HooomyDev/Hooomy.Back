@@ -6,7 +6,8 @@ using MediatR;
 namespace Hooome.Application.CQRS.Companies.Queries.GetCompanyList;
 
 public class GetCompanyListQueryHandler(ICompanyRepository companyRepo,
-    IMapper mapper, 
+    ICompanyImageRepository companyImageRepo,
+    IMapper mapper,
     IMinioService minioService)
     : IRequestHandler<GetCompanyListQuery, CompanyListVm>
 {
@@ -18,7 +19,12 @@ public class GetCompanyListQueryHandler(ICompanyRepository companyRepo,
 
         foreach (var company in companyDtos)
         {
-            company.LogoUrl = minioService.GetUrl(ImageType.Company, company.LogoUrl);
+            var companyLogo = await companyImageRepo.GetLogoByCompanyId(company.Id, cancellationToken);
+
+            if (companyLogo is not null)
+            {
+                company.LogoUrl = minioService.GetUrl(ImageType.Company, companyLogo.FileName);
+            }
         }
 
         return new CompanyListVm { Companies = companyDtos };

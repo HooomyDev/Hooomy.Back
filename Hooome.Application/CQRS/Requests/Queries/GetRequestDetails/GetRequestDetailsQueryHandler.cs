@@ -7,7 +7,10 @@ using MediatR;
 
 namespace Hooome.Application.CQRS.Requests.Queries.GetRequestDetails;
 
-public class GetRequestDetailsQueryHandler(IRequestRepository requestRepo, IMapper mapper, IMinioService minioService)
+public class GetRequestDetailsQueryHandler(IRequestRepository requestRepo,
+    IRequestImageRepository requestImageRepo,
+    IMapper mapper,
+    IMinioService minioService)
     : IRequestHandler<GetRequestDetailsQuery, RequestDetailsVm>
 {
     public async Task<RequestDetailsVm> Handle(GetRequestDetailsQuery request,
@@ -19,10 +22,12 @@ public class GetRequestDetailsQueryHandler(IRequestRepository requestRepo, IMapp
 
         var requestDetails = mapper.Map<RequestDetailsVm>(entity);
 
+        var requestImages = await requestImageRepo.GetAllByRequestId(request.Id, cancellationToken);
+
         var imageUrls = new List<string>();
-        foreach (var imageName in requestDetails.ImagesUrls)
+        foreach (var image in requestImages)
         {
-            var url = minioService.GetUrl(ImageType.Request, imageName);
+            var url = minioService.GetUrl(ImageType.Request, image.FileName);
 
             imageUrls.Add(url);
         }
