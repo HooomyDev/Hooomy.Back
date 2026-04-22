@@ -6,13 +6,12 @@ using MediatR;
 
 namespace Hooome.Application.CQRS.Companies.Queries.GetCompanyDetails;
 
-public class GetCompanyDetailsQueryHandler(IHooomeDbContext dbContext, IMapper mapper)
+public class GetCompanyDetailsQueryHandler(ICompanyRepository companyRepo, IMapper mapper)
     : IRequestHandler<GetCompanyDetailsQuery, CompanyDetailsVm>
 {
     public async Task<CompanyDetailsVm> Handle(GetCompanyDetailsQuery request, CancellationToken cancellationToken)
     {
-        var company = await dbContext.Companies
-            .FindAsync([request.CompanyId], cancellationToken) 
+        var company = await companyRepo.GetById(request.CompanyId, cancellationToken)
             ?? throw new NotFoundException(nameof(Company), request.CompanyId);
 
         return mapper.Map<CompanyDetailsVm>(company);

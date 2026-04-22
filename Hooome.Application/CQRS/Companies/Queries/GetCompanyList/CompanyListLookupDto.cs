@@ -15,7 +15,7 @@ public class CompanyListLookupDto : IMapWith<Company>
     {
         profile.CreateMap<Company, CompanyListLookupDto>()
             .ForMember(dest => dest.LogoUrl,
-                opt => opt.MapFrom(src => src.Logo != null ? src.Logo.FilePath : string.Empty))
+                opt => opt.MapFrom(src => src.Logo != null ? src.Logo.FileName : string.Empty))
             .ForMember(dest => dest.Address,
                 opt => opt.MapFrom(src => src.Address != null
                     ? $"{src.Address.Street}, {src.Address.HouseNumber}"
