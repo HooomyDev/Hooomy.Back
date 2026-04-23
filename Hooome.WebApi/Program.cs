@@ -10,6 +10,7 @@ using Hooome.WebApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Minio;
@@ -190,18 +191,17 @@ try
     builder.Services.AddScoped<IMapClusteringService, MapClusteringService>();
     builder.Services.AddScoped<IChatModerationService, ChatModerationService>();
 
-    builder.Services.AddSingleton<IMinioClient>(_ =>
+    builder.Services.Configure<MinioOptions>(
+        builder.Configuration.GetSection("MinIO"));
+    
+    builder.Services.AddSingleton<IMinioClient>(provider =>
     {
-        var config = builder.Configuration.GetSection("MinIO");
-        var endpoint = config["Endpoint"];
-        var accessKey = config["AccessKey"];
-        var secretKey = config["SecretKey"];
-        var useSSL = bool.Parse(config["UseSSL"] ?? "false");
+        var options = provider.GetRequiredService<IOptions<MinioOptions>>().Value;
 
         return new MinioClient()
-            .WithEndpoint(endpoint)
-            .WithCredentials(accessKey, secretKey)
-            .WithSSL(useSSL)
+            .WithEndpoint(options.Endpoint)
+            .WithCredentials(options.AccessKey, options.SecretKey)
+            .WithSSL(options.UseSSL)
             .Build();
     });
 

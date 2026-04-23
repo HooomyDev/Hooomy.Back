@@ -2,6 +2,7 @@
 using Hooome.Domain.Enums;
 using Hooome.WebApi.Models;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Options;
 using Minio;
 using Minio.DataModel.Args;
 using Minio.Exceptions;
@@ -12,10 +13,11 @@ namespace Hooome.WebApi.Services;
 public class MinioService(
     IMinioClient minioClient,
     IDistributedCache cache,
-    Dictionary<ImageType, BucketConfig> buckets,
-    IConfiguration configuration)
+    IOptions<MinioOptions> options)
     : IMinioService
 {
+    private readonly MinioOptions options = options.Value;
+
     public async Task<string> UploadImage(IFormFile file, ImageType type, Guid entityId)
     {
         try
@@ -123,8 +125,8 @@ public class MinioService(
 
             var bucket = GetBucket(type);
 
-            var endpoint = configuration["MinIO:ExternalEndpoint"];
-            var useSSL = bool.Parse(configuration["MinIO:UseSSL"] ?? "false");
+            var endpoint = options.Endpoint;
+            var useSSL = options.UseSSL;
             var protocol = useSSL ? "https" : "http";
 
             var url = $"{protocol}://{endpoint}/{bucket.Name}/{objectName}";
@@ -188,7 +190,7 @@ public class MinioService(
 
     private BucketConfig GetBucket(ImageType imageType)
     {
-        if (!buckets.TryGetValue(imageType, out var bucket))
+        if (!options.Buckets.TryGetValue(imageType, out var bucket))
             throw new ArgumentException($"Configuration for bucket \"{imageType}\" not found");
 
         return bucket;
