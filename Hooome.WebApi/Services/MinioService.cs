@@ -4,13 +4,14 @@ using Hooome.WebApi.Models;
 using Microsoft.Extensions.Caching.Distributed;
 using Minio;
 using Minio.DataModel.Args;
+using Minio.Exceptions;
 using Serilog;
 
 namespace Hooome.WebApi.Services;
 
 public class MinioService(
     IMinioClient minioClient,
-    IDistributedCache cache, 
+    IDistributedCache cache,
     Dictionary<ImageType, BucketConfig> buckets,
     IConfiguration configuration)
     : IMinioService
@@ -19,6 +20,8 @@ public class MinioService(
     {
         try
         {
+            ArgumentNullException.ThrowIfNull(file);
+
             var bucket = GetBucket(type);
 
             await EnsureBucketExist(bucket.Name);
@@ -42,6 +45,16 @@ public class MinioService(
 
             return objectName;
         }
+        catch (ArgumentNullException ex)
+        {
+            Log.Error(ex, "File {FileName} is null", file.FileName);
+            throw;
+        }
+        catch (AccessDeniedException ex)
+        {
+            Log.Error(ex, "Access denied");
+            throw;
+        }
         catch (Exception ex)
         {
             Log.Error(ex, "Failed to upload image for {ImageType} {EntityId}", type, entityId);
@@ -53,6 +66,11 @@ public class MinioService(
     {
         try
         {
+            if (string.IsNullOrEmpty(objectName))
+            {
+                throw new ArgumentNullException(nameof(objectName), "File name is required");
+            }
+
             var bucket = GetBucket(type);
 
             var args = new RemoveObjectArgs()
@@ -60,6 +78,24 @@ public class MinioService(
                 .WithObject(objectName);
 
             await minioClient.RemoveObjectAsync(args);
+
+            var cacheKey = $"minio_url_{type}_{objectName}";
+            await cache.RemoveAsync(cacheKey);
+        }
+        catch (ArgumentNullException ex)
+        {
+            Log.Error(ex, "Invalid parameter for delete operation");
+            throw;
+        }
+        catch (BucketNotFoundException ex)
+        {
+            Log.Error(ex, "Bucket not found when deleting {ObjectName}", objectName);
+            throw;
+        }
+        catch (AccessDeniedException ex)
+        {
+            Log.Error(ex, "Access denied");
+            throw;
         }
         catch (Exception ex)
         {
@@ -68,43 +104,63 @@ public class MinioService(
         }
     }
 
-    public async Task<string> GetUrl(ImageType type, string imageName)
+    public async Task<string> GetUrl(ImageType type, string objectName)
     {
-        var cacheKey = $"minio_url_{type}_{imageName}";
-
-        var cachedUrl = await cache.GetStringAsync(cacheKey);
-        if(!string.IsNullOrEmpty(cachedUrl))
+        try
         {
-            return cachedUrl;
+            if (string.IsNullOrEmpty(objectName))
+            {
+                throw new ArgumentNullException(nameof(objectName), "File name is required");
+            }
+
+            var cacheKey = $"minio_url_{type}_{objectName}";
+
+            var cachedUrl = await cache.GetStringAsync(cacheKey);
+            if (!string.IsNullOrEmpty(cachedUrl))
+            {
+                return cachedUrl;
+            }
+
+            var bucket = GetBucket(type);
+
+            var endpoint = configuration["MinIO:ExternalEndpoint"];
+            var useSSL = bool.Parse(configuration["MinIO:UseSSL"] ?? "false");
+            var protocol = useSSL ? "https" : "http";
+
+            var url = $"{protocol}://{endpoint}/{bucket.Name}/{objectName}";
+
+            await cache.SetStringAsync(cacheKey, url, new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1)
+            });
+
+            return url;
         }
-
-        var bucket = GetBucket(type);
-
-        var endpoint = configuration["MinIO:ExternalEndpoint"];
-        var useSSL = bool.Parse(configuration["MinIO:UseSSL"] ?? "false");
-        var protocol = useSSL ? "https" : "http";
-
-        var url = $"{protocol}://{endpoint}/{bucket.Name}/{imageName}";
-
-        await cache.SetStringAsync(cacheKey, url, new DistributedCacheEntryOptions
+        catch (ArgumentNullException ex)
         {
-            AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1)
-        });
-
-        return url;
+            Log.Error(ex, "Argument null error in GetUrl for {ImageType}", type);
+            throw;
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Unexpected error in GetUrl for {ImageType} {ObjectName}", type, objectName);
+            throw;
+        }
     }
 
     private async Task EnsureBucketExist(string bucketName)
     {
-        var isExists = await minioClient
-            .BucketExistsAsync(new BucketExistsArgs().WithBucket(bucketName));
-
-        if (!isExists)
+        try
         {
-            await minioClient
-                .MakeBucketAsync(new MakeBucketArgs().WithBucket(bucketName));
+            var isExists = await minioClient
+                .BucketExistsAsync(new BucketExistsArgs().WithBucket(bucketName));
 
-            var policy = $@"{{
+            if (!isExists)
+            {
+                await minioClient
+                    .MakeBucketAsync(new MakeBucketArgs().WithBucket(bucketName));
+
+                var policy = $@"{{
                 ""Version"": ""2012-10-17"",
                 ""Statement"": [
                     {{
@@ -116,18 +172,24 @@ public class MinioService(
                 ]
             }}";
 
-            var args = new SetPolicyArgs()
-                .WithBucket(bucketName)
-                .WithPolicy(policy);
+                var args = new SetPolicyArgs()
+                    .WithBucket(bucketName)
+                    .WithPolicy(policy);
 
-            await minioClient.SetPolicyAsync(args);
+                await minioClient.SetPolicyAsync(args);
+            }
+        }
+        catch (BucketNotFoundException ex)
+        {
+            Log.Error(ex, "Bucket {bucketName} not found", bucketName);
+            throw;
         }
     }
 
     private BucketConfig GetBucket(ImageType imageType)
     {
         if (!buckets.TryGetValue(imageType, out var bucket))
-            throw new ArgumentException($"Configuration for {imageType} not found");
+            throw new ArgumentException($"Configuration for bucket \"{imageType}\" not found");
 
         return bucket;
     }
