@@ -7,6 +7,7 @@ using Minio;
 using Minio.DataModel.Args;
 using Minio.Exceptions;
 using Serilog;
+using System.Security.AccessControl;
 
 namespace Hooome.WebApi.Services;
 
@@ -186,12 +187,16 @@ public class MinioService(
             Log.Error(ex, "Bucket {bucketName} not found", bucketName);
             throw;
         }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Unexpected error in EnsureBucketExist for {bucketName}", bucketName);
+        }
     }
 
     private BucketConfig GetBucket(ImageType imageType)
     {
         if (!options.Buckets.TryGetValue(imageType, out var bucket))
-            throw new ArgumentException($"Configuration for bucket \"{imageType}\" not found");
+            throw new ArgumentNullException($"Configuration for bucket \"{imageType}\" not found");
 
         return bucket;
     }
