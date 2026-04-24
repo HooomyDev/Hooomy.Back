@@ -1,15 +1,19 @@
 using Hooome.Application;
 using Hooome.Application.Common.Mappings;
 using Hooome.Application.Interfaces;
+using Hooome.Domain.Enums;
 using Hooome.Persistance;
 using Hooome.WebApi.Hubs;
 using Hooome.WebApi.Middleware;
+using Hooome.WebApi.Models;
 using Hooome.WebApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Minio;
 using Serilog;
 using Serilog.Events;
 using System.Reflection;
@@ -181,16 +185,35 @@ try
         options.MultipartHeadersLengthLimit = int.MaxValue;
     });
 
-    // Current User Service
+    //Services
     builder.Services.AddSingleton<ICurrentUserService, CurrentUserService>();
     builder.Services.AddHttpContextAccessor();
-
-    // Image Service
-    builder.Services.AddScoped<IImageService, ImageService>();
-
     builder.Services.AddScoped<IMapClusteringService, MapClusteringService>();
-
     builder.Services.AddScoped<IChatModerationService, ChatModerationService>();
+
+    builder.Services.Configure<MinioOptions>(
+        builder.Configuration.GetSection("MinIO"));
+    
+    builder.Services.AddSingleton<IMinioClient>(provider =>
+    {
+        var options = provider.GetRequiredService<IOptions<MinioOptions>>().Value;
+
+        return new MinioClient()
+            .WithEndpoint(options.Endpoint)
+            .WithCredentials(options.AccessKey, options.SecretKey)
+            .WithSSL(options.UseSSL)
+            .Build();
+    });
+
+    builder.Services.AddSingleton(sp =>
+    {
+        var buckets = builder.Configuration.GetSection("MinIO:Buckets")
+            .Get<Dictionary<ImageType, BucketConfig>>();
+
+        return buckets ?? [];
+    });
+
+    builder.Services.AddScoped<IMinioService, MinioService>();
 
     var app = builder.Build();
 

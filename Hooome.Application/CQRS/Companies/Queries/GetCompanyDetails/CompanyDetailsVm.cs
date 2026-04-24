@@ -12,6 +12,7 @@ public class CompanyDetailsVm : IMapWith<Company>
     public string Email { get; set; } = null!;
     public string WorkingHours { get; set; } = null!;
     public string Address { get; set; } = null!;
+    public string LogoUrl { get; set; } = null!;
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime? UpdatedAt { get; set; }
 

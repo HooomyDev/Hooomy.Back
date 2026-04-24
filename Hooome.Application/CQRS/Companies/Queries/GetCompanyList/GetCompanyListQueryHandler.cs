@@ -1,21 +1,32 @@
 ﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using Hooome.Application.Interfaces;
+using Hooome.Domain.Enums;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Hooome.Application.CQRS.Companies.Queries.GetCompanyList;
 
-public class GetCompanyListQueryHandler(IHooomeDbContext context, IMapper mapper)
+public class GetCompanyListQueryHandler(ICompanyRepository companyRepo,
+    ICompanyImageRepository companyImageRepo,
+    IMapper mapper,
+    IMinioService minioService)
     : IRequestHandler<GetCompanyListQuery, CompanyListVm>
 {
     public async Task<CompanyListVm> Handle(GetCompanyListQuery request, CancellationToken cancellationToken)
     {
-        var companies = await context.Companies
-            .Take(50)
-            .ProjectTo<CompanyListLookupDto>(mapper.ConfigurationProvider)
-            .ToListAsync(cancellationToken);
+        var companies = await companyRepo.GetAll(cancellationToken);
 
-        return new CompanyListVm { Companies = companies };
+        var companyDtos = mapper.Map<List<CompanyListLookupDto>>(companies);
+
+        foreach (var company in companyDtos)
+        {
+            var companyLogo = await companyImageRepo.GetLogoByCompanyId(company.Id, cancellationToken);
+
+            if (companyLogo is not null)
+            {
+                company.LogoUrl = await minioService.GetUrl(ImageType.Company, companyLogo.FileName);
+            }
+        }
+
+        return new CompanyListVm { Companies = companyDtos };
     }
 }

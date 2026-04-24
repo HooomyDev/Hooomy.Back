@@ -5,18 +5,11 @@ using MediatR;
 
 namespace Hooome.Application.CQRS.Companies.Commands.CreateCompany;
 
-public class CreateCompanyCommandHandler(IHooomeDbContext dbContext)
+public class CreateCompanyCommandHandler(ICompanyRepository companyRepo)
     : IRequestHandler<CreateCompanyCommand, Guid>
 {
     public async Task<Guid> Handle(CreateCompanyCommand request, CancellationToken cancellationToken)
     {
-        if (request.AddressId != Guid.Empty && request.AddressId is not null)
-        {
-            var exitingAddress = await dbContext.Addresses
-                .FindAsync([request.AddressId], cancellationToken)
-                ?? throw new NotFoundException(nameof(Address), request.AddressId);
-        }
-
         var newCompany = new Company
         {
             Id = Guid.NewGuid(),
@@ -24,12 +17,11 @@ public class CreateCompanyCommandHandler(IHooomeDbContext dbContext)
             Phone = request.Phone ?? string.Empty,
             Email = request.Email ?? string.Empty,
             WorkingHours = request.WorkingHours ?? string.Empty,
-            AddressId = request.AddressId,
+            AddressId = request.AddressId ?? null,
             CreatedAt = DateTime.UtcNow,
         };
         
-        await dbContext.Companies.AddAsync(newCompany, cancellationToken);
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await companyRepo.Create(newCompany, cancellationToken);
 
         return newCompany.Id;
     }

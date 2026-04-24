@@ -14,9 +14,16 @@ public class CompanyImageTypeConfiguration : IEntityTypeConfiguration<CompanyIma
             .IsRequired()
             .HasMaxLength(255);
 
-        builder.Property(i => i.FilePath)
+        builder.Property(i => i.OriginalFileName)
             .IsRequired()
-            .HasMaxLength(500);
+            .HasMaxLength(255);
+
+        builder.Property(i => i.ContentType)
+            .IsRequired()
+            .HasMaxLength(20);
+
+        builder.Property(i => i.UploadedAt)
+            .IsRequired();
 
         builder.Property(i => i.CompanyId)
             .IsRequired();
@@ -25,7 +32,5 @@ public class CompanyImageTypeConfiguration : IEntityTypeConfiguration<CompanyIma
             .WithOne(c => c.Logo)
             .HasForeignKey<CompanyImage>(i => i.CompanyId)
             .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasIndex(i => i.IsMain);
     }
 }

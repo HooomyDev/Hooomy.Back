@@ -5,7 +5,9 @@ using MediatR;
 
 namespace Hooome.Application.CQRS.Requests.Commands.UploadImages;
 
-public class UploadImagesCommandHandler(IImageService imageService, IRequestRepository requestRepo)
+public class UploadImagesCommandHandler(IRequestRepository requestRepo,
+    IRequestImageRepository requestImageRepo, 
+    IMinioService minioService)
     : IRequestHandler<UploadImagesCommand>
 {
     public async Task Handle(UploadImagesCommand request, CancellationToken cancellationToken)
@@ -14,6 +16,25 @@ public class UploadImagesCommandHandler(IImageService imageService, IRequestRepo
             .GetByIdAndUserId(request.RequestId, request.UserId, cancellationToken)
             ?? throw new NotFoundException(nameof(Request), request.RequestId);
 
-        await imageService.SaveImagesAsync(request.Files, "request", request.RequestId, cancellationToken);
+        foreach(var file in request.Files)
+        {
+            var imageId = Guid.NewGuid();
+
+            var imageName = await minioService
+                .UploadImage(file, Domain.Enums.ImageType.Request, imageId);
+
+            var requestImage = new RequestImage()
+            {
+                Id = imageId,
+                RequestId = request.RequestId,
+                FileName = imageName,
+                OriginalFileName = file.FileName,
+                FileSize = file.Length,
+                ContentType = file.ContentType,
+                UploadedAt = DateTime.UtcNow
+            };
+
+            await requestImageRepo.Create(requestImage, cancellationToken);
+        }
     }
 }

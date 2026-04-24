@@ -2,19 +2,16 @@
 using Hooome.Application.Interfaces;
 using Hooome.Domain;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Hooome.Application.CQRS.Addresses.Commands.CreateAddress;
 
-public class CreateAddressCommandHandler(IHooomeDbContext dbContext)
+public class CreateAddressCommandHandler(IAddressRepository addressRepo)
     : IRequestHandler<CreateAddressCommand, Guid>
 {
     public async Task<Guid> Handle(CreateAddressCommand request, CancellationToken cancellationToken)
     {
-        var existingAddress = await dbContext.Addresses
-             .FirstOrDefaultAsync(a =>
-                 a.Latitude == (decimal)request.Latitude &&
-                 a.Longitude == (decimal)request.Longitude, cancellationToken);
+        var existingAddress = await addressRepo
+            .GetByCoords(request.Latitude, request.Longitude, cancellationToken);
 
         if (existingAddress is not null)
             return existingAddress.Id;
@@ -33,8 +30,7 @@ public class CreateAddressCommandHandler(IHooomeDbContext dbContext)
             Longitude = (decimal)request.Longitude
         };
 
-        await dbContext.Addresses.AddAsync(newAddress, cancellationToken);
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await addressRepo.Create(newAddress, cancellationToken);
 
         return newAddress.Id;
     }

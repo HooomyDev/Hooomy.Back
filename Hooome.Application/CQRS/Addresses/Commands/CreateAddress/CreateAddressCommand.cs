@@ -1,7 +1,4 @@
 ﻿using MediatR;
-using Serilog;
-using System.IO;
-using System.Net;
 
 namespace Hooome.Application.CQRS.Addresses.Commands.CreateAddress;
 
