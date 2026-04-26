@@ -1,5 +1,6 @@
 ﻿using Hooome.Application.CQRS.Addresses.Commands.CreateAddress;
 using Hooome.Application.CQRS.Addresses.Queries.GetAddressList;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hooome.WebApi.Controllers;
@@ -35,6 +36,7 @@ public class AddressController : BaseController
     /// <response code="200">Ok</response>
     /// <response code="400">Bad request</response>
     /// <response code="401">Unauthorized</response>
+    [Authorize(Policy = "ApprovedOnly")]
     [HttpGet]
     [ProducesResponseType(typeof(AddressListVm), StatusCodes.Status200OK)]
     public async Task<ActionResult<AddressListVm>> Get([FromQuery] string searchQuery)
@@ -75,6 +77,7 @@ public class AddressController : BaseController
     /// <response code="400">Invalid parameters (invalid coordinates, empty address, etc.)</response>
     /// <response code="401">User is not authenticated</response>
     /// <response code="500">Internal server error</response>
+    [Authorize(Policy = "ApprovedOnly")]
     [HttpGet("find-or-create")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
     public async Task<ActionResult<Guid>> FindOrCreateAddress(

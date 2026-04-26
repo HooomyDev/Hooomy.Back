@@ -42,6 +42,7 @@ public class ChatController(IMapper mapper) : BaseController
     ///</remarks>
     ///<response code="200">Ok</response>
     ///<response code="401">Unauthorized</response>
+    [Authorize(Policy = "ApprovedOnly")]
     [HttpGet]
     public async Task<ActionResult<ChatListVm>> GetAll()
     {
@@ -85,6 +86,7 @@ public class ChatController(IMapper mapper) : BaseController
     ///<response code="200">Ok</response>
     ///<response code="401">Unauthorized</response>
     ///<response code="404">Not found</response>
+    [Authorize(Policy = "ApprovedOnly")]
     [HttpGet("{chatId:guid}")]
     public async Task<ActionResult<ChatDetailsVm>> GetDetails(Guid chatId)
     {
@@ -127,6 +129,7 @@ public class ChatController(IMapper mapper) : BaseController
     ///</remarks>
     ///<response code="200">Ok</response>
     ///<response code="401">Unauthorized</response>
+    [Authorize(Policy = "EmployeeOnly")]
     [HttpGet("company-chats/{companyId:guid}")]
     public async Task<ActionResult<ChatListForCompanyVm>> GetChatsForCompany(Guid companyId)
     {
@@ -160,6 +163,7 @@ public class ChatController(IMapper mapper) : BaseController
     ///<response code="200">Ok</response>
     ///<response code="400">Bad request</response>
     ///<response code="401">Unauthorized</response>
+    [Authorize(Policy = "ApprovedOnly")]
     [HttpPost("create")]
     public async Task<ActionResult<Guid>> Create(CreateChatDto dto)
     {

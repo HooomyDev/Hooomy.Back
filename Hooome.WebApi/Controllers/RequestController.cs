@@ -23,6 +23,7 @@ namespace Hooome.WebApi.Controllers;
 [Route("api/requests")]
 public class RequestController(IMapper mapper) : BaseController
 {
+    [Authorize(Policy = "ApprovedOnly")]
     [HttpGet]
     public async Task<ActionResult<RequestListVm>> Get(
         [FromQuery] DateTime? startDate,
@@ -43,11 +44,8 @@ public class RequestController(IMapper mapper) : BaseController
         return Ok(vm);
     }
 
+    [Authorize(Policy = "ApprovedOnly")]
     [HttpGet("{id}")]
-    [Authorize]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<RequestDetailsVm>> Get(Guid id)
     {
         var query = new GetRequestDetailsQuery
@@ -61,11 +59,8 @@ public class RequestController(IMapper mapper) : BaseController
         return Ok(vm);
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpGet("count")]
-    [Authorize(Roles = "Admin")]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<int>> GetCount()
     {
         var query = new GetRequestCountQuery();
@@ -75,6 +70,7 @@ public class RequestController(IMapper mapper) : BaseController
         return Ok(count);
     }
 
+    [Authorize(Policy = "UserPendingOrGuest")]
     [HttpGet("statistic")]
     public async Task<ActionResult<RequestDailyStatisticVm>> Get([FromQuery] int period)
     {
@@ -88,6 +84,7 @@ public class RequestController(IMapper mapper) : BaseController
         return Ok(statistic);
     }
 
+    [Authorize(Policy = "ApprovedOnly")]
     [HttpGet("categories")]
     public async Task<ActionResult<RequestCategoryListVm>> GetCategories()
     {
@@ -98,11 +95,8 @@ public class RequestController(IMapper mapper) : BaseController
         return Ok(categories);
     }
 
-    [Authorize]
+    [Authorize(Policy = "ApprovedOnly")]
     [HttpPost("create")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<Guid>> Create([FromBody] CreateRequestDto dto)
     {
         var command = mapper.Map<CreateRequestCommand>(dto);
@@ -113,7 +107,7 @@ public class RequestController(IMapper mapper) : BaseController
         return Ok(requestId);
     }
 
-    [Authorize]
+    [Authorize(Policy = "ApprovedOnly")]
     [HttpPost("{requestId:guid}/upload-images")]
     public async Task<ActionResult> UploadImages(Guid requestId, [FromForm] List<IFormFile> files)
     {
@@ -129,12 +123,8 @@ public class RequestController(IMapper mapper) : BaseController
         return NoContent();
     }
 
+    [Authorize(Policy = "ApprovedOnly")]
     [HttpPut("update")]
-    [Authorize]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Update([FromBody] UpdateRequestDto dto)
     {
         var command = mapper.Map<UpdateRequestCommand>(dto);
@@ -145,11 +135,8 @@ public class RequestController(IMapper mapper) : BaseController
         return NoContent();
     }
 
+    [Authorize(Policy = "ApprovedOnly")]
     [HttpDelete("delete/{id}")]
-    [Authorize]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Delete(Guid id)
     {
         var command = new DeleteRequestCommand
@@ -163,6 +150,7 @@ public class RequestController(IMapper mapper) : BaseController
         return NoContent();
     }
 
+    [Authorize(Policy = "UserPendingOrGuest")]
     [HttpGet("map")]
     public async Task<ActionResult<MapDataVm>> GetClusters(
         [FromQuery] int zoom = 12,
@@ -181,6 +169,7 @@ public class RequestController(IMapper mapper) : BaseController
         return Ok(result);
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpGet("administration")]
     public async Task<ActionResult<RequestListWithPaginationVm>> GetRequests(
         [FromQuery] string? title,
