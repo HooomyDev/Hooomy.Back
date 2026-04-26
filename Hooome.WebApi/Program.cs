@@ -6,6 +6,7 @@ using Hooome.Persistance;
 using Hooome.WebApi.Hubs;
 using Hooome.WebApi.Middleware;
 using Hooome.WebApi.Models;
+using Hooome.WebApi.Models.Enums;
 using Hooome.WebApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
@@ -133,6 +134,53 @@ try
         };
     });
 
+    builder.Services.AddAuthorizationBuilder()
+        .AddPolicy("AdminOnly", policy =>
+        {
+            policy.RequireRole("Admin");
+        })
+        .AddPolicy("EmployeeOnly", policy =>
+        {
+            policy.RequireRole("Employee");
+        })
+        .AddPolicy("ApprovedOnly", policy =>
+        {
+            policy.RequireAssertion(context =>
+            {
+                if (!context.User.Identity.IsAuthenticated)
+                    return false;
+
+                var statusClaim = context.User.FindFirst("status")?.Value;
+
+                if (string.IsNullOrEmpty(statusClaim))
+                    return false;
+
+                var status = Enum.Parse<UserStatus>(statusClaim);
+
+                return status == UserStatus.Approved;
+            });
+        })
+        .AddPolicy("UserPendingOrGuest", policy =>
+        {
+            policy.RequireAssertion(context =>
+            {
+                if (!context.User.Identity.IsAuthenticated)
+                    return true;
+
+                var statusClaim = context.User.FindFirst("status")?.Value;
+
+                if (string.IsNullOrEmpty(statusClaim))
+                    return true;
+
+                var status = Enum.Parse<UserStatus>(statusClaim);
+
+                if (status == UserStatus.Approved)
+                    return true;
+
+                return status == UserStatus.Pending;
+            });
+        });
+
     // Swagger с поддержкой JWT
     builder.Services.AddSwaggerGen(c =>
     {
@@ -181,7 +229,7 @@ try
     builder.Services.Configure<FormOptions>(options =>
     {
         options.ValueLengthLimit = int.MaxValue;
-        options.MultipartBodyLengthLimit = 100 * 1024 * 1024; 
+        options.MultipartBodyLengthLimit = 100 * 1024 * 1024;
         options.MultipartHeadersLengthLimit = int.MaxValue;
     });
 
@@ -193,7 +241,7 @@ try
 
     builder.Services.Configure<MinioOptions>(
         builder.Configuration.GetSection("MinIO"));
-    
+
     builder.Services.AddSingleton<IMinioClient>(provider =>
     {
         var options = provider.GetRequiredService<IOptions<MinioOptions>>().Value;
