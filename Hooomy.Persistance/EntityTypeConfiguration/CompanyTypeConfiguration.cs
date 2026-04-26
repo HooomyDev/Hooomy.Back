@@ -33,9 +33,14 @@ public class CompanyTypeConfiguration : IEntityTypeConfiguration<Company>
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(c => c.Address)
-            .WithMany(a => a.Companies)
-            .HasForeignKey(c => c.AddressId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .WithOne(a => a.RegisteredCompany)
+            .HasForeignKey<Address>(a => a.RegisteredCompanyId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.HasMany(c => c.ServedAddresses)
+            .WithOne(a => a.ServicedByCompany)
+            .HasForeignKey(a => a.ServicedByCompanyId)
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne(c => c.Logo)
             .WithOne(i => i.Company)
