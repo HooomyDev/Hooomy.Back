@@ -2,6 +2,7 @@
 using Hooome.Application.CQRS.Companies.Commands.AddAddress;
 using Hooome.Application.CQRS.Companies.Commands.CreateCompany;
 using Hooome.Application.CQRS.Companies.Commands.DeleteCompany;
+using Hooome.Application.CQRS.Companies.Commands.RemoveAddress;
 using Hooome.Application.CQRS.Companies.Commands.UpdateCompany;
 using Hooome.Application.CQRS.Companies.Commands.UploadLogo;
 using Hooome.Application.CQRS.Companies.Queries.GetCompanyDetails;
@@ -66,6 +67,7 @@ public class CompanyController(IMapper mapper) : BaseController
         return NoContent();
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpPut("{companyId:guid}/add-address/{addressId:guid}")]
     public async Task<ActionResult> AddAddress(Guid companyId, Guid addressId)
     {
@@ -80,6 +82,22 @@ public class CompanyController(IMapper mapper) : BaseController
         return NoContent();
     }
 
+    [Authorize(Policy = "AdminOnly")]
+    [HttpPut("{companyId:guid}/remove-address/{addressId:guid}")]
+    public async Task<ActionResult> RemoveAddress(Guid companyId, Guid addressId)
+    {
+        var command = new RemoveAddressCommand()
+        {
+            CompanyId = companyId,
+            AddressId = addressId
+        };
+
+        await Mediator.Send(command);
+
+        return NoContent();
+    }
+    
+    [Authorize(Policy = "AdminOnly")]
     [HttpPut("update")]
     public async Task<ActionResult> Update([FromBody] UpdateCompanyDto dto)
     {
@@ -90,6 +108,7 @@ public class CompanyController(IMapper mapper) : BaseController
         return NoContent();
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpDelete("delete/{id:guid}")]
     public async Task<ActionResult> Delete(Guid id)
     {

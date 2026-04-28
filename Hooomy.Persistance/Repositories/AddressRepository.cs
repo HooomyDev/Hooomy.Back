@@ -23,6 +23,21 @@ public class AddressRepository(HooomeDbContext dbContext)
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task RemoveAddress(Guid companyId, Guid addressId, CancellationToken cancellationToken = default)
+    {
+        var company = await _dbContext.Companies
+        .FirstOrDefaultAsync(c => c.Id == companyId, cancellationToken)
+        ?? throw new NotFoundException(nameof(Company), companyId);
+
+        var address = await _dbContext.Addresses
+            .FirstOrDefaultAsync(a => a.Id == addressId, cancellationToken)
+            ?? throw new NotFoundException(nameof(Address), addressId);
+
+        address.ServicedByCompanyId = null;
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
     public async Task<Address?> GetByCoords(double lat, double lng, CancellationToken cancellationToken = default)
         => await _dbSet.FirstOrDefaultAsync(a =>
                  a.Latitude == (decimal)lat &&
