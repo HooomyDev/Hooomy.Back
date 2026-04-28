@@ -15,6 +15,7 @@ namespace Hooome.WebApi.Controllers;
 [Authorize]
 public class PollController(IMapper mapper) : BaseController
 {
+    [Authorize(Policy = "UserPendingOrGuest")]
     [HttpGet]
     public async Task<ActionResult<PollListVm>> Get([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string filter = "all")
     {
@@ -30,6 +31,7 @@ public class PollController(IMapper mapper) : BaseController
         return Ok(polls);
     }
 
+    [Authorize(Policy = "ApprovedOnly")]
     [HttpGet("{pollId:guid}")]
     public async Task<ActionResult<PollDetailsVm>> GetDetails(Guid pollId)
     {
@@ -44,6 +46,7 @@ public class PollController(IMapper mapper) : BaseController
         return Ok(poll);
     }
 
+    [Authorize(Policy = "ApprovedOnly")]
     [HttpPost("{id:guid}/vote")]
     public async Task<ActionResult<PollDetailsVm>> Vote(Guid id, [FromBody] SubmitVoteDto dto)
     {
@@ -67,6 +70,7 @@ public class PollController(IMapper mapper) : BaseController
         return Ok(poll);
     }
 
+    [Authorize(Policy = "EmployeeOnly")]
     [HttpPost("create")]
     public async Task<ActionResult<Guid>> Create([FromBody] CreatePollDto dto)
     {
@@ -78,6 +82,7 @@ public class PollController(IMapper mapper) : BaseController
         return Ok(pollId);
     }
 
+    [Authorize(Policy = "EmployeeOnly")]
     [HttpPut("update")]
     public async Task<ActionResult> Update([FromBody] UpdatePollDto dto)
     {
@@ -89,6 +94,7 @@ public class PollController(IMapper mapper) : BaseController
         return NoContent();
     }
 
+    [Authorize(Policy = "EmployeeOnly")]
     [HttpDelete("delete/{id:guid}")]
     public async Task<ActionResult> Delete(Guid id)
     {

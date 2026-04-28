@@ -16,6 +16,7 @@ namespace Hooome.WebApi.Controllers;
 [Authorize]
 public class ComplaintsController(IMapper mapper) : BaseController
 {
+    [Authorize(Policy = "ApprovedOnly")]
     [HttpGet]
     public async Task<ActionResult<ComplaintListVm>> Get(
             [FromQuery] ComplaintStatus status = ComplaintStatus.Unknown,
@@ -33,6 +34,7 @@ public class ComplaintsController(IMapper mapper) : BaseController
         return Ok(complaints);
     }
 
+    [Authorize(Policy = "ApprovedOnly")]
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<ComplaintDetailsVm>> Get(Guid id)
     {
@@ -45,6 +47,7 @@ public class ComplaintsController(IMapper mapper) : BaseController
         return Ok(complaint);
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpGet("count")]
     public async Task<ActionResult<int>> GetComplaintCount()
     {
@@ -53,6 +56,7 @@ public class ComplaintsController(IMapper mapper) : BaseController
         return Ok(count);
     }
 
+    [Authorize(Policy = "ApprovedOnly")]
     [HttpPost("create")]
     public async Task<ActionResult<Guid>> Create([FromBody] CreateComplaintDto dto)
     {
@@ -61,6 +65,7 @@ public class ComplaintsController(IMapper mapper) : BaseController
         return Ok(complaintId);
     }
 
+    [Authorize(Policy = "ApprovedOnly")]
     [HttpPut("update")]
     public async Task<IActionResult> Update([FromBody] UpdateComplaintDto dto)
     {
@@ -69,6 +74,7 @@ public class ComplaintsController(IMapper mapper) : BaseController
         return NoContent();
     }
 
+    [Authorize(Policy = "ApprovedOnly")]
     [HttpDelete("delete/{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {

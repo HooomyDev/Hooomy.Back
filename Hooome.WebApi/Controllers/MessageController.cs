@@ -9,6 +9,7 @@ namespace Hooome.WebApi.Controllers;
 [Authorize]
 public class MessageController : BaseController
 {
+    [Authorize(Policy = "ApprovedOnly")]
     [HttpGet]
     public async Task<ActionResult<MessageListVm>> Get(Guid chatId)
     {

@@ -4,6 +4,7 @@ using Hooome.Application.CQRS.Companies.Commands.UploadLogo;
 using Hooome.Application.CQRS.Companies.Queries.GetCompanyDetails;
 using Hooome.Application.CQRS.Companies.Queries.GetCompanyList;
 using Hooome.WebApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hooome.WebApi.Controllers;
@@ -11,6 +12,7 @@ namespace Hooome.WebApi.Controllers;
 [Route("api/companies")]
 public class CompanyController(IMapper mapper) : BaseController
 {
+    [Authorize(Policy = "UserPendingOrGuest")]
     [HttpGet]
     public async Task<ActionResult<CompanyListVm>> GetAll()
     {
@@ -21,6 +23,7 @@ public class CompanyController(IMapper mapper) : BaseController
         return Ok(companies);
     }
 
+    [Authorize(Policy = "UserPendingOrGuest")]
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<CompanyDetailsVm>> Get(Guid id)
     {
@@ -34,6 +37,7 @@ public class CompanyController(IMapper mapper) : BaseController
         return Ok(company);
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpPost("create")]
     public async Task<ActionResult<Guid>> Create([FromBody] CreateCompanyDto dto)
     {
@@ -44,6 +48,7 @@ public class CompanyController(IMapper mapper) : BaseController
         return Ok(companyId);
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpPost("upload-image")]
     public async Task<ActionResult> UploadLogo([FromForm] IFormFile logo, [FromQuery] Guid companyId)
     {
