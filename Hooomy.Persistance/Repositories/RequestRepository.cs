@@ -11,8 +11,9 @@ public class RequestRepository(HooomeDbContext dbContext)
     public async Task<Request?> GetByIdAndUserId(Guid requestId, Guid userId, CancellationToken cancellationToken = default)
     {
         return await _dbSet
-            .Include(r => r.Address)
-            .Include(r => r.Images)
+            .Include(r => r.Address)     
+            .Include(r => r.Images)    
+            .Include(r => r.Comments)
             .FirstOrDefaultAsync(x => x.UserID == userId && x.Id == requestId, cancellationToken);
     }
 
@@ -129,6 +130,12 @@ public class RequestRepository(HooomeDbContext dbContext)
         {
             image.IsDeleted = true;
             image.DeletedAt = DateTime.UtcNow;
+        }
+
+        foreach(var comment in entity.Comments)
+        {
+            comment.IsDeleted = true;
+            comment.DeletedAt = DateTime.UtcNow;
         }
 
         await _dbContext.SaveChangesAsync(cancellationToken);

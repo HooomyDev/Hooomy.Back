@@ -3,6 +3,7 @@ using System;
 using Hooome.Persistance;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Hooome.Persistance.Migrations
 {
     [DbContext(typeof(HooomeDbContext))]
-    partial class HooomeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260429172535_RequestComments2")]
+    partial class RequestComments2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,23 +42,12 @@ namespace Hooome.Persistance.Migrations
                     b.Property<decimal?>("Longitude")
                         .HasColumnType("numeric");
 
-                    b.Property<Guid?>("RegisteredCompanyId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("ServicedByCompanyId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("Street")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("RegisteredCompanyId")
-                        .IsUnique();
-
-                    b.HasIndex("ServicedByCompanyId");
 
                     b.HasIndex("Latitude", "Longitude");
 
@@ -148,6 +140,8 @@ namespace Hooome.Persistance.Migrations
                         .HasColumnType("character varying(100)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AddressId");
 
                     b.HasIndex("Id")
                         .IsUnique();
@@ -349,8 +343,10 @@ namespace Hooome.Persistance.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -369,6 +365,8 @@ namespace Hooome.Persistance.Migrations
 
                     b.HasIndex("Id")
                         .IsUnique();
+
+                    b.HasIndex("IsActive");
 
                     b.ToTable("Polls");
                 });
@@ -648,23 +646,6 @@ namespace Hooome.Persistance.Migrations
                     b.ToTable("Works");
                 });
 
-            modelBuilder.Entity("Hooome.Domain.Address", b =>
-                {
-                    b.HasOne("Hooome.Domain.Company", "RegisteredCompany")
-                        .WithOne("Address")
-                        .HasForeignKey("Hooome.Domain.Address", "RegisteredCompanyId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.HasOne("Hooome.Domain.Company", "ServicedByCompany")
-                        .WithMany("ServedAddresses")
-                        .HasForeignKey("ServicedByCompanyId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.Navigation("RegisteredCompany");
-
-                    b.Navigation("ServicedByCompany");
-                });
-
             modelBuilder.Entity("Hooome.Domain.Chat", b =>
                 {
                     b.HasOne("Hooome.Domain.Company", "Company")
@@ -674,6 +655,16 @@ namespace Hooome.Persistance.Migrations
                         .IsRequired();
 
                     b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("Hooome.Domain.Company", b =>
+                {
+                    b.HasOne("Hooome.Domain.Address", "Address")
+                        .WithMany("Companies")
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Address");
                 });
 
             modelBuilder.Entity("Hooome.Domain.CompanyImage", b =>
@@ -796,6 +787,8 @@ namespace Hooome.Persistance.Migrations
 
             modelBuilder.Entity("Hooome.Domain.Address", b =>
                 {
+                    b.Navigation("Companies");
+
                     b.Navigation("FavoriteAddresses");
 
                     b.Navigation("Requests");
@@ -810,13 +803,9 @@ namespace Hooome.Persistance.Migrations
 
             modelBuilder.Entity("Hooome.Domain.Company", b =>
                 {
-                    b.Navigation("Address");
-
                     b.Navigation("Logo");
 
                     b.Navigation("Polls");
-
-                    b.Navigation("ServedAddresses");
                 });
 
             modelBuilder.Entity("Hooome.Domain.Poll", b =>
