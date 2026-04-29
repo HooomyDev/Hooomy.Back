@@ -24,6 +24,7 @@ public interface IRequestRepository : IRepository<Request>
 
     Task<(IEnumerable<Request> Items, int TotalCount)> GetRequestsWithPagination(
         string? title = null,
+        Guid? companyId = null,
         RequestStatus? status = null,
         RequestCategory? category = null,
         int page = 1,

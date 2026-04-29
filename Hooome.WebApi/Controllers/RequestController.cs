@@ -173,6 +173,7 @@ public class RequestController(IMapper mapper) : BaseController
     [HttpGet("administration")]
     public async Task<ActionResult<RequestListWithPaginationVm>> GetRequests(
         [FromQuery] string? title,
+        [FromQuery] Guid? companyId,
         [FromQuery] int page = 1, 
         [FromQuery] int pageSize = 10,
         [FromQuery] RequestCategory category = RequestCategory.None,
@@ -181,6 +182,7 @@ public class RequestController(IMapper mapper) : BaseController
         var query = new GetRequestListWithPaginationQuery
         {
             Title = title,
+            CompanyId = companyId,
             Page = page,
             PageSize = pageSize,
             Category = category,

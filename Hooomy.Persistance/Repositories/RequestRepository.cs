@@ -74,6 +74,7 @@ public class RequestRepository(HooomeDbContext dbContext)
     
     public async Task<(IEnumerable<Request> Items, int TotalCount)> GetRequestsWithPagination(
         string? title = null, 
+        Guid? companyId = null,
         RequestStatus? status = null, 
         RequestCategory? category = null, 
         int page = 1, 
@@ -98,6 +99,11 @@ public class RequestRepository(HooomeDbContext dbContext)
         if (category.HasValue && category.Value != RequestCategory.None)
         {
             query = query.Where(r => r.Category == category.Value);
+        }
+
+        if(companyId is not null)
+        {
+            //query = query.Include(r => r.Address).Where(r => r.Address.)
         }
 
         var totalCount = await query.CountAsync(cancellationToken);
