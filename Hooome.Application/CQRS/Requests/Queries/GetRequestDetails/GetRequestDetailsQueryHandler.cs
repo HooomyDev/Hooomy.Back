@@ -34,7 +34,6 @@ public class GetRequestDetailsQueryHandler(IRequestRepository requestRepo,
 
         requestDetails.ImagesUrls = imageUrls;
 
-
         return requestDetails;
     }
 }

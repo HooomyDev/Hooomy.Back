@@ -3,6 +3,7 @@ using System;
 using Hooome.Persistance;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Hooome.Persistance.Migrations
 {
     [DbContext(typeof(HooomeDbContext))]
-    partial class HooomeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260429182020_RequestComments21")]
+    partial class RequestComments21
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -349,8 +352,10 @@ namespace Hooome.Persistance.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -369,6 +374,8 @@ namespace Hooome.Persistance.Migrations
 
                     b.HasIndex("Id")
                         .IsUnique();
+
+                    b.HasIndex("IsActive");
 
                     b.ToTable("Polls");
                 });

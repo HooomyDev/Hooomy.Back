@@ -8,11 +8,20 @@ namespace Hooome.Persistance.Repositories;
 public class RequestRepository(HooomeDbContext dbContext)
     : BaseRepository<Request>(dbContext), IRequestRepository
 {
+    public override async Task<Request?> GetById(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await _dbSet
+            .Include(r => r.Address)
+            .Include(r => r.Images)
+            .Include(r => r.Comments)
+            .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
+    }
+
     public async Task<Request?> GetByIdAndUserId(Guid requestId, Guid userId, CancellationToken cancellationToken = default)
     {
         return await _dbSet
-            .Include(r => r.Address)     
-            .Include(r => r.Images)    
+            .Include(r => r.Address)
+            .Include(r => r.Images)
             .Include(r => r.Comments)
             .FirstOrDefaultAsync(x => x.UserID == userId && x.Id == requestId, cancellationToken);
     }
@@ -77,7 +86,10 @@ public class RequestRepository(HooomeDbContext dbContext)
 
     public async Task<(IEnumerable<Request> Items, int TotalCount)> GetRequestsWithPagination(
         string? title = null,
+<<<<<<< HEAD
         Guid? companyId = null,
+=======
+>>>>>>> 3acd773 (save changes)
         RequestStatus? status = null,
         RequestCategory? category = null,
         int page = 1,
@@ -86,6 +98,7 @@ public class RequestRepository(HooomeDbContext dbContext)
     {
         var query = _dbContext.Requests
              .Include(r => r.Address)
+             .Include(r => r.Comments)
              .Where(r => !r.IsDeleted)
              .AsQueryable();
 
@@ -132,7 +145,7 @@ public class RequestRepository(HooomeDbContext dbContext)
             image.DeletedAt = DateTime.UtcNow;
         }
 
-        foreach(var comment in entity.Comments)
+        foreach (var comment in entity.Comments)
         {
             comment.IsDeleted = true;
             comment.DeletedAt = DateTime.UtcNow;

@@ -17,6 +17,10 @@ public class RequestCommentTypeConfiguration : IEntityTypeConfiguration<RequestC
         builder.Property(rc => rc.UserId)
             .IsRequired();
 
+        builder.Property(rc => rc.SenderName)
+            .IsRequired()
+            .HasMaxLength(250);
+
         builder.Property(rc => rc.Text)
             .IsRequired()
             .HasMaxLength(1000);

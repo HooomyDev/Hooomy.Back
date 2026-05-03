@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Hooome.Application.CQRS.Requests.Commands.CreateComment;
 using Hooome.Application.CQRS.Requests.Commands.CreateRequest;
 using Hooome.Application.CQRS.Requests.Commands.DeleteRequest;
 using Hooome.Application.CQRS.Requests.Commands.UpdateRequest;
@@ -14,6 +15,7 @@ using Hooome.Domain.Enums;
 using Hooome.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Hooome.WebApi.Controllers;
 
@@ -193,5 +195,22 @@ public class RequestController(IMapper mapper) : BaseController
         var requests = await Mediator.Send(query);
 
         return Ok(requests);
+    }
+
+    [Authorize(Policy = "EmployeeOnly")]
+    [HttpPost("add-comment")]
+    public async Task<ActionResult<Guid>> AddComment([FromBody] AddCommentDto dto)
+    {
+        var userName = User.FindFirst(ClaimTypes.Email)?.Value ??
+                   User.FindFirst(ClaimTypes.NameIdentifier)?.Value ??
+                   "Unknown User";
+
+        var command = mapper.Map<CreateRequestCommentCommand>(dto);
+        command.UserId = UserId;
+        command.SenderName = userName;
+
+        var commentId = await Mediator.Send(command);
+
+        return Ok(commentId);
     }
 }
