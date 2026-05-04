@@ -9,4 +9,5 @@ public interface IRepository<T> where T : class
     Task Create(T entity, CancellationToken cancellationToken = default);
     Task Update(T entity, CancellationToken cancellationToken = default);
     Task Delete(T entity, CancellationToken cancellationToken = default);
+    Task<int> SaveChanges(CancellationToken cancellationToken = default);
 }

@@ -47,4 +47,9 @@ public class BaseRepository<T>(HooomeDbContext dbContext)
     {
         return await _dbSet.CountAsync(cancellationToken);
     }
+
+    public async Task<int> SaveChanges(CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.SaveChangesAsync(cancellationToken);
+    }
 }

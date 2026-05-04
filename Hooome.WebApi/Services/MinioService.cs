@@ -126,7 +126,7 @@ public class MinioService(
 
             var bucket = GetBucket(type);
 
-            var endpoint = options.Endpoint;
+            var endpoint = options.ExternalEndpoint;
             var useSSL = options.UseSSL;
             var protocol = useSSL ? "https" : "http";
 

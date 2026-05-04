@@ -30,5 +30,11 @@ public class AddressTypeConfiguration : IEntityTypeConfiguration<Address>
             .WithOne(w => w.Address)
             .HasForeignKey(a => a.AddressId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(a => a.ServicedByCompany)
+            .WithMany(c => c.ServedAddresses)
+            .HasForeignKey(a => a.ServicedByCompanyId)
+            .OnDelete(DeleteBehavior.NoAction);
+
     }
 }
