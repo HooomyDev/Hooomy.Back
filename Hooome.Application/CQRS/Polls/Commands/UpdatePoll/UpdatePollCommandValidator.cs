@@ -22,8 +22,5 @@ public class UpdatePollCommandValidator
         RuleFor(p => p.Description)
             .NotEmpty()
             .MaximumLength(2000);
-
-        RuleFor(p => p.IsActive)
-            .NotEmpty();
     }
 }

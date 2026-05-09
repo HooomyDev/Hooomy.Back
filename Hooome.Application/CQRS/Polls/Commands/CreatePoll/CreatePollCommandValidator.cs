@@ -27,5 +27,13 @@ public class CreatePollCommandValidator
         RuleFor(p => p.Description)
             .NotEmpty()
             .MaximumLength(2000);
+
+        RuleFor(p => p.Options)
+            .NotNull()
+            .Must(o => o.Count > 0)
+            .Must(o => o.Count <= 5);
+
+        RuleForEach(p => p.Options)
+            .SetValidator(new PollOptionDtoValidator());
     }
 }

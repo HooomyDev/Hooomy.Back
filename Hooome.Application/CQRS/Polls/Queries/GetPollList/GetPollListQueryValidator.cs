@@ -7,11 +7,20 @@ public class GetPollListQueryValidator
 {
     public GetPollListQueryValidator()
     {
-        RuleFor(x => x.Page)
+        RuleFor(p => p.Page)
            .GreaterThanOrEqualTo(1);
 
-        RuleFor(x => x.PageSize)
+        RuleFor(p => p.PageSize)
             .GreaterThanOrEqualTo(1)
             .LessThanOrEqualTo(100);
+
+        RuleFor(p => p.Title)
+            .MaximumLength(500);
+
+        RuleFor(p => p.Type)
+            .IsInEnum();
+
+        RuleFor(p => p.Status)
+            .IsInEnum();
     }
 }
