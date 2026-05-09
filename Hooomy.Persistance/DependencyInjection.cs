@@ -28,6 +28,10 @@ public static class DependencyInjection
         services.AddScoped<IAddressRepository, AddressRepository>();
         services.AddScoped<ICompanyRepository, CompanyRepository>();
         services.AddScoped<ICompanyImageRepository, CompanyImageRepository>();
+        services.AddScoped<IWorkRepository, WorkRepository>();
+        services.AddScoped<IPollRepository, PollRepository>();
+        services.AddScoped<IPollOptionRepository, PollOptionRepository>();
+        services.AddScoped<IPollVoteRepository, PollVoteRepository>();
 
         return services;
     }

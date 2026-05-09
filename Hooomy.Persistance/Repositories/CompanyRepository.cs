@@ -23,6 +23,7 @@ public class CompanyRepository(HooomeDbContext dbContext)
             .Include(c => c.ServedAddresses)
             .Include(c => c.Address)
             .Include(c => c.Logo)
+            .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
 }

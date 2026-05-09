@@ -5,14 +5,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hooome.Persistance.Repositories;
 
-public class RequestRepository(HooomeDbContext dbContext) 
+public class RequestRepository(HooomeDbContext dbContext)
     : BaseRepository<Request>(dbContext), IRequestRepository
 {
     public async Task<Request?> GetByIdAndUserId(Guid requestId, Guid userId, CancellationToken cancellationToken = default)
     {
         return await _dbSet
-            .Include(r => r.Address)     
-            .Include(r => r.Images)       
+            .Include(r => r.Address)
+            .Include(r => r.Images)
             .FirstOrDefaultAsync(x => x.UserID == userId && x.Id == requestId, cancellationToken);
     }
 
@@ -35,50 +35,52 @@ public class RequestRepository(HooomeDbContext dbContext)
         if (endDate.HasValue)
             query = query.Where(r => r.CreatedAt <= endDate.Value.Date.AddDays(1));
 
-        if (status.HasValue && status.Value != RequestStatus.Unknown)
-            query = query.Where(r => r.Status == status.Value);
+        Console.WriteLine(status);
+        if (status != RequestStatus.Unknown)
+            query = query.Where(r => r.Status == status);
+
+        Console.WriteLine(query.ToQueryString());
 
         return await query
             .OrderByDescending(r => r.CreatedAt)
+            .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<Dictionary<string, int>> GetRequestsCount(
+    public async Task<Dictionary<string, int>> GetRequestsByDate(
         DateTime startDate,
         DateTime endDate,
-        StatisticGroupType groupType,
+        Guid? companyId = null,
         CancellationToken cancellationToken = default)
     {
         var query = _dbContext.Requests
+            .Include(r => r.Address)
             .Where(r => r.CreatedAt.Date >= startDate.Date &&
                        r.CreatedAt.Date <= endDate.Date &&
                        !r.IsDeleted && !r.IsDeleted);
 
-        return groupType switch
+            Console.WriteLine(companyId + "++++++++++++++++++++++++++++++++++++++");
+        if(companyId.HasValue)
         {
-            StatisticGroupType.Day => await query
-                                .GroupBy(r => r.CreatedAt.Date)
-                                .Select(g => new { Key = g.Key.ToString("yyyy-MM-dd"), Count = g.Count() })
-                                .ToDictionaryAsync(g => g.Key, g => g.Count, cancellationToken),
-            StatisticGroupType.Month => await query
-                                .GroupBy(r => new { r.CreatedAt.Year, r.CreatedAt.Month })
-                                .Select(g => new { Key = $"{g.Key.Year}-{g.Key.Month:D2}", Count = g.Count() })
-                                .ToDictionaryAsync(g => g.Key, g => g.Count, cancellationToken),
-            StatisticGroupType.Year => await query
-                                .GroupBy(r => r.CreatedAt.Year)
-                                .Select(g => new { Key = g.Key.ToString(), Count = g.Count() })
-                                .ToDictionaryAsync(g => g.Key, g => g.Count, cancellationToken),
-            _ => throw new ArgumentException("Invalid group type"),
-        };
+            Console.WriteLine(companyId + "++++++++++++++++++++++++++++++++++++++");
+            query = query.Where(r => r.Address.ServicedByCompanyId == companyId);
+        }
+        Console.WriteLine(companyId + "++++++++++++++++++++++++++++++++++++++");
+
+        return await query
+            .GroupBy(r => r.CreatedAt.Date)
+            .Select(g => new { Key = g.Key.ToString("yyyy-MM-dd"), Count = g.Count() })
+            .AsNoTracking()
+            .ToDictionaryAsync(g => g.Key, g => g.Count, cancellationToken); 
     }
-    
+
     public async Task<(IEnumerable<Request> Items, int TotalCount)> GetRequestsWithPagination(
-        string? title = null, 
+        string? title = null,
         Guid? companyId = null,
-        RequestStatus? status = null, 
-        RequestCategory? category = null, 
-        int page = 1, 
-        int pageSize = 10, 
+        RequestStatus? status = null,
+        RequestCategory? category = null,
+        int page = 1,
+        int pageSize = 10,
         CancellationToken cancellationToken = default)
     {
         var query = _dbContext.Requests
@@ -101,9 +103,9 @@ public class RequestRepository(HooomeDbContext dbContext)
             query = query.Where(r => r.Category == category.Value);
         }
 
-        if(companyId is not null)
+        if (companyId is not null)
         {
-            //query = query.Include(r => r.Address).Where(r => r.Address.)
+            query = query.Where(r => r.Address.ServicedByCompanyId == companyId);
         }
 
         var totalCount = await query.CountAsync(cancellationToken);
@@ -112,6 +114,7 @@ public class RequestRepository(HooomeDbContext dbContext)
             .OrderByDescending(r => r.CreatedAt)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
+            .AsNoTracking()
             .ToListAsync(cancellationToken);
 
         return (items, totalCount);
@@ -122,7 +125,7 @@ public class RequestRepository(HooomeDbContext dbContext)
         entity.IsDeleted = true;
         entity.DeletedAt = DateTime.UtcNow;
 
-        foreach(var image in entity.Images)
+        foreach (var image in entity.Images)
         {
             image.IsDeleted = true;
             image.DeletedAt = DateTime.UtcNow;
