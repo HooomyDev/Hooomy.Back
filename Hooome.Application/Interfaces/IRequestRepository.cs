@@ -16,10 +16,10 @@ public interface IRequestRepository : IRepository<Request>
         RequestStatus? status = null,
         CancellationToken cancellationToken = default);
 
-    Task<Dictionary<string, int>> GetRequestsCount(
+    Task<Dictionary<string, int>> GetRequestsByDate(
         DateTime startDate,
         DateTime endDate,
-        StatisticGroupType groupType,
+        Guid? companyId,
         CancellationToken cancellationToken = default);
 
     Task<(IEnumerable<Request> Items, int TotalCount)> GetRequestsWithPagination(

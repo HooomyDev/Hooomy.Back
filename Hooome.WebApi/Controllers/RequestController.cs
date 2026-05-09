@@ -59,7 +59,7 @@ public class RequestController(IMapper mapper) : BaseController
         return Ok(vm);
     }
 
-    [Authorize(Policy = "AdminOnly")]
+    [Authorize(Policy = "UserPendingOrGuest")]
     [HttpGet("count")]
     public async Task<ActionResult<int>> GetCount()
     {
@@ -72,11 +72,13 @@ public class RequestController(IMapper mapper) : BaseController
 
     [Authorize(Policy = "UserPendingOrGuest")]
     [HttpGet("statistic")]
-    public async Task<ActionResult<RequestDailyStatisticVm>> Get([FromQuery] int period)
+    public async Task<ActionResult<RequestDailyStatisticVm>> Get([FromQuery] int period,
+        [FromQuery] Guid? companyId)
     {
         var query = new GetRequestDailyStatisticQuery
         {
-            Period = (RequestsPeriod)period
+            Period = (RequestsPeriod)period,
+            CompanyId = companyId
         };
 
         var statistic = await Mediator.Send(query);
@@ -128,7 +130,6 @@ public class RequestController(IMapper mapper) : BaseController
     public async Task<ActionResult> Update([FromBody] UpdateRequestDto dto)
     {
         var command = mapper.Map<UpdateRequestCommand>(dto);
-        command.UserId = UserId;
 
         await Mediator.Send(command);
 
@@ -169,7 +170,7 @@ public class RequestController(IMapper mapper) : BaseController
         return Ok(result);
     }
 
-    [Authorize(Policy = "AdminOnly")]
+    [Authorize(Policy = "AdminOrEmployeeOnly")]
     [HttpGet("administration")]
     public async Task<ActionResult<RequestListWithPaginationVm>> GetRequests(
         [FromQuery] string? title,

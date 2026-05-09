@@ -17,7 +17,7 @@ public class GetRequestDetailsQueryHandler(IRequestRepository requestRepo,
         CancellationToken cancellationToken)
     {
         var entity = await requestRepo
-            .GetByIdAndUserId(request.Id, request.UserId, cancellationToken) 
+            .GetById(request.Id, cancellationToken) 
             ?? throw new NotFoundException(nameof(Request), request.Id);
 
         var requestDetails = mapper.Map<RequestDetailsVm>(entity);

@@ -38,38 +38,38 @@ public enum RequestCategory
     CivilDefenseShelterMaintenance = 11,
 
     [Description("Другое")]
-    Other = 11,
+    Other = 12,
 
     [Description("Техническое обслуживание лифта")]
-    ElevatorMaintenance = 12,
+    ElevatorMaintenance = 13,
 
     [Description("Обращение с ТКО")]
-    SolidWasteManagement = 13,
+    SolidWasteManagement = 14,
 
     [Description("Водоснабжение. Холодная вода")]
-    ColdWaterSupply = 14,
+    ColdWaterSupply = 15,
 
     [Description("Канализация")]
-    Sewage = 15,
+    Sewage = 16,
 
     [Description("Автомобильные дороги, тротуары")]
-    RoadsAndSidewalks = 16,
+    RoadsAndSidewalks = 17,
 
     [Description("Кровельные работы")]
-    RoofingWorks = 17,
+    RoofingWorks = 18,
 
     [Description("Уличное освещение")]
-    StreetLighting = 18,
+    StreetLighting = 19,
 
     [Description("Общественные места (Парки, скверы)")]
-    PublicPlacesParksSquares = 19,
+    PublicPlacesParksSquares = 20,
 
     [Description("Работы по ремонту стыков")]
-    JointRepairWorks = 20,
+    JointRepairWorks = 21,
 
     [Description("Техническое обслуживание зданий и сооружений")]
-    BuildingMaintenance = 21,
+    BuildingMaintenance = 22,
 
     [Description("Рекламные и информационные конструкции и объявления")]
-    AdvertisingAndInformationStructures = 22
+    AdvertisingAndInformationStructures = 23
 }
