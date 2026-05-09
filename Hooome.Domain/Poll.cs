@@ -9,7 +9,7 @@ public class Poll
     public string Description { get; set; } = null!;
     public Guid CreatedBy { get; set; }
     public Guid CompanyId { get; set; }
-    public bool IsActive { get; set; }
+    public PollStatus Status { get; set; }
     public PollType Type { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.Now;
