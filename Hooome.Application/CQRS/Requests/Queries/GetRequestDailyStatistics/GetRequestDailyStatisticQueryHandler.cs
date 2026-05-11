@@ -1,4 +1,5 @@
 ﻿using Hooome.Application.Interfaces;
+using Hooome.Domain;
 using MediatR;
 
 namespace Hooome.Application.CQRS.Requests.Queries.GetRequestDailyStatistics;
@@ -12,74 +13,58 @@ public class GetRequestDailyStatisticQueryHandler(IRequestRepository requestRepo
     {
         var (startDate, endDate) = GetDateRange(request.Period);
         var now = DateTime.UtcNow.Date;
-        
-        var groupType = request.Period == RequestsPeriod.HalfYear || request.Period == RequestsPeriod.Year 
-            ? StatisticGroupType.Month 
-            : StatisticGroupType.Day;
 
-        var groupedData = await requestRepo.GetRequestsCount(
-            startDate, endDate, groupType, cancellationToken);
+        var groupedData = await requestRepo.GetRequestsByDate(
+            startDate, endDate, request.CompanyId, cancellationToken);
 
-        var statistics = BuildStatistics(startDate, endDate, groupedData, groupType, now);
+        var requestsByDates = BuildDailyStatistics(startDate, endDate, groupedData, now);
 
-        return new RequestDailyStatisticVm { Requests = statistics };
+        var (requests, totalCount) = await requestRepo.GetRequestsWithPagination(companyId: request.CompanyId,
+            cancellationToken: cancellationToken);
+
+        var requestsByStatuses = BuildStatisticByStatuses([.. requests]);
+
+        var requestsByCategories = BuildStatisticByCategories([.. requests]);
+
+        return new RequestDailyStatisticVm 
+        { 
+            RequestsByDates = requestsByDates, 
+            RequestsByStatuses = requestsByStatuses,
+            RequestsByCategories = requestsByCategories,
+            TotalCount = totalCount,
+        };
     }
 
-    private static List<RequestDailyStatisticLookupDto> BuildStatistics(
+    private static List<RequestDailyStatisticLookupDto> BuildDailyStatistics(
         DateTime startDate,
         DateTime endDate,
         Dictionary<string, int> groupedData,
-        StatisticGroupType groupType,
         DateTime now)
     {
         var statistics = new List<RequestDailyStatisticLookupDto>();
 
-        if (groupType == StatisticGroupType.Month)
+        var current = startDate;
+
+        while (current <= endDate)
         {
-            var current = new DateTime(startDate.Year, startDate.Month, 1);
-            var last = new DateTime(endDate.Year, endDate.Month, 1);
+            var key = current.ToString("yyyy-MM-dd");
+            var count = groupedData.GetValueOrDefault(key, 0);
 
-            while (current <= last)
+            statistics.Add(new RequestDailyStatisticLookupDto
             {
-                var key = current.ToString("yyyy-MM");
-                var count = groupedData.GetValueOrDefault(key, 0);
+                Date = key,
+                Count = count,
+                DisplayDate = current.ToString("ddd, MMM d"),
+                IsToday = current == now,
+                HasData = count > 0
+            });
 
-                statistics.Add(new RequestDailyStatisticLookupDto
-                {
-                    Date = key,
-                    Count = count,
-                    DisplayDate = current.ToString("MMM yyyy"),
-                    IsToday = false,
-                    HasData = count > 0
-                });
-
-                current = current.AddMonths(1);
-            }
-        }
-        else
-        {
-            var current = startDate;
-
-            while (current <= endDate)
-            {
-                var key = current.ToString("yyyy-MM-dd");
-                var count = groupedData.GetValueOrDefault(key, 0);
-
-                statistics.Add(new RequestDailyStatisticLookupDto
-                {
-                    Date = key,
-                    Count = count,
-                    DisplayDate = FormatDisplayDate(current),
-                    IsToday = current == now,
-                    HasData = count > 0
-                });
-
-                current = current.AddDays(1);
-            }
+            current = current.AddDays(1);
         }
 
         return statistics;
     }
+
 
     private static (DateTime startDate, DateTime endDate) GetDateRange(RequestsPeriod period)
     {
@@ -90,15 +75,39 @@ public class GetRequestDailyStatisticQueryHandler(IRequestRepository requestRepo
             RequestsPeriod.Week => (now.AddDays(-6), now),
             RequestsPeriod.TwoWeek => (now.AddDays(-13), now),
             RequestsPeriod.Month => (now.AddDays(-29), now),
-            RequestsPeriod.CurrentMonth => (new DateTime(now.Year, now.Month, 1), now),
-            RequestsPeriod.HalfYear => (now.AddMonths(-5).AddDays(1 - now.Day), now),
-            RequestsPeriod.Year => (now.AddMonths(-11).AddDays(1 - now.Day), now),
             _ => (now.AddDays(-6), now)
         };
     }
 
-    private static string FormatDisplayDate(DateTime date)
+    private static List<RequestByStatusesLookupDto> BuildStatisticByStatuses(List<Request> requests)
     {
-        return date.ToString("ddd, MMM d");
+        var statistics = requests
+            .GroupBy(r => r.Status)
+            .Select(g => new RequestByStatusesLookupDto
+            {
+                Status = g.Key,
+                Count = g.Count(),
+                Percentage = Math.Round((double)g.Count() / requests.Count * 100, 2)
+            })
+            .OrderBy(r => r.Status)
+            .ToList();
+
+        return statistics;
+    }
+
+    private static List<RequestByCategoriesLookupDto> BuildStatisticByCategories(List<Request> requests)
+    {
+        var statistics = requests
+            .GroupBy(r => r.Category)
+            .Select(g => new RequestByCategoriesLookupDto
+            {
+                Category = g.Key,
+                Count = g.Count(),
+                Percentage = Math.Round((double)g.Count() / requests.Count * 100, 2)
+            })
+            .OrderBy(r => r.Category)
+            .ToList();
+
+        return statistics;
     }
 }

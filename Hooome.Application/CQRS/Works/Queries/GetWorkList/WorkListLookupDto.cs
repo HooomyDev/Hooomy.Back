@@ -18,5 +18,9 @@ public class WorkListLookupDto : IMapWith<Work>
     public DateTime? FactEndTime { get; set; }
 
     public void Mapping(Profile profile)
-        => profile.CreateMap<Work, WorkListLookupDto>();
+    {
+        profile.CreateMap<Work, WorkListLookupDto>()
+            .ForMember(dest => dest.Address, 
+            opt => opt.MapFrom(src => $"{src.Address.Street}, {src.Address.HouseNumber}"));
+    }
 }

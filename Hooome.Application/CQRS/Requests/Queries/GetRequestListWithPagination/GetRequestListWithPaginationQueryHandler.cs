@@ -11,6 +11,7 @@ public class GetRequestListWithPaginationQueryHandler(IRequestRepository request
     {
         var (requests, totalCount) = await requestRepo.GetRequestsWithPagination(
             title: request.Title,
+            companyId: request.CompanyId,
             status: request.Status,
             category: request.Category,
             page: request.Page,

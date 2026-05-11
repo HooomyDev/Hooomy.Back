@@ -10,4 +10,5 @@ public class CreatePollCommand : IRequest<Guid>
     public Guid CreatedBy { get; set; }
     public Guid CompanyId { get; set; }
     public PollType Type { get; set; }
+    public IList<PollOptionDto> Options { get; set; } = [];
 }

@@ -1,4 +1,6 @@
-﻿namespace Hooome.Application.CQRS.Polls.Queries.GetPollList;
+﻿using Hooome.Domain.Enums;
+
+namespace Hooome.Application.CQRS.Polls.Queries.GetPollList;
 
 public class PollListVm
 {
@@ -6,6 +8,7 @@ public class PollListVm
     public int Page { get; set; }           
     public int PageSize { get; set; }       
     public int TotalCount { get; set; }     
-    public int TotalPages { get; set; }     
-    public string? FilterOption { get; set; }
+    public int TotalPages { get; set; }
+    public PollStatus Status { get; set; }
+    public PollType Type { get; set; }
 }

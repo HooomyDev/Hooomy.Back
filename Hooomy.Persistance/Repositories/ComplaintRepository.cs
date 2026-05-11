@@ -32,6 +32,8 @@ public class ComplaintRepository(HooomeDbContext dbContext)
 
         query = query.OrderByDescending(c => c.CreatedAt);
 
-        return await query.ToListAsync(cancellationToken);
+        return await query
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
     }
 }

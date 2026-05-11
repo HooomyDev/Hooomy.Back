@@ -1,50 +1,34 @@
-﻿using Hooome.Application.Interfaces;
+﻿using AutoMapper;
+using Hooome.Application.Interfaces;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Hooome.Application.CQRS.Polls.Queries.GetPollList;
 
-public class GetPollListQueryHandler(IHooomeDbContext dbContext)
+public class GetPollListQueryHandler(IPollRepository pollRepo, IMapper mapper)
     : IRequestHandler<GetPollListQuery, PollListVm>
 {
     public async Task<PollListVm> Handle(GetPollListQuery request, CancellationToken cancellationToken)
     {
-        var query = dbContext.Polls
-            .Include(p => p.Company)
-            .Include(p => p.Options)
-            .Include(p => p.Votes)
-            .AsQueryable();
+        var (polls, totalCount) = await pollRepo.GetFilteredPolls(
+            title: request.Title, 
+            type: request.Type, 
+            status: request.Status, 
+            page: request.Page,
+            pageSize: request.PageSize,
+            companyId: request.CompanyId,
+            cancellationToken: cancellationToken);
 
-        var totalCount = await query.CountAsync(cancellationToken);
-
-        if(request.FilterOption == "active")
-        {
-            query = query.Where(x => x.IsActive);
-        }
-
-        var polls = await query
-            .OrderByDescending(x => x.CreatedAt)
-            .Skip((request.Page - 1) * request.PageSize)
-            .Take(request.PageSize)
-            .Select(x => new PollListLookupDto()
-            {
-                Id = x.Id,
-                Title = x.Title,
-                CompanyName = x.Company.Name,
-                VoteCount = x.Votes.Count,
-                IsActive = x.IsActive,
-                Type = x.Type,
-            })
-            .ToListAsync(cancellationToken);
+        var pollDtos = mapper.Map<List<PollListLookupDto>>(polls);
 
         return new PollListVm 
         { 
-            Polls = polls,
+            Polls = pollDtos,
             Page = request.Page,
             PageSize = request.PageSize,
-            TotalCount = totalCount,
+            TotalCount = (int)Math.Ceiling(totalCount / (double)request.PageSize),
             TotalPages = (int)Math.Ceiling(totalCount / (double)request.PageSize),
-            FilterOption = request.FilterOption,
+            Status = request.Status,
+            Type = request.Type,
         };
     }
 }

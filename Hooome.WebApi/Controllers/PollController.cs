@@ -5,6 +5,7 @@ using Hooome.Application.CQRS.Polls.Commands.SubmitVote;
 using Hooome.Application.CQRS.Polls.Commands.UpdatePoll;
 using Hooome.Application.CQRS.Polls.Queries.GetPollDetails;
 using Hooome.Application.CQRS.Polls.Queries.GetPollList;
+using Hooome.Domain.Enums;
 using Hooome.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,25 +13,33 @@ using Microsoft.AspNetCore.Mvc;
 namespace Hooome.WebApi.Controllers;
 
 [Route("api/polls")]
-[Authorize]
 public class PollController(IMapper mapper) : BaseController
 {
     [Authorize(Policy = "UserPendingOrGuest")]
     [HttpGet]
-    public async Task<ActionResult<PollListVm>> Get([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string filter = "all")
+    public async Task<ActionResult<PollListVm>> Get([FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] string title = "",
+        [FromQuery] PollStatus status = PollStatus.Unknown,
+        [FromQuery] PollType type = PollType.Unknown,
+        [FromQuery] Guid? companyId = null
+        )
     {
         var query = new GetPollListQuery()
         {
             Page = page,
             PageSize = pageSize,
-            FilterOption = filter
+            Title = title,
+            Status = status,
+            Type = type,
+            CompanyId = companyId
         };
 
         var polls = await Mediator.Send(query);
 
         return Ok(polls);
     }
-
+    
     [Authorize(Policy = "ApprovedOnly")]
     [HttpGet("{pollId:guid}")]
     public async Task<ActionResult<PollDetailsVm>> GetDetails(Guid pollId)
@@ -70,7 +79,7 @@ public class PollController(IMapper mapper) : BaseController
         return Ok(poll);
     }
 
-    [Authorize(Policy = "EmployeeOnly")]
+    [Authorize(Policy = "AdminOrEmployeeOnly")]
     [HttpPost("create")]
     public async Task<ActionResult<Guid>> Create([FromBody] CreatePollDto dto)
     {
@@ -82,7 +91,7 @@ public class PollController(IMapper mapper) : BaseController
         return Ok(pollId);
     }
 
-    [Authorize(Policy = "EmployeeOnly")]
+    [Authorize(Policy = "AdminOrEmployeeOnly")]
     [HttpPut("update")]
     public async Task<ActionResult> Update([FromBody] UpdatePollDto dto)
     {
@@ -94,7 +103,7 @@ public class PollController(IMapper mapper) : BaseController
         return NoContent();
     }
 
-    [Authorize(Policy = "EmployeeOnly")]
+    [Authorize(Policy = "AdminOrEmployeeOnly")]
     [HttpDelete("delete/{id:guid}")]
     public async Task<ActionResult> Delete(Guid id)
     {

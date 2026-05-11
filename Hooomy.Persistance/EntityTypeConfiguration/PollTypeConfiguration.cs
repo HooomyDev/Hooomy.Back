@@ -22,18 +22,18 @@ public class PollTypeConfiguration : IEntityTypeConfiguration<Poll>
         builder.Property(p => p.CreatedBy)
             .IsRequired();
 
-        builder.Property(p => p.IsActive)
-            .IsRequired()
-            .HasDefaultValue(true);
-
         builder.Property(p => p.Type)
             .IsRequired()
             .HasConversion<int>();
 
-        builder.Property(p => p.CreatedAt)
+        builder.Property(p => p.Status)
             .IsRequired();
 
-        builder.HasIndex(p => p.IsActive);
+        builder.Property(p => p.Type)
+            .IsRequired();
+
+        builder.Property(p => p.CreatedAt)
+            .IsRequired();
 
         builder.Property(p => p.CompanyId)
             .IsRequired();

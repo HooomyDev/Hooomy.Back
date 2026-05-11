@@ -1,7 +1,4 @@
-﻿using Hooome.Application.CQRS.Streets.Queries.GetStreetList;
-using Hooome.Domain;
-using MediatR;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+﻿using MediatR;
 
 namespace Hooome.Application.CQRS.Addresses.Queries.GetAddressList;
 

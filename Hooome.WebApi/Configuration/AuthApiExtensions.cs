@@ -68,9 +68,9 @@ public static class AuthApiExtensions
             {
                 policy.RequireRole("Admin");
             })
-            .AddPolicy("EmployeeOnly", policy =>
+            .AddPolicy("AdminOrEmployeeOnly", policy =>
             {
-                policy.RequireRole("Employee");
+                policy.RequireRole("Admin", "Employee");
             })
             .AddPolicy("ApprovedOnly", policy =>
             {
