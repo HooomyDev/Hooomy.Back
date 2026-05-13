@@ -45,11 +45,8 @@ public class RequestRepository(HooomeDbContext dbContext)
         if (endDate.HasValue)
             query = query.Where(r => r.CreatedAt <= endDate.Value.Date.AddDays(1));
 
-        Console.WriteLine(status);
         if (status != RequestStatus.Unknown)
             query = query.Where(r => r.Status == status);
-
-        Console.WriteLine(query.ToQueryString());
 
         return await query
             .OrderByDescending(r => r.CreatedAt)
@@ -69,13 +66,10 @@ public class RequestRepository(HooomeDbContext dbContext)
                        r.CreatedAt.Date <= endDate.Date &&
                        !r.IsDeleted && !r.IsDeleted);
 
-            Console.WriteLine(companyId + "++++++++++++++++++++++++++++++++++++++");
         if(companyId.HasValue)
         {
-            Console.WriteLine(companyId + "++++++++++++++++++++++++++++++++++++++");
             query = query.Where(r => r.Address.ServicedByCompanyId == companyId);
         }
-        Console.WriteLine(companyId + "++++++++++++++++++++++++++++++++++++++");
 
         return await query
             .GroupBy(r => r.CreatedAt.Date)
@@ -86,10 +80,7 @@ public class RequestRepository(HooomeDbContext dbContext)
 
     public async Task<(IEnumerable<Request> Items, int TotalCount)> GetRequestsWithPagination(
         string? title = null,
-<<<<<<< HEAD
         Guid? companyId = null,
-=======
->>>>>>> 3acd773 (save changes)
         RequestStatus? status = null,
         RequestCategory? category = null,
         int page = 1,

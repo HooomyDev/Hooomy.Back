@@ -197,7 +197,7 @@ public class RequestController(IMapper mapper) : BaseController
         return Ok(requests);
     }
 
-    [Authorize(Policy = "EmployeeOnly")]
+    [Authorize(Policy = "AdminOrEmployeeOnly")]
     [HttpPost("add-comment")]
     public async Task<ActionResult<Guid>> AddComment([FromBody] AddCommentDto dto)
     {
