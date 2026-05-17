@@ -32,6 +32,8 @@ public static class DependencyInjection
         services.AddScoped<IPollRepository, PollRepository>();
         services.AddScoped<IPollOptionRepository, PollOptionRepository>();
         services.AddScoped<IPollVoteRepository, PollVoteRepository>();
+        services.AddScoped<IRequestCommentImageRepository, RequestCommentImageRepository>();
+        services.AddScoped<IRequestCommentRepository, RequestCommentRepository>();
 
         return services;
     }

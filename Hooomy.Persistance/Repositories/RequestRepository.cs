@@ -138,6 +138,7 @@ public class RequestRepository(HooomeDbContext dbContext)
 
         foreach (var comment in entity.Comments)
         {
+            comment.Status = RequestCommentStatus.Deleted;
             comment.IsDeleted = true;
             comment.DeletedAt = DateTime.UtcNow;
         }

@@ -19,4 +19,5 @@ public class Company
     public Address? Address { get; set; }
 
     public ICollection<Address> ServedAddresses { get; set; } = [];
+    public ICollection<RequestComment> Comments { get; set; } = [];
 }

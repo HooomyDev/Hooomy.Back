@@ -3,6 +3,7 @@ using System;
 using Hooome.Persistance;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Hooome.Persistance.Migrations
 {
     [DbContext(typeof(HooomeDbContext))]
-    partial class HooomeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260513091634_RequestCommentImage")]
+    partial class RequestCommentImage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -498,9 +501,6 @@ namespace Hooome.Persistance.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("CompanyId")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -510,11 +510,18 @@ namespace Hooome.Persistance.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("PhotoUrl")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
                     b.Property<Guid>("RequestId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
+                    b.Property<string>("SenderName")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)");
 
                     b.Property<string>("Text")
                         .IsRequired()
@@ -528,8 +535,6 @@ namespace Hooome.Persistance.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
 
                     b.HasIndex("Id")
                         .IsUnique();
@@ -809,19 +814,11 @@ namespace Hooome.Persistance.Migrations
 
             modelBuilder.Entity("Hooome.Domain.RequestComment", b =>
                 {
-                    b.HasOne("Hooome.Domain.Company", "Company")
-                        .WithMany("Comments")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Hooome.Domain.Request", "Request")
                         .WithMany("Comments")
                         .HasForeignKey("RequestId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Company");
 
                     b.Navigation("Request");
                 });
@@ -876,8 +873,6 @@ namespace Hooome.Persistance.Migrations
             modelBuilder.Entity("Hooome.Domain.Company", b =>
                 {
                     b.Navigation("Address");
-
-                    b.Navigation("Comments");
 
                     b.Navigation("Logo");
 
