@@ -20,6 +20,7 @@ public interface IHooomeDbContext
     DbSet<CompanyImage> CompanyImages { get; set; }
     DbSet<RequestImage> RequestImages { get; set; }
     DbSet<Address> Addresses { get; set; }
+    DbSet<RequestCommentImage> RequestCommentsImages { get; set; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }
