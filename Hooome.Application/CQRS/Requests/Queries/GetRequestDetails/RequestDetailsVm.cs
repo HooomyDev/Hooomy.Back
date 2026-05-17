@@ -14,7 +14,6 @@ public class RequestDetailsVm : IMapWith<Request>
     public RequestStatus Status { get; set; } = RequestStatus.Unknown;
     public RequestCategory Category { get; set; } = RequestCategory.Other;
     public IList<string> ImagesUrls { get; set; } = [];
-    public IList<RequestCommentDto> Comments { get; set; } = [];
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 
@@ -22,8 +21,6 @@ public class RequestDetailsVm : IMapWith<Request>
     {
         profile.CreateMap<Request, RequestDetailsVm>()
             .ForMember(dest => dest.Address,
-                opt => opt.MapFrom(src => $"{src.Address.Street}, {src.Address.HouseNumber}"))
-            .ForMember(dest => dest.Comments,
-                opt => opt.MapFrom(src => src.Comments.OrderByDescending(c => c.CreatedAt)));
+                opt => opt.MapFrom(src => $"{src.Address.Street}, {src.Address.HouseNumber}"));
     }
 }
