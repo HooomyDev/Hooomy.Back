@@ -12,12 +12,14 @@ public class CreateRequestCommentCommandHandler(IRequestRepository requestRepo,
 {
     public async Task<Guid> Handle(CreateRequestCommentCommand request, CancellationToken cancellationToken)
     {
-        var requestExist = await requestRepo.IsExist(request.RequestId, cancellationToken);
+        var requestExists = await requestRepo.IsExist(request.RequestId, cancellationToken);
 
-        if (!requestExist)
+        if (!requestExists)
             throw new NotFoundException(nameof(Request), request.RequestId);
 
-        var existsCompany = await companyRepo.GetById(request.CompanyId, cancellationToken) ??
+        var companyExists = await companyRepo.IsExist(request.CompanyId, cancellationToken);
+        
+        if(companyExists)
             throw new NotFoundException(nameof(Request), request.RequestId);
 
         var newRequestComment = new RequestComment()
@@ -25,7 +27,7 @@ public class CreateRequestCommentCommandHandler(IRequestRepository requestRepo,
             Id = Guid.NewGuid(),
             UserId = request.UserId,
             RequestId = request.RequestId,
-            CompanyId = existsCompany.Id,
+            CompanyId = request.CompanyId,
             Text = request.Text,
             Status = Domain.Enums.RequestCommentStatus.Pending,
             CreatedAt = DateTime.UtcNow,
