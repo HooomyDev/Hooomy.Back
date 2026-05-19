@@ -19,7 +19,7 @@ public class CreateRequestCommentCommandHandler(IRequestRepository requestRepo,
 
         var companyExists = await companyRepo.IsExist(request.CompanyId, cancellationToken);
         
-        if(companyExists)
+        if(!companyExists)
             throw new NotFoundException(nameof(Request), request.RequestId);
 
         var newRequestComment = new RequestComment()

@@ -7,14 +7,16 @@ using MediatR;
 
 namespace Hooome.Application.CQRS.Polls.Commands.SubmitVote;
 
-public class SubmitVoteCommandHandler(IPollRepository pollRepo, 
+public class SubmitVoteCommandHandler(IPollRepository pollRepo,
     IPollVoteRepository pollVoteRepo, IPollOptionRepository pollOptionRepo)
     : IRequestHandler<SubmitVoteCommand>
 {
     public async Task Handle(SubmitVoteCommand request, CancellationToken cancellationToken)
     {
-        var poll = await pollRepo.GetById(request.PollId, cancellationToken)
-            ?? throw new NotFoundException(nameof(Poll), request.PollId);
+        var pollExists = await pollRepo.IsExist(request.PollId, cancellationToken);
+
+        if (!pollExists)
+            throw new NotFoundException(nameof(Poll), request.PollId);
 
         var hasVoted = await pollVoteRepo
             .IsVoteExist(request.PollId, request.UserId, cancellationToken);
@@ -32,7 +34,7 @@ public class SubmitVoteCommandHandler(IPollRepository pollRepo,
                     var vote = new PollVote
                     {
                         Id = Guid.NewGuid(),
-                        PollId = poll.Id,
+                        PollId = request.PollId,
                         OptionId = option.Id,
                         UserId = request.UserId,
                         CreatedAt = DateTime.UtcNow
@@ -49,14 +51,16 @@ public class SubmitVoteCommandHandler(IPollRepository pollRepo,
 
                     foreach (var optionId in request.Vote.OptionIds)
                     {
-                        var option = await pollOptionRepo.GetById(request.Vote.OptionId, cancellationToken)
-                            ?? throw new NotFoundException(nameof(PollOption), request.Vote.OptionId);
+                        var optionExists = await pollOptionRepo.IsExist(optionId, cancellationToken)
+
+                        if (optionExists)
+                            throw new NotFoundException(nameof(PollOption), request.Vote.OptionId);
 
                         var vote = new PollVote
                         {
                             Id = Guid.NewGuid(),
-                            PollId = poll.Id,
-                            OptionId = option.Id,
+                            PollId = request.PollId,
+                            OptionId = optionId,
                             UserId = request.UserId,
                             CreatedAt = DateTime.UtcNow
                         };
