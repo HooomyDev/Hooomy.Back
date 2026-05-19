@@ -27,7 +27,7 @@ public class WorkController(IMapper mapper) : BaseController
         return Ok(works);
     }
 
-    [Authorize(Policy = "EmployeeOnly")]
+    [Authorize(Policy = "AdminOrEmployeeOnly")]
     [HttpPost("create")]
     public async Task<ActionResult<Guid>> Create([FromBody] CreateWorkDto dto)
     {

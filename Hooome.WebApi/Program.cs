@@ -1,10 +1,7 @@
 using Hooome.Application;
 using Hooome.Persistance;
 using Hooome.WebApi.Configuration;
-using Hooome.WebApi.Hubs;
 using Hooome.WebApi.Middleware;
-using Hooome.WebApi.Services;
-using Microsoft.Extensions.FileProviders;
 using Serilog;
 
 Log.Logger = SerilogConfigurator.Configure();

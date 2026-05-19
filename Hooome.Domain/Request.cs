@@ -20,4 +20,5 @@ public class Request
 
     public Address Address { get; set; } = null!;
     public ICollection<RequestImage> Images { get; set; } = [];
+    public ICollection<RequestComment> Comments { get; set; } = [];
 }

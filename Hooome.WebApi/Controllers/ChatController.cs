@@ -129,7 +129,7 @@ public class ChatController(IMapper mapper) : BaseController
     ///</remarks>
     ///<response code="200">Ok</response>
     ///<response code="401">Unauthorized</response>
-    [Authorize(Policy = "EmployeeOnly")]
+    [Authorize(Policy = "AdminOrEmployeeOnly")]
     [HttpGet("company-chats/{companyId:guid}")]
     public async Task<ActionResult<ChatListForCompanyVm>> GetChatsForCompany(Guid companyId)
     {

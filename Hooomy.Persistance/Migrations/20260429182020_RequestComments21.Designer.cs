@@ -3,6 +3,7 @@ using System;
 using Hooome.Persistance;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Hooome.Persistance.Migrations
 {
     [DbContext(typeof(HooomeDbContext))]
-    partial class HooomeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260429182020_RequestComments21")]
+    partial class RequestComments21
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -349,8 +352,10 @@ namespace Hooome.Persistance.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -369,6 +374,8 @@ namespace Hooome.Persistance.Migrations
 
                     b.HasIndex("Id")
                         .IsUnique();
+
+                    b.HasIndex("IsActive");
 
                     b.ToTable("Polls");
                 });
@@ -498,9 +505,6 @@ namespace Hooome.Persistance.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("CompanyId")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -510,11 +514,18 @@ namespace Hooome.Persistance.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("PhotoUrl")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
                     b.Property<Guid>("RequestId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
+                    b.Property<string>("SenderName")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)");
 
                     b.Property<string>("Text")
                         .IsRequired()
@@ -529,57 +540,12 @@ namespace Hooome.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CompanyId");
-
                     b.HasIndex("Id")
                         .IsUnique();
 
                     b.HasIndex("RequestId");
 
                     b.ToTable("RequestComments");
-                });
-
-            modelBuilder.Entity("Hooome.Domain.RequestCommentImage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<long>("FileSize")
-                        .HasColumnType("bigint");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("OriginalFileName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<Guid>("RequestCommentId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("UploadedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RequestCommentId");
-
-                    b.ToTable("RequestCommentsImages");
                 });
 
             modelBuilder.Entity("Hooome.Domain.RequestImage", b =>
@@ -809,32 +775,13 @@ namespace Hooome.Persistance.Migrations
 
             modelBuilder.Entity("Hooome.Domain.RequestComment", b =>
                 {
-                    b.HasOne("Hooome.Domain.Company", "Company")
-                        .WithMany("Comments")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Hooome.Domain.Request", "Request")
                         .WithMany("Comments")
                         .HasForeignKey("RequestId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Company");
-
                     b.Navigation("Request");
-                });
-
-            modelBuilder.Entity("Hooome.Domain.RequestCommentImage", b =>
-                {
-                    b.HasOne("Hooome.Domain.RequestComment", "Comment")
-                        .WithMany("Images")
-                        .HasForeignKey("RequestCommentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Comment");
                 });
 
             modelBuilder.Entity("Hooome.Domain.RequestImage", b =>
@@ -877,8 +824,6 @@ namespace Hooome.Persistance.Migrations
                 {
                     b.Navigation("Address");
 
-                    b.Navigation("Comments");
-
                     b.Navigation("Logo");
 
                     b.Navigation("Polls");
@@ -902,11 +847,6 @@ namespace Hooome.Persistance.Migrations
                 {
                     b.Navigation("Comments");
 
-                    b.Navigation("Images");
-                });
-
-            modelBuilder.Entity("Hooome.Domain.RequestComment", b =>
-                {
                     b.Navigation("Images");
                 });
 #pragma warning restore 612, 618

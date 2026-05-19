@@ -1,4 +1,10 @@
 ﻿using AutoMapper;
+using Hooome.Application.CQRS.RequestComments.Commands.CreateComment;
+using Hooome.Application.CQRS.RequestComments.Commands.DeleteComment;
+using Hooome.Application.CQRS.RequestComments.Commands.UpdateComment;
+using Hooome.Application.CQRS.RequestComments.Commands.UploadCommentImages;
+using Hooome.Application.CQRS.RequestComments.Queries.GetRequestCommentCount;
+using Hooome.Application.CQRS.RequestComments.Queries.GetRequestComments;
 using Hooome.Application.CQRS.Requests.Commands.CreateRequest;
 using Hooome.Application.CQRS.Requests.Commands.DeleteRequest;
 using Hooome.Application.CQRS.Requests.Commands.UpdateRequest;
@@ -175,7 +181,7 @@ public class RequestController(IMapper mapper) : BaseController
     public async Task<ActionResult<RequestListWithPaginationVm>> GetRequests(
         [FromQuery] string? title,
         [FromQuery] Guid? companyId,
-        [FromQuery] int page = 1, 
+        [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10,
         [FromQuery] RequestCategory category = RequestCategory.None,
         [FromQuery] RequestStatus status = RequestStatus.Unknown)
@@ -193,5 +199,94 @@ public class RequestController(IMapper mapper) : BaseController
         var requests = await Mediator.Send(query);
 
         return Ok(requests);
+    }
+
+    [Authorize(Policy = "AdminOrEmployeeOnly")]
+    [HttpPost("add-comment")]
+    public async Task<ActionResult<Guid>> AddComment([FromBody] AddCommentDto dto)
+    {
+        var command = mapper.Map<CreateRequestCommentCommand>(dto);
+        command.UserId = UserId;
+
+        var commentId = await Mediator.Send(command);
+
+        return Ok(commentId);
+    }
+
+    [Authorize(Policy = "AdminOrEmployeeOnly")]
+    [HttpPost("comments/{commentId:guid}/upload-comment-images")]
+    public async Task<ActionResult> UploadCommentImages(Guid commentId, [FromForm] List<IFormFile> files)
+    {
+        var command = new UploadRequestCommentImageCommand
+        {
+            RequestCommentId = commentId,
+            Files = files
+        };
+
+        await Mediator.Send(command);
+
+        return NoContent();
+    }
+
+    [Authorize(Policy = "ApprovedOnly")]
+    [HttpGet("comments")]
+    public async Task<ActionResult<RequestCommentsVm>> GetComments([FromQuery] Guid? requestId,
+        [FromQuery] string? text,
+        [FromQuery] RequestCommentStatus? status,
+        [FromQuery] int page = 1,
+        int pageSize = 5)
+    {
+        var query = new GetRequestCommentsQuery
+        {
+            RequestId = requestId,
+            Text = text,
+            Status = status,
+            Page = page,
+            PageSize = pageSize
+        };
+
+        var comments = await Mediator.Send(query);
+
+        return Ok(comments);
+    }
+
+    [Authorize(Policy = "AdminOrEmployeeOnly")]
+    [HttpGet("comments/count")]
+    public async Task<ActionResult<int>> GetCommentCount([FromQuery] Guid? requestId, string filter = "all")
+    {
+        var query = new GetRequestCommentCountQuery
+        {
+            RequestId = requestId,
+            Filter = filter
+        };
+
+        var count = await Mediator.Send(query);
+
+        return Ok(count);
+    }
+
+    [Authorize(Policy = "AdminOrEmployeeOnly")]
+    [HttpDelete("comments/delete/{commentId:guid}")]
+    public async Task<ActionResult> DeleteComment(Guid commentId)
+    {
+        var command = new DeleteRequestCommentCommand
+        {
+            CommentId = commentId
+        };
+
+        await Mediator.Send(command);
+
+        return NoContent();
+    }
+
+    [Authorize(Policy = "AdminOrEmployeeOnly")]
+    [HttpPut("comments/update")]
+    public async Task<ActionResult> UpdateComment([FromBody] UpdateCommentDto dto)
+    {
+        var query = mapper.Map<UpdateRequestCommentCommand>(dto);
+
+        await Mediator.Send(query);
+
+        return NoContent();
     }
 }

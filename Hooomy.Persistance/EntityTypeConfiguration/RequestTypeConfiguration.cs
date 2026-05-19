@@ -27,6 +27,11 @@ public class RequestTypeConfiguration : IEntityTypeConfiguration<Request>
             .HasForeignKey(i => i.RequestId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasMany(r => r.Comments)
+            .WithOne(i => i.Request)
+            .HasForeignKey(i => i.RequestId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         builder.HasOne(r => r.Address)
             .WithMany(a => a.Requests)
             .HasForeignKey(r => r.AddressId)

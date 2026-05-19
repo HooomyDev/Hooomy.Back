@@ -8,11 +8,21 @@ namespace Hooome.Persistance.Repositories;
 public class RequestRepository(HooomeDbContext dbContext)
     : BaseRepository<Request>(dbContext), IRequestRepository
 {
+    public override async Task<Request?> GetById(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await _dbSet
+            .Include(r => r.Address)
+            .Include(r => r.Images)
+            .Include(r => r.Comments)
+            .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
+    }
+
     public async Task<Request?> GetByIdAndUserId(Guid requestId, Guid userId, CancellationToken cancellationToken = default)
     {
         return await _dbSet
             .Include(r => r.Address)
             .Include(r => r.Images)
+            .Include(r => r.Comments)
             .FirstOrDefaultAsync(x => x.UserID == userId && x.Id == requestId, cancellationToken);
     }
 
@@ -35,11 +45,8 @@ public class RequestRepository(HooomeDbContext dbContext)
         if (endDate.HasValue)
             query = query.Where(r => r.CreatedAt <= endDate.Value.Date.AddDays(1));
 
-        Console.WriteLine(status);
         if (status != RequestStatus.Unknown)
             query = query.Where(r => r.Status == status);
-
-        Console.WriteLine(query.ToQueryString());
 
         return await query
             .OrderByDescending(r => r.CreatedAt)
@@ -59,13 +66,10 @@ public class RequestRepository(HooomeDbContext dbContext)
                        r.CreatedAt.Date <= endDate.Date &&
                        !r.IsDeleted && !r.IsDeleted);
 
-            Console.WriteLine(companyId + "++++++++++++++++++++++++++++++++++++++");
         if(companyId.HasValue)
         {
-            Console.WriteLine(companyId + "++++++++++++++++++++++++++++++++++++++");
             query = query.Where(r => r.Address.ServicedByCompanyId == companyId);
         }
-        Console.WriteLine(companyId + "++++++++++++++++++++++++++++++++++++++");
 
         return await query
             .GroupBy(r => r.CreatedAt.Date)
@@ -85,6 +89,7 @@ public class RequestRepository(HooomeDbContext dbContext)
     {
         var query = _dbContext.Requests
              .Include(r => r.Address)
+             .Include(r => r.Comments)
              .Where(r => !r.IsDeleted)
              .AsQueryable();
 
@@ -129,6 +134,13 @@ public class RequestRepository(HooomeDbContext dbContext)
         {
             image.IsDeleted = true;
             image.DeletedAt = DateTime.UtcNow;
+        }
+
+        foreach (var comment in entity.Comments)
+        {
+            comment.Status = RequestCommentStatus.Deleted;
+            comment.IsDeleted = true;
+            comment.DeletedAt = DateTime.UtcNow;
         }
 
         await _dbContext.SaveChangesAsync(cancellationToken);

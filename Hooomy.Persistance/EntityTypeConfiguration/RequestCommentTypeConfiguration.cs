@@ -21,8 +21,8 @@ public class RequestCommentTypeConfiguration : IEntityTypeConfiguration<RequestC
             .IsRequired()
             .HasMaxLength(1000);
 
-        builder.Property(rc => rc.PhotoUrl)
-            .HasMaxLength(500);
+        builder.Property(rc => rc.Status)
+            .IsRequired();
 
         builder.Property(rc => rc.CreatedAt)
             .IsRequired();
