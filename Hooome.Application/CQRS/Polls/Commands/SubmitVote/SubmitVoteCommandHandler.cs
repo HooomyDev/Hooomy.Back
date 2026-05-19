@@ -51,7 +51,7 @@ public class SubmitVoteCommandHandler(IPollRepository pollRepo,
 
                     foreach (var optionId in request.Vote.OptionIds)
                     {
-                        var optionExists = await pollOptionRepo.IsExist(optionId, cancellationToken)
+                        var optionExists = await pollOptionRepo.IsExist(optionId, cancellationToken);
 
                         if (optionExists)
                             throw new NotFoundException(nameof(PollOption), request.Vote.OptionId);
