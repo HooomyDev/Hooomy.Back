@@ -263,13 +263,12 @@ public class DataSeeder
             requests.Add(new Request
             {
                 Id = Guid.NewGuid(),
-                UserID = Guid.NewGuid(), // В реальном приложении нужно брать ID существующего пользователя
+                UserId = Guid.NewGuid(), // В реальном приложении нужно брать ID существующего пользователя
                 AddressId = address.Id,
                 Title = "asdasd",
                 Description = GetRequestDescription(category, address, i),
                 Status = status,
                 Category = category,
-                PhotoUrl = hasPhoto ? $"https://example.com/photos/request_{DateTime.UtcNow:yyyyMMdd}_{i}.jpg" : string.Empty,
                 CreatedAt = createdDate,
                 UpdatedAt = status != RequestStatus.Created ? createdDate.AddDays(random.Next(1, 15)) : null
             });
@@ -288,13 +287,12 @@ public class DataSeeder
                 requests.Add(new Request
                 {
                     Id = Guid.NewGuid(),
-                    UserID = Guid.NewGuid(),
+                    UserId = Guid.NewGuid(),
                     AddressId = popularAddress.Id,
                     Title = "asdasd",
                     Description = $"Повторная заявка на адрес {popularAddress.Street}, {popularAddress.HouseNumber}. Проблема не решена с предыдущей заявки.",
                     Status = status,
                     Category = category,
-                    PhotoUrl = random.Next(2) == 0 ? $"https://example.com/photos/repeat_{DateTime.UtcNow:yyyyMMdd}_{i}.jpg" : string.Empty,
                     CreatedAt = createdDate,
                     UpdatedAt = status != RequestStatus.Created ? createdDate.AddDays(random.Next(1, 7)) : null
                 });
