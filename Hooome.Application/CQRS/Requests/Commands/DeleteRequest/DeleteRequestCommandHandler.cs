@@ -10,13 +10,9 @@ public class DeleteRequestCommandHandler(IRepository<Request> requestRepo)
 {
     public async Task Handle(DeleteRequestCommand request, CancellationToken cancellationToken)
     {
-        var entity = await requestRepo.GetById(request.Id, cancellationToken);
-
-        if (entity is null || entity.UserID != request.UserId)
-        {
-            throw new NotFoundException(nameof(Request), request.Id);
-        }
-
+        var entity = await requestRepo.GetById(request.Id, cancellationToken) 
+            ?? throw new NotFoundException(nameof(Request), request.Id);
+        
         await requestRepo.Delete(entity, cancellationToken);
     }
 }
