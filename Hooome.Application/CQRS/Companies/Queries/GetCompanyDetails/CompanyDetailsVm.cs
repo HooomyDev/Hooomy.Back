@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Hooome.Application.Common.Mappings;
+using Hooome.Application.CQRS.Requests.Queries.GetRequestDetails;
 using Hooome.Domain;
 
 namespace Hooome.Application.CQRS.Companies.Queries.GetCompanyDetails;
@@ -14,6 +15,8 @@ public class CompanyDetailsVm : IMapWith<Company>
     public string Address { get; set; } = null!;
     public List<AddressDto> Addresses { get; set; } = [];
     public string LogoUrl { get; set; } = null!;
+    public double AverageRating { get; set; }
+    public List<ReviewDto> Reviews { get; set; } = [];
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime? UpdatedAt { get; set; }
 
