@@ -8,7 +8,7 @@ using MediatR;
 
 namespace Hooome.Application.CQRS.Companies.Queries.GetCompanyDetails;
 
-public class GetCompanyDetailsQueryHandler(ICompanyRepository companyRepo, 
+public class GetCompanyDetailsQueryHandler(ICompanyRepository companyRepo,
     ICompanyImageRepository companyImageRepo,
     IRequestReviewRepository requestReviewRepo,
     IMinioService minioService,
@@ -24,7 +24,7 @@ public class GetCompanyDetailsQueryHandler(ICompanyRepository companyRepo,
 
         var companyLogo = await companyImageRepo.GetLogoByCompanyId(companyDetails.Id, cancellationToken);
 
-        if(companyLogo is not null)
+        if (companyLogo is not null)
         {
             companyDetails.LogoUrl = await minioService.GetUrl(ImageType.Company, companyLogo.FileName);
         }
@@ -33,7 +33,12 @@ public class GetCompanyDetailsQueryHandler(ICompanyRepository companyRepo,
         var reviewsDtos = mapper.Map<List<ReviewDto>>(reviews);
 
         companyDetails.Reviews = reviewsDtos;
-        companyDetails.AverageRating = reviewsDtos.Average(r => r.Score);
+        if (reviews is not null)
+        {
+            companyDetails.AverageRating = reviews.Count != 0
+                 ? reviews.Average(r => r.Score)
+                 : 0;
+        }
 
         return companyDetails;
     }
