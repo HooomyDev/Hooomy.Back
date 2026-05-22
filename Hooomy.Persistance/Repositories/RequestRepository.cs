@@ -14,6 +14,7 @@ public class RequestRepository(HooomeDbContext dbContext)
             .Include(r => r.Address)
             .Include(r => r.Images)
             .Include(r => r.Comments)
+            .Include(r => r.Review)
             .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
     }
 
@@ -23,7 +24,8 @@ public class RequestRepository(HooomeDbContext dbContext)
             .Include(r => r.Address)
             .Include(r => r.Images)
             .Include(r => r.Comments)
-            .FirstOrDefaultAsync(x => x.UserID == userId && x.Id == requestId, cancellationToken);
+            .Include(r => r.Review)
+            .FirstOrDefaultAsync(x => x.UserId == userId && x.Id == requestId, cancellationToken);
     }
 
     public async Task<IEnumerable<Request>> GetFilteredRequests(
@@ -36,7 +38,7 @@ public class RequestRepository(HooomeDbContext dbContext)
         var query = _dbSet
             .Include(r => r.Address)
             .Include(r => r.Images)
-            .Where(r => !r.IsDeleted && r.UserID == userId)
+            .Where(r => !r.IsDeleted && r.UserId == userId)
             .AsQueryable();
 
         if (startDate.HasValue)
@@ -110,7 +112,7 @@ public class RequestRepository(HooomeDbContext dbContext)
 
         if (companyId is not null)
         {
-            query = query.Where(r => r.Address.ServicedByCompanyId == companyId);
+            query = query.Where(r => r.Address.ServicedByCompanyId == companyId && r.Status != RequestStatus.Pending);
         }
 
         var totalCount = await query.CountAsync(cancellationToken);

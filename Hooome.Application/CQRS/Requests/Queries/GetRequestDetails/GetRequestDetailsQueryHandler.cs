@@ -9,7 +9,7 @@ namespace Hooome.Application.CQRS.Requests.Queries.GetRequestDetails;
 
 public class GetRequestDetailsQueryHandler(IRequestRepository requestRepo,
     IRequestImageRepository requestImageRepo,
-    IRequestCommentImageRepository requestCommentImageRepo,
+    IRequestReviewRepository requestReviewRepo,
     IMapper mapper,
     IMinioService minioService)
     : IRequestHandler<GetRequestDetailsQuery, RequestDetailsVm>

@@ -1,7 +1,6 @@
 ﻿using Hooome.Application.Interfaces;
 using Hooome.Domain;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 using System.Reflection;
 
 namespace Hooome.Persistance;
@@ -25,6 +24,7 @@ public sealed class HooomeDbContext(DbContextOptions<HooomeDbContext> options)
     public DbSet<RequestImage> RequestImages { get; set; }
     public DbSet<Address> Addresses { get; set; }
     public DbSet<RequestCommentImage> RequestCommentsImages { get; set; }
+    public DbSet<RequestReview> RequestReviews { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

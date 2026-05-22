@@ -5,6 +5,8 @@ using Hooome.Application.CQRS.RequestComments.Commands.UpdateComment;
 using Hooome.Application.CQRS.RequestComments.Commands.UploadCommentImages;
 using Hooome.Application.CQRS.RequestComments.Queries.GetRequestCommentCount;
 using Hooome.Application.CQRS.RequestComments.Queries.GetRequestComments;
+using Hooome.Application.CQRS.RequestReviews.Commands.CreateReview;
+using Hooome.Application.CQRS.RequestReviews.Commands.DeleteReview;
 using Hooome.Application.CQRS.Requests.Commands.CreateRequest;
 using Hooome.Application.CQRS.Requests.Commands.DeleteRequest;
 using Hooome.Application.CQRS.Requests.Commands.UpdateRequest;
@@ -286,6 +288,30 @@ public class RequestController(IMapper mapper) : BaseController
         var query = mapper.Map<UpdateRequestCommentCommand>(dto);
 
         await Mediator.Send(query);
+
+        return NoContent();
+    }
+
+    [Authorize(Policy = "ApprovedOnly")]
+    [HttpPost("{requestId:guid}/review")]
+    public async Task<ActionResult> Review(Guid requestId, [FromBody] CreateReviewDto dto)
+    {
+        var command = mapper.Map<CreateReviewCommand>(dto);
+        command.RequestId = requestId;
+        command.UserId = UserId;
+
+        await Mediator.Send(command);
+
+        return NoContent();
+    }
+
+    [Authorize(Policy = "ApprovedOnly")]
+    [HttpDelete("delete-review/{reviewId:guid}")]
+    public async Task<ActionResult> DeleteReview(Guid reviewId)
+    {
+        var command = new DeleteReviewCommand { ReviewId = reviewId };
+
+        await Mediator.Send(command);
 
         return NoContent();
     }

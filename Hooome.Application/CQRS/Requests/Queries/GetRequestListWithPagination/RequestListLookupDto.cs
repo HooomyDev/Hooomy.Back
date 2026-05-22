@@ -14,6 +14,8 @@ public class RequestListLookupDto : IMapWith<Request>
     public string Address { get; set; } = null!;
     public RequestStatus Status { get; set; } = RequestStatus.Unknown;
     public RequestCategory Category { get; set; } = RequestCategory.Other;
+    public bool IsDeleted { get; set; }
+    public DateTime? DeletedAt { get; set; }
     public DateTime CreatedAt { get; set; }
 
     public void Mapping(Profile profile)

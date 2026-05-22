@@ -18,12 +18,12 @@ public class CreateRequestCommandHandler(
         var newRequest = new Request
         {
             Id = Guid.NewGuid(),
-            UserID = request.UserId,
+            UserId = request.UserId,
             Title = request.Title,
             Description = request.Description,
             AddressId = request.AddressId,
             Category = request.Category,
-            Status = Domain.Enums.RequestStatus.Created,
+            Status = Domain.Enums.RequestStatus.Pending,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = null
         };
