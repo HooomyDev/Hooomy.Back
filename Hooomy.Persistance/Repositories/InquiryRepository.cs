@@ -26,6 +26,7 @@ public class InquiryRepository(HooomeDbContext dbContext)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .OrderByDescending(i => i.CreatedAt)
+            .AsNoTracking()
             .ToListAsync(cancellationToken);
         
         var totalCount = await query.CountAsync(cancellationToken);

@@ -23,8 +23,4 @@
     <ProjectReference Include="..\Hooome.Domain\Hooome.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="CQRS\Inquiries\Queries\" />
-  </ItemGroup>
-
 </Project>
