@@ -28,33 +28,7 @@ public class RequestRepository(HooomeDbContext dbContext)
             .FirstOrDefaultAsync(x => x.UserId == userId && x.Id == requestId, cancellationToken);
     }
 
-    public async Task<IEnumerable<Request>> GetFilteredRequests(
-        Guid userId,
-        DateTime? startDate = null,
-        DateTime? endDate = null,
-        RequestStatus? status = null,
-        CancellationToken cancellationToken = default)
-    {
-        var query = _dbSet
-            .Include(r => r.Address)
-            .Include(r => r.Images)
-            .Where(r => !r.IsDeleted && r.UserId == userId)
-            .AsQueryable();
 
-        if (startDate.HasValue)
-            query = query.Where(r => r.CreatedAt >= startDate.Value);
-
-        if (endDate.HasValue)
-            query = query.Where(r => r.CreatedAt <= endDate.Value.Date.AddDays(1));
-
-        if (status != RequestStatus.Unknown)
-            query = query.Where(r => r.Status == status);
-
-        return await query
-            .OrderByDescending(r => r.CreatedAt)
-            .AsNoTracking()
-            .ToListAsync(cancellationToken);
-    }
 
     public async Task<Dictionary<string, int>> GetRequestsByDate(
         DateTime startDate,
@@ -68,7 +42,7 @@ public class RequestRepository(HooomeDbContext dbContext)
                        r.CreatedAt.Date <= endDate.Date &&
                        !r.IsDeleted && !r.IsDeleted);
 
-        if(companyId.HasValue)
+        if (companyId.HasValue)
         {
             query = query.Where(r => r.Address.ServicedByCompanyId == companyId);
         }
@@ -77,7 +51,7 @@ public class RequestRepository(HooomeDbContext dbContext)
             .GroupBy(r => r.CreatedAt.Date)
             .Select(g => new { Key = g.Key.ToString("yyyy-MM-dd"), Count = g.Count() })
             .AsNoTracking()
-            .ToDictionaryAsync(g => g.Key, g => g.Count, cancellationToken); 
+            .ToDictionaryAsync(g => g.Key, g => g.Count, cancellationToken);
     }
 
     public async Task<(IEnumerable<Request> Items, int TotalCount)> GetRequestsWithPagination(
@@ -146,5 +120,65 @@ public class RequestRepository(HooomeDbContext dbContext)
         }
 
         await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<Request>> GetByCompanyId(Guid companyId, CancellationToken cancellationToken = default)
+    {
+        return await _dbSet
+            .Include(r => r.Address)
+            .Where(r => r.Address.ServicedByCompanyId == companyId && !r.IsDeleted)
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<int> Count(RequestStatus requestStatus = RequestStatus.Unknown, CancellationToken cancellationToken = default)
+    {
+        var query = _dbSet.Where(r => !r.IsDeleted).AsQueryable();
+
+        if (requestStatus != RequestStatus.Unknown)
+        {
+            query = query.Where(r => r.Status == requestStatus);
+        }
+
+        return await query.CountAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<Request>> GetFilteredRequests(Guid userId,
+        RequestCategory? category = null,
+        RequestStatus? status = null,
+        string? searchTitle = null,
+        Guid? addressId = null,
+        CancellationToken cancellationToken = default)
+    {
+        var query = _dbSet
+            .Include(r => r.Address)
+            .Include(r => r.Images)
+            .Where(r => !r.IsDeleted && r.UserId == userId)
+            .AsQueryable();
+
+        if(status.HasValue && status.Value != RequestStatus.Unknown)
+        {
+            query = query.Where(r => r.Status == status);
+        }
+
+        if(category.HasValue && category.Value != RequestCategory.None)
+        {
+            query = query.Where(r => r.Category == category);
+        }
+
+        if(!string.IsNullOrEmpty(searchTitle))
+        {
+            query = query.Where(r => r.Title.Contains(searchTitle));
+        }
+
+        if(addressId is not null)
+        {
+            query = query.Where(r => r.AddressId == addressId);
+        }
+
+        return await query
+            .OrderByDescending(r => r.CreatedAt)
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
     }
 }

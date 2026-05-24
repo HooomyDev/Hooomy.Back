@@ -7,6 +7,7 @@ using Hooome.Application.CQRS.Companies.Commands.UpdateCompany;
 using Hooome.Application.CQRS.Companies.Commands.UploadLogo;
 using Hooome.Application.CQRS.Companies.Queries.GetCompanyDetails;
 using Hooome.Application.CQRS.Companies.Queries.GetCompanyList;
+using Hooome.Application.CQRS.Companies.Queries.GetCompanyStatistics;
 using Hooome.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -120,5 +121,16 @@ public class CompanyController(IMapper mapper) : BaseController
         await Mediator.Send(command);
 
         return NoContent();
+    }
+
+    [Authorize(Policy = "AdminOnly")]
+    [HttpGet("statistic")]
+    public async Task<ActionResult<CompanyStatisticsVm>> GetStatistic()
+    {
+        var query = new GetCompanyStatisticsQuery();
+
+        var statistic = await Mediator.Send(query);
+
+        return Ok(statistic);
     }
 }
