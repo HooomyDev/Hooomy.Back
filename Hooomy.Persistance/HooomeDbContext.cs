@@ -10,7 +10,6 @@ public sealed class HooomeDbContext(DbContextOptions<HooomeDbContext> options)
 {
     public DbSet<Request> Requests { get; set; }
     public DbSet<FavoriteAddress> FavoriteAddresses { get; set; }
-    public DbSet<Street> Streets { get; set; }
     public DbSet<Work> Works { get; set; }
     public DbSet<Complaint> Complaints { get; set; }
     public DbSet<Company> Companies { get; set; }

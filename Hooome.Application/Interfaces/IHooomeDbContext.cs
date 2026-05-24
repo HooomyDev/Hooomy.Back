@@ -7,7 +7,6 @@ public interface IHooomeDbContext
 {
     DbSet<Request> Requests { get; set; }
     DbSet<FavoriteAddress> FavoriteAddresses { get; set; }
-    DbSet<Street> Streets { get; set; }
     DbSet<Work> Works { get; set; }
     DbSet<Complaint> Complaints { get; set; }
     DbSet<Company> Companies { get; set; }
