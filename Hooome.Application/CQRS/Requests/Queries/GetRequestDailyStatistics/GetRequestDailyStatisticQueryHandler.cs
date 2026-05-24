@@ -65,16 +65,15 @@ public class GetRequestDailyStatisticQueryHandler(IRequestRepository requestRepo
         return statistics;
     }
 
-
-    private static (DateTime startDate, DateTime endDate) GetDateRange(RequestsPeriod period)
+    private static (DateTime startDate, DateTime endDate) GetDateRange(Period period)
     {
         var now = DateTime.UtcNow.Date;
 
         return period switch
         {
-            RequestsPeriod.Week => (now.AddDays(-6), now),
-            RequestsPeriod.TwoWeek => (now.AddDays(-13), now),
-            RequestsPeriod.Month => (now.AddDays(-29), now),
+            Period.Week => (now.AddDays(-6), now),
+            Period.TwoWeek => (now.AddDays(-13), now),
+            Period.Month => (now.AddDays(-29), now),
             _ => (now.AddDays(-6), now)
         };
     }

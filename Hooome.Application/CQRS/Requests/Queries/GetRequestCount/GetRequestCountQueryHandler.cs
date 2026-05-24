@@ -1,15 +1,14 @@
 ﻿using Hooome.Application.Interfaces;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Hooome.Application.CQRS.Requests.Queries.GetRequestCount;
 
-public class GetRequestCountQueryHandler(IHooomeDbContext dbContext)
+public class GetRequestCountQueryHandler(IRequestRepository requestRepo)
     : IRequestHandler<GetRequestCountQuery, int>
 {
     public async Task<int> Handle(GetRequestCountQuery request, CancellationToken cancellationToken)
     {
-        var requestCount = await dbContext.Requests.CountAsync(cancellationToken);
+        var requestCount = await requestRepo.Count(request.Status, cancellationToken);
 
         return requestCount;
     }

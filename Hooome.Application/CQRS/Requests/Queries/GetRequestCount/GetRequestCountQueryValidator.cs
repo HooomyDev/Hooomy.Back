@@ -7,6 +7,6 @@ public class GetRequestCountQueryValidator
 {
     public GetRequestCountQueryValidator()
     {
-        
+        RuleFor(r => r.Status).IsInEnum();
     }
 }

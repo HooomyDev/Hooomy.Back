@@ -9,11 +9,11 @@ public interface IRequestRepository : IRepository<Request>
         Guid userId, 
         CancellationToken cancellationToken = default);
 
-    Task<IEnumerable<Request>> GetFilteredRequests(
-        Guid userId,
-        DateTime? startDate = null,
-        DateTime? endDate = null,
+    Task<IEnumerable<Request>> GetFilteredRequests(Guid userId,
+        RequestCategory? category = null,
         RequestStatus? status = null,
+        string? searchTitle = null,
+        Guid? addressId = null,
         CancellationToken cancellationToken = default);
 
     Task<Dictionary<string, int>> GetRequestsByDate(
@@ -29,6 +29,14 @@ public interface IRequestRepository : IRepository<Request>
         RequestCategory? category = null,
         int page = 1,
         int pageSize = 10,
+        CancellationToken cancellationToken = default);
+
+    Task<IEnumerable<Request>> GetByCompanyId(
+        Guid companyId,
+        CancellationToken cancellationToken = default);
+
+    Task<int> Count(
+        RequestStatus requestStatus = RequestStatus.Unknown, 
         CancellationToken cancellationToken = default);
 }
 

@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using Hooome.Application.Interfaces;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Hooome.Application.CQRS.Requests.Queries.GetRequestList;
 
@@ -13,9 +11,10 @@ public class GetRequestsListQueryHandler(IRequestRepository requestRepo, IMapper
     {
         var requests = await requestRepo.GetFilteredRequests(
             userId: request.UserId,
-            startDate: request.StartDate,
-            endDate: request.EndDate,
+            category: request.RequestCategory,
+            addressId: request.AddressId,
             status: request.RequestStatus,
+            searchTitle: request.SearchTitle,
             cancellationToken: cancellationToken);
 
         var requestsDtos = mapper.Map<List<RequestListDto>>(requests);
