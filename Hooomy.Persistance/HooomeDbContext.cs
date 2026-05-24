@@ -24,6 +24,7 @@ public sealed class HooomeDbContext(DbContextOptions<HooomeDbContext> options)
     public DbSet<Address> Addresses { get; set; }
     public DbSet<RequestCommentImage> RequestCommentsImages { get; set; }
     public DbSet<RequestReview> RequestReviews { get; set; }
+    public DbSet<Inquiry> Inquiries { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

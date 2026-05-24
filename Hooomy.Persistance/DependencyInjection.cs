@@ -35,6 +35,7 @@ public static class DependencyInjection
         services.AddScoped<IRequestCommentImageRepository, RequestCommentImageRepository>();
         services.AddScoped<IRequestCommentRepository, RequestCommentRepository>();
         services.AddScoped<IRequestReviewRepository, RequestReviewRepository>();
+        services.AddScoped<IInquiryRepository, InquiryRepository>();
 
         return services;
     }
