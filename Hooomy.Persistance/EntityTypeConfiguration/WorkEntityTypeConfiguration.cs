@@ -22,5 +22,10 @@ public class WorkEntityTypeConfiguration : IEntityTypeConfiguration<Work>
         builder.Property(w => w.PlannedEndTime).IsRequired();
         builder.Property(w => w.FactStartTime);
         builder.Property(w => w.FactEndTime);
+
+        builder.HasMany(w => w.Notifications)
+            .WithOne(wn => wn.Work)
+            .HasForeignKey(wn => wn.WorkId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

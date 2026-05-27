@@ -21,4 +21,5 @@ public class Request
     public RequestReview? Review { get; set; }
     public ICollection<RequestImage> Images { get; set; } = [];
     public ICollection<RequestComment> Comments { get; set; } = [];
+    public ICollection<RequestNotification> Notifications { get; set; } = [];
 }

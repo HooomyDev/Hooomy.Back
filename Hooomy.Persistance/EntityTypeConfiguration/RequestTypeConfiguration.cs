@@ -36,5 +36,10 @@ public class RequestTypeConfiguration : IEntityTypeConfiguration<Request>
             .WithMany(a => a.Requests)
             .HasForeignKey(r => r.AddressId)
             .OnDelete(DeleteBehavior.NoAction);
+
+        builder.HasMany(r => r.Notifications)
+            .WithOne(i => i.Request)
+            .HasForeignKey(rn => rn.RequestId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

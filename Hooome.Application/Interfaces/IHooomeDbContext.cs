@@ -22,6 +22,9 @@ public interface IHooomeDbContext
     DbSet<RequestCommentImage> RequestCommentsImages { get; set; }
     DbSet<RequestReview> RequestReviews { get; set; }
     DbSet<Inquiry> Inquiries { get; set; }
+    DbSet<SystemNotification> SystemNotifications { get; set; }
+    DbSet<WorkNotification> WorkNotifications { get; set; }
+    DbSet<RequestNotification> RequestNotifications { get; set; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }
