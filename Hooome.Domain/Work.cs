@@ -18,4 +18,5 @@ public class Work
     public DateTime? UpdatedAt { get; set; }
 
     public Address Address { get; set; } = null!;
+    public ICollection<WorkNotification> Notifications { get; set; } = [];
 }
