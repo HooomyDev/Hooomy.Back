@@ -9,6 +9,7 @@ public class RequestListDto : IMapWith<Request>
 {
     public Guid Id { get; set; }
     public string Title { get; set; } = null!;
+    public RequestCategory Category { get; set; } = RequestCategory.None;
     public RequestStatus Status { get; set; } = RequestStatus.Unknown;
     public string Address { get; set; } = null!;
     public DateTime? CreatedAt { get; set; }

@@ -1,4 +1,5 @@
 ﻿using Hooome.Application.CQRS.Addresses.Commands.CreateAddress;
+using Hooome.Application.CQRS.Addresses.Queries.GetAddressDetails;
 using Hooome.Application.CQRS.Addresses.Queries.GetAddressList;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -36,7 +37,7 @@ public class AddressController : BaseController
     /// <response code="200">Ok</response>
     /// <response code="400">Bad request</response>
     /// <response code="401">Unauthorized</response>
-    [Authorize(Policy = "ApprovedOnly")]
+    [Authorize(Policy = "UserPendingOrGuest")]
     [HttpGet]
     [ProducesResponseType(typeof(AddressListVm), StatusCodes.Status200OK)]
     public async Task<ActionResult<AddressListVm>> Get([FromQuery] string searchQuery)
@@ -95,5 +96,19 @@ public class AddressController : BaseController
         var id = await Mediator.Send(query);
 
         return Ok(id);
+    }
+
+    [Authorize(Policy = "UserPendingOrGuest")]
+    [HttpGet("{addressId:guid}")]
+    public async Task<ActionResult<AddressDetailsVm>> GetDetails(Guid addressId)
+    {
+        var query = new GetAddressDetailsQuery
+        {
+            AddressId = addressId
+        };
+
+        var address = await Mediator.Send(query);
+
+        return Ok(address);
     }
 }

@@ -7,7 +7,8 @@ public class GetRequestListQuery : IRequest<RequestListVm>
 {
     public Guid UserId { get; set; }
 
-    public RequestStatus? RequestStatus { get; set; }
-    public DateTime? StartDate { get; set; }
-    public DateTime? EndDate { get; set; }
+    public RequestCategory? RequestCategory { get; set; } 
+    public RequestStatus? RequestStatus { get; set; } 
+    public string? SearchTitle { get; set; }
+    public Guid? AddressId { get; set; }
 }

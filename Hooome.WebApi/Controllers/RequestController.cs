@@ -34,17 +34,19 @@ public class RequestController(IMapper mapper) : BaseController
     [Authorize(Policy = "ApprovedOnly")]
     [HttpGet]
     public async Task<ActionResult<RequestListVm>> Get(
-        [FromQuery] DateTime? startDate,
-        [FromQuery] DateTime? endDate,
-        [FromQuery] RequestStatus requestStatus = RequestStatus.Unknown
+        [FromQuery] Guid? addressId,
+        [FromQuery] string? searchTitle,
+        [FromQuery] RequestCategory? requestCategory,
+        [FromQuery] RequestStatus? requestStatus 
         )
     {
         var query = new GetRequestListQuery
         {
             UserId = UserId,
-            StartDate = startDate,
-            EndDate = endDate,
-            RequestStatus = requestStatus
+            RequestStatus = requestStatus,
+            RequestCategory = requestCategory,
+            AddressId = addressId,
+            SearchTitle = searchTitle,
         };
 
         var vm = await Mediator.Send(query);
@@ -69,9 +71,12 @@ public class RequestController(IMapper mapper) : BaseController
 
     [Authorize(Policy = "UserPendingOrGuest")]
     [HttpGet("count")]
-    public async Task<ActionResult<int>> GetCount()
+    public async Task<ActionResult<int>> GetCount([FromQuery] RequestStatus status)
     {
-        var query = new GetRequestCountQuery();
+        var query = new GetRequestCountQuery()
+        {
+            Status = status
+        };
 
         var count = await Mediator.Send(query);
 
@@ -85,7 +90,7 @@ public class RequestController(IMapper mapper) : BaseController
     {
         var query = new GetRequestDailyStatisticQuery
         {
-            Period = (RequestsPeriod)period,
+            Period = (Period)period,
             CompanyId = companyId
         };
 

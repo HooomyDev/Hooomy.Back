@@ -7,6 +7,7 @@ namespace Hooome.Application.CQRS.Works.Queries.GetWorkList;
 
 public class WorkListLookupDto : IMapWith<Work>
 {
+    public Guid Id { get; set; }
     public string Title { get; set; } = null!;
     public string Description { get; set; } = null!;
     public string Address { get; set; } = null!;
@@ -16,6 +17,8 @@ public class WorkListLookupDto : IMapWith<Work>
     public DateTime PlannedEndTime { get; set; }
     public DateTime? FactStartTime { get; set; }
     public DateTime? FactEndTime { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 
     public void Mapping(Profile profile)
     {

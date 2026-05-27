@@ -264,6 +264,32 @@ namespace Hooome.Persistance.Migrations
                     b.ToTable("FavoriteAddresses");
                 });
 
+            modelBuilder.Entity("Hooome.Domain.Inquiry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<string>("UserEmail")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.ToTable("Inquiries");
+                });
+
             modelBuilder.Entity("Hooome.Domain.Message", b =>
                 {
                     b.Property<Guid>("Id")
@@ -665,25 +691,6 @@ namespace Hooome.Persistance.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("RequestReviews");
-                });
-
-            modelBuilder.Entity("Hooome.Domain.Street", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Id")
-                        .IsUnique();
-
-                    b.ToTable("Streets");
                 });
 
             modelBuilder.Entity("Hooome.Domain.Work", b =>

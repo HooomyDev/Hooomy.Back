@@ -8,6 +8,7 @@ public class ChatListLookupDto : IMapWith<Chat>
 {
     public Guid Id { get; set; }
     public string CompanyName { get; set; } = null!;
+    public string ResidentName { get; set; } = null!;
     public string LastMessageContent { get; set; } = null!;
     public DateTime? LastMessageSentAt { get; set; }
     public DateTime CreatedAt { get; set; }

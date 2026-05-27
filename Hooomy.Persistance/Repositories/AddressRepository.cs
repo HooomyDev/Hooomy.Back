@@ -8,6 +8,14 @@ namespace Hooome.Persistance.Repositories;
 public class AddressRepository(HooomeDbContext dbContext)
     : BaseRepository<Address>(dbContext), IAddressRepository
 {
+    public override async Task<Address?> GetById(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await _dbSet
+            .Include(a => a.Works)
+            .Include(a => a.ServicedByCompany)
+            .FirstOrDefaultAsync(a => a.Id == id, cancellationToken);  
+    }
+
     public async Task AddAddress(Guid companyId, Guid addressId, CancellationToken cancellationToken = default)
     {
         var company = await _dbContext.Companies
@@ -46,7 +54,7 @@ public class AddressRepository(HooomeDbContext dbContext)
     public async Task<List<Address>> GetByQuery(string query, CancellationToken cancellationToken = default) 
         => await _dbSet.Where(a => EF.Functions.ILike(a.Street, $"%{query}%"))
             .OrderBy(s => s.Street)
-            .Take(15)
+            .Take(30)
             .AsNoTracking()
             .ToListAsync(cancellationToken);
 }
