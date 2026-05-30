@@ -1,7 +1,6 @@
 ﻿using Hooome.Application.Interfaces;
 using Hooome.Domain;
 using Hooome.Domain.Enums;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hooome.Persistance.Repositories;
@@ -16,6 +15,7 @@ public class WorkRepository(HooomeDbContext dbContext)
         WorkSeriousness? seriousness = null,
         Guid? addressId = null,
         string? searchTitle = null,
+        Guid? companyId = null,
         CancellationToken cancellationToken = default)
     {
         var query = _dbSet.Include(w => w.Address).AsQueryable();
@@ -38,6 +38,11 @@ public class WorkRepository(HooomeDbContext dbContext)
         if(!string.IsNullOrEmpty(searchTitle))
         {
             query = query.Where(w => w.Title.Contains(searchTitle));
+        }
+
+        if(companyId is not null)
+        {
+            query = query.Where(w => w.Address.ServicedByCompanyId == companyId);
         }
 
         var totalCount = await query.CountAsync(cancellationToken);

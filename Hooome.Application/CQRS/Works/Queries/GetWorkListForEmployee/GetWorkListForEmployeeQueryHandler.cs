@@ -17,6 +17,7 @@ public class GetWorkListForEmployeeQueryHandler(IWorkRepository workRepo, IMappe
             seriousness: request.Seriousness,
             addressId: request.AddressId,
             searchTitle: request.SearchTitle,
+            companyId: request.CompanyId,
             cancellationToken: cancellationToken);
 
         var workDtos = mapper.Map<List<WorkListLookupDto>>(works);

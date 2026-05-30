@@ -7,6 +7,6 @@ public class GetWorkListForEmployeeQueryValidator
 {
     public GetWorkListForEmployeeQueryValidator()
     {
-        
+        RuleFor(x => x.CompanyId).NotEmpty().NotEqual(Guid.Empty);
     }
 }

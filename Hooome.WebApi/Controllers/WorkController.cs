@@ -40,12 +40,14 @@ public class WorkController(IMapper mapper) : BaseController
         [FromQuery] WorkSeriousness? seriousness,
         [FromQuery] Guid? addressId,
         [FromQuery] string? searchTitle,
+        [FromQuery] Guid companyId,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10
         )
     {
         var query = new GetWorkListForEmployeeQuery
         {
+            CompanyId = companyId,
             Category = category,
             Seriousness = seriousness,
             AddressId = addressId,
