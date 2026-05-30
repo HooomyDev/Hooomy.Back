@@ -24,7 +24,7 @@ public class CompanyDetailsVm : IMapWith<Company>
     {
         profile.CreateMap<Company, CompanyDetailsVm>()
             .ForMember(dest => dest.Address,
-                opt => opt.MapFrom(src => $"{src.Address.Street}, {src.Address.HouseNumber}"))
+                opt => opt.MapFrom(src => src.Address == null ? "-" : $"{src.Address.Street}, {src.Address.HouseNumber}"))
             .ForMember(dest => dest.Addresses,
                 opt => opt.MapFrom(src => src.ServedAddresses));
     }
