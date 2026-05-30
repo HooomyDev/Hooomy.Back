@@ -13,5 +13,6 @@ public interface IWorkRepository : IRepository<Work>
         WorkSeriousness? seriousness = null,
         Guid? addressId = null,
         string? searchTitle = null,
+        Guid? companyId = null,
         CancellationToken cancellationToken = default);
 }
