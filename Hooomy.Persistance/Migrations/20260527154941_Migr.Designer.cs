@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Hooome.Persistance.Migrations
 {
     [DbContext(typeof(HooomeDbContext))]
-    [Migration("20260519174827_RequestReview")]
-    partial class RequestReview
+    [Migration("20260527154941_Migr")]
+    partial class Migr
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -265,6 +265,32 @@ namespace Hooome.Persistance.Migrations
                         .IsUnique();
 
                     b.ToTable("FavoriteAddresses");
+                });
+
+            modelBuilder.Entity("Hooome.Domain.Inquiry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<string>("UserEmail")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.ToTable("Inquiries");
                 });
 
             modelBuilder.Entity("Hooome.Domain.Message", b =>
@@ -624,6 +650,30 @@ namespace Hooome.Persistance.Migrations
                     b.ToTable("RequestImages");
                 });
 
+            modelBuilder.Entity("Hooome.Domain.RequestNotification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("RequestId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RequestId");
+
+                    b.ToTable("RequestNotifications");
+                });
+
             modelBuilder.Entity("Hooome.Domain.RequestReview", b =>
                 {
                     b.Property<Guid>("Id")
@@ -633,7 +683,7 @@ namespace Hooome.Persistance.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("DeletedAt")
+                    b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsDeleted")
@@ -653,7 +703,7 @@ namespace Hooome.Persistance.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("UserId")
@@ -670,23 +720,23 @@ namespace Hooome.Persistance.Migrations
                     b.ToTable("RequestReviews");
                 });
 
-            modelBuilder.Entity("Hooome.Domain.Street", b =>
+            modelBuilder.Entity("Hooome.Domain.SystemNotification", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Title")
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Text")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Id")
-                        .IsUnique();
-
-                    b.ToTable("Streets");
+                    b.ToTable("SystemNotifications");
                 });
 
             modelBuilder.Entity("Hooome.Domain.Work", b =>
@@ -737,6 +787,30 @@ namespace Hooome.Persistance.Migrations
                     b.HasIndex("AddressId");
 
                     b.ToTable("Works");
+                });
+
+            modelBuilder.Entity("Hooome.Domain.WorkNotification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<Guid>("WorkId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WorkId");
+
+                    b.ToTable("WorkNotifications");
                 });
 
             modelBuilder.Entity("Hooome.Domain.Address", b =>
@@ -893,6 +967,17 @@ namespace Hooome.Persistance.Migrations
                     b.Navigation("Request");
                 });
 
+            modelBuilder.Entity("Hooome.Domain.RequestNotification", b =>
+                {
+                    b.HasOne("Hooome.Domain.Request", "Request")
+                        .WithMany("Notifications")
+                        .HasForeignKey("RequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Request");
+                });
+
             modelBuilder.Entity("Hooome.Domain.RequestReview", b =>
                 {
                     b.HasOne("Hooome.Domain.Request", "Request")
@@ -913,6 +998,17 @@ namespace Hooome.Persistance.Migrations
                         .IsRequired();
 
                     b.Navigation("Address");
+                });
+
+            modelBuilder.Entity("Hooome.Domain.WorkNotification", b =>
+                {
+                    b.HasOne("Hooome.Domain.Work", "Work")
+                        .WithMany("Notifications")
+                        .HasForeignKey("WorkId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Work");
                 });
 
             modelBuilder.Entity("Hooome.Domain.Address", b =>
@@ -960,12 +1056,19 @@ namespace Hooome.Persistance.Migrations
 
                     b.Navigation("Images");
 
+                    b.Navigation("Notifications");
+
                     b.Navigation("Review");
                 });
 
             modelBuilder.Entity("Hooome.Domain.RequestComment", b =>
                 {
                     b.Navigation("Images");
+                });
+
+            modelBuilder.Entity("Hooome.Domain.Work", b =>
+                {
+                    b.Navigation("Notifications");
                 });
 #pragma warning restore 612, 618
         }

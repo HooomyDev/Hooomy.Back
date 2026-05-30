@@ -717,25 +717,6 @@ namespace Hooome.Persistance.Migrations
                     b.ToTable("RequestReviews");
                 });
 
-            modelBuilder.Entity("Hooome.Domain.Street", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Id")
-                        .IsUnique();
-
-                    b.ToTable("Streets");
-                });
-
             modelBuilder.Entity("Hooome.Domain.SystemNotification", b =>
                 {
                     b.Property<Guid>("Id")
@@ -986,7 +967,7 @@ namespace Hooome.Persistance.Migrations
             modelBuilder.Entity("Hooome.Domain.RequestNotification", b =>
                 {
                     b.HasOne("Hooome.Domain.Request", "Request")
-                        .WithMany()
+                        .WithMany("Notifications")
                         .HasForeignKey("RequestId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1019,7 +1000,7 @@ namespace Hooome.Persistance.Migrations
             modelBuilder.Entity("Hooome.Domain.WorkNotification", b =>
                 {
                     b.HasOne("Hooome.Domain.Work", "Work")
-                        .WithMany()
+                        .WithMany("Notifications")
                         .HasForeignKey("WorkId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1072,12 +1053,19 @@ namespace Hooome.Persistance.Migrations
 
                     b.Navigation("Images");
 
+                    b.Navigation("Notifications");
+
                     b.Navigation("Review");
                 });
 
             modelBuilder.Entity("Hooome.Domain.RequestComment", b =>
                 {
                     b.Navigation("Images");
+                });
+
+            modelBuilder.Entity("Hooome.Domain.Work", b =>
+                {
+                    b.Navigation("Notifications");
                 });
 #pragma warning restore 612, 618
         }
