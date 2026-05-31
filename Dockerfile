@@ -21,7 +21,7 @@ WORKDIR /app
 COPY --from=build /app/publish .
 
 RUN mkdir -p /app/static && chmod 755 /app/static
-COPY static/minsk_addresses.csv /app/static/
+COPY Hooome.WebApi/static/minsk_addresses.csv /app/static/
 
 ENV ASPNETCORE_URLS=http://0.0.0.0:${PORT:-8080}
 ENTRYPOINT ["dotnet", "Hooome.WebApi.dll"]
