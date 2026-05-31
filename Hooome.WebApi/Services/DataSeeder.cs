@@ -39,7 +39,13 @@ public class DataSeeder
         if (context.Addresses.Any())
             return;
 
-        var lines = await File.ReadAllLinesAsync("static/minsk_addresses.csv", Encoding.UTF8);
+        var filePath = Path.Combine(
+            hostEnvironment.ContentRootPath, 
+            "static", 
+            "minsk_addresses.csv"
+        );
+
+        var lines = await File.ReadAllLinesAsync(filePath, Encoding.UTF8);
         var addresses = new List<Address>();
 
         Console.WriteLine($"Start loading addresses");
