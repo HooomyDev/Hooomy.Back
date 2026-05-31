@@ -14,18 +14,18 @@ public class DataSeeder
     {
         try
         {
-            var companies = await SeedCompaniesAsync(context);
-            await SeedAddressesAsync(context);
-            var requests = await SeedRequestsAsync(context);
-            await SeedComplaintsAsync(context, companies, requests);
-            await SeedPollsAsync(context);
-            await SeedPollOptionsAsync(context);
-            await SeedPollVotesAsync(context);
-            await SeedWorksAsync(context);
+            //var companies = await SeedCompaniesAsync(context);
+            //await SeedAddressesAsync(context);
+            //var requests = await SeedRequestsAsync(context);
+            //await SeedComplaintsAsync(context, companies, requests);
+            //await SeedPollsAsync(context);
+            //await SeedPollOptionsAsync(context);
+            //await SeedPollVotesAsync(context);
+            //await SeedWorksAsync(context);
 
-            await context.SaveChangesAsync();
+            //await context.SaveChangesAsync();
 
-            Log.Information("All data has been added successfully");
+            //Log.Information("All data has been added successfully");
         }
         catch (Exception ex)
         {
