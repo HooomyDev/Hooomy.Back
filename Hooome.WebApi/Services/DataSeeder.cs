@@ -39,11 +39,28 @@ public class DataSeeder
         if (context.Addresses.Any())
             return;
 
-        var filePath = Path.Combine(
-            Directory.GetCurrentDirectory(),
-            "static",
-            "minsk_addresses.csv"
-        );
+        Log.Information("=== RUNTIME CSV DEBUG ===");
+        Log.Information("Current directory: {Dir}", Directory.GetCurrentDirectory());
+        Log.Information("Environment: {Env}", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"));
+
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "static", "minsk_addresses.csv");
+        Log.Information("Looking for: {Path}", filePath);
+        Log.Information("File exists: {Exists}", File.Exists(filePath));
+
+        if (!File.Exists(filePath))
+        {
+            Log.Information("File not found! Listing /app/static contents:");
+            try
+            {
+                var files = Directory.GetFiles("/app/static", "*.*", SearchOption.AllDirectories);
+                foreach (var f in files)
+                    Log.Information("  - {File}", f);
+            }
+            catch (Exception ex)
+            {
+                Log.Information(ex, "Failed to list /app/static");
+            }
+        }
 
         var lines = await File.ReadAllLinesAsync(filePath, Encoding.UTF8);
         var addresses = new List<Address>();
