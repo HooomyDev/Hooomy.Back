@@ -32,5 +32,6 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 
 RUN mkdir -p /app/static && chmod 755 /app/static
+COPY Hooome.WebApi/static/minsk_addresses.csv /app/static/
 
 ENTRYPOINT ["dotnet", "Hooome.WebApi.dll"]
