@@ -40,8 +40,8 @@ public class DataSeeder
             return;
 
         var filePath = Path.Combine(
-            hostEnvironment.ContentRootPath, 
-            "static", 
+            Directory.GetCurrentDirectory(),
+            "static",
             "minsk_addresses.csv"
         );
 
