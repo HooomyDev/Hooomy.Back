@@ -10,6 +10,7 @@ public class WorkListLookupDto : IMapWith<Work>
     public Guid Id { get; set; }
     public string Title { get; set; } = null!;
     public string Description { get; set; } = null!;
+    public Guid AddressId { get; set; }
     public string Address { get; set; } = null!;
     public RequestCategory Category { get; set; }
     public WorkSeriousness Seriousness { get; set; }
@@ -23,7 +24,7 @@ public class WorkListLookupDto : IMapWith<Work>
     public void Mapping(Profile profile)
     {
         profile.CreateMap<Work, WorkListLookupDto>()
-            .ForMember(dest => dest.Address, 
+            .ForMember(dest => dest.Address,
             opt => opt.MapFrom(src => $"{src.Address.Street}, {src.Address.HouseNumber}"));
     }
 }
