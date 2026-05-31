@@ -20,8 +20,8 @@ FROM base AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 
-RUN mkdir -p /app/static && chmod 755 /app/static
-COPY --chmod=644 Hooome.WebApi/static/minsk_addresses.csv /app/static/
+RUN mkdir -p /app/internal-data && chmod 755 /app/internal-data
+COPY --chmod=644 Hooome.WebApi/static/minsk_addresses.csv /app/internal-data/
 
 RUN echo "=== CSV file check ===" && \
     ls -la /app/static/ && \

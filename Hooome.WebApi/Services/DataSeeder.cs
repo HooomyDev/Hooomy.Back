@@ -43,7 +43,7 @@ public class DataSeeder
         Log.Information("Current directory: {Dir}", Directory.GetCurrentDirectory());
         Log.Information("Environment: {Env}", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"));
 
-        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "static", "minsk_addresses.csv");
+        var filePath = "/app/internal-data/minsk_addresses.csv";
         Log.Information("Looking for: {Path}", filePath);
         Log.Information("File exists: {Exists}", File.Exists(filePath));
 
