@@ -2,7 +2,7 @@
 
 public enum PollStatus
 {
-    Unknown = 0,
+    Unknown,
     Active,
     Closed,
     Archived

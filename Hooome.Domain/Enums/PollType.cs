@@ -2,7 +2,7 @@
 
 public enum PollType
 {
-    Unknown = 0,
+    Unknown,
     One,
     Several,
 }
