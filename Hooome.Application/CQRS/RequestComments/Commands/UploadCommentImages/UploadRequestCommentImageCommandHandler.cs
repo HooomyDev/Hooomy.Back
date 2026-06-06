@@ -26,7 +26,7 @@ public class UploadRequestCommentImageCommandHandler(IRequestCommentRepository r
             var requestCommentImage = new RequestCommentImage()
             {
                 Id = imageId,
-                RequestCommentId = request.RequestCommentId,
+                CommentId = request.RequestCommentId,
                 FileName = imageName,
                 OriginalFileName = file.FileName,
                 FileSize = file.Length,

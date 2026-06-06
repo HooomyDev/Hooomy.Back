@@ -15,7 +15,7 @@ public class WorkNotificationRepository(HooomeDbContext dbContext)
             .Include(wn => wn.Work)
                 .ThenInclude(w => w.Address)
                     .ThenInclude(a => a.FavoriteAddresses)
-            .Where(wn => wn.Work.Address.FavoriteAddresses.Any(fa => fa.UserID == userId))
+            .Where(wn => wn.Work.Address.FavoriteAddresses.Any(fa => fa.UserId == userId))
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }

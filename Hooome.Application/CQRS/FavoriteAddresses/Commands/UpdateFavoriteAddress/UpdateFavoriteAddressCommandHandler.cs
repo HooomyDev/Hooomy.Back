@@ -13,7 +13,7 @@ public class UpdateFavoriteAddressCommandHandler(IHooomeDbContext dbContext)
         var entity = await dbContext.FavoriteAddresses
             .FindAsync([request.Id], cancellationToken);
 
-        if (entity == null || entity.UserID != request.UserId)
+        if (entity == null || entity.UserId != request.UserId)
         {
             throw new NotFoundException(nameof(FavoriteAddress), request.Id);
         }

@@ -535,7 +535,7 @@ public class DataSeeder
                 PlannedEndTime = Utc(now.AddDays(random.Next(31, 60))),
                 FactStartTime = null,
                 FactEndTime = null,
-                CreatedAt = UtcOrNull(now),
+                CreatedAt = now,
                 UpdatedAt = null,
                 Notifications = new List<WorkNotification>()
             });

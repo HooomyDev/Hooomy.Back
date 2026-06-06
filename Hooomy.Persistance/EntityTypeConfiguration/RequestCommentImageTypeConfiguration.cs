@@ -18,7 +18,7 @@ public class RequestCommentImageTypeConfiguration : IEntityTypeConfiguration<Req
             .IsRequired()
             .HasMaxLength(255);
 
-        builder.Property(i => i.RequestCommentId)
+        builder.Property(i => i.CommentId)
             .IsRequired();
 
         builder.Property(i => i.ContentType)
@@ -30,7 +30,7 @@ public class RequestCommentImageTypeConfiguration : IEntityTypeConfiguration<Req
 
         builder.HasOne(i => i.Comment)
             .WithMany(r => r.Images)
-            .HasForeignKey(i => i.RequestCommentId)
+            .HasForeignKey(i => i.CommentId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

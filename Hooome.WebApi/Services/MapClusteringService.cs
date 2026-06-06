@@ -22,7 +22,7 @@ public class MapClusteringService : IMapClusteringService
                 Longitude = g.Key.CenterLng,
                 AddressesCount = g.Count(),
                 TotalRequests = g.Sum(a => a.RequestsCount),
-                Addresses = g.Take(10).ToList(), // Первые 10 адресов для превью
+                Addresses = [.. g.Take(10)],
                 Bounds = GetCellBounds(g.Key.CellX, g.Key.CellY, size)
             })
             .OrderByDescending(c => c.TotalRequests)
@@ -30,35 +30,27 @@ public class MapClusteringService : IMapClusteringService
 
         return clusters;
     }
-
-    /// <summary>
-    /// Получить ключ ячейки для координат
-    /// </summary>
-    private (int CellX, int CellY, double CenterLat, double CenterLng)
+    
+    private static (int CellX, int CellY, double CenterLat, double CenterLng)
         GetCellKey(double lat, double lng, double cellSize)
     {
-        // Вычисляем индексы ячейки
         var cellX = (int)Math.Floor(lng / cellSize);
         var cellY = (int)Math.Floor(lat / cellSize);
 
-        // Вычисляем центр ячейки
         var centerLng = (cellX + 0.5) * cellSize;
         var centerLat = (cellY + 0.5) * cellSize;
 
         return (cellX, cellY, centerLat, centerLng);
     }
 
-    /// <summary>
-    /// Получить границы ячейки
-    /// </summary>
     private static (double MinLat, double MaxLat, double MinLng, double MaxLng)
         GetCellBounds(int cellX, int cellY, double cellSize)
     {
         return (
-            MinLng: cellX * cellSize,
-            MaxLng: (cellX + 1) * cellSize,
             MinLat: cellY * cellSize,
-            MaxLat: (cellY + 1) * cellSize
+            MaxLat: (cellY + 1) * cellSize,
+            MinLng: cellX * cellSize,
+            MaxLng: (cellX + 1) * cellSize
         );
     }
 }
