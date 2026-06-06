@@ -10,6 +10,11 @@ public class FavoriteAddressTypeConfiguration
     public void Configure(EntityTypeBuilder<FavoriteAddress> builder)
     {
         builder.HasKey(fa => fa.Id);
+
+        builder.Property(fa => fa.Pseudonym)
+            .HasMaxLength(255)
+            .IsRequired();
+
         builder.HasIndex(fa => fa.Id).IsUnique();
     }
 }

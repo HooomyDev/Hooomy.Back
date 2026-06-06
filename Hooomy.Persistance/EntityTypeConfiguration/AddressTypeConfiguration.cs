@@ -35,6 +35,5 @@ public class AddressTypeConfiguration : IEntityTypeConfiguration<Address>
             .WithMany(c => c.ServedAddresses)
             .HasForeignKey(a => a.ServicedByCompanyId)
             .OnDelete(DeleteBehavior.NoAction);
-
     }
 }

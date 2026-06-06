@@ -9,7 +9,9 @@ public class PollOptionTypeConfiguration : IEntityTypeConfiguration<PollOption>
     public void Configure(EntityTypeBuilder<PollOption> builder)
     {
         builder.HasKey(po => po.Id);
-        builder.HasIndex(po => po.Id).IsUnique();
+        
+        builder.HasIndex(po => po.Id)
+            .IsUnique();
 
         builder.Property(po => po.PollId)
             .IsRequired();

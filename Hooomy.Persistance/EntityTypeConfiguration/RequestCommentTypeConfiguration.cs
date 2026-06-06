@@ -9,7 +9,9 @@ public class RequestCommentTypeConfiguration : IEntityTypeConfiguration<RequestC
     public void Configure(EntityTypeBuilder<RequestComment> builder)
     {
         builder.HasKey(rc => rc.Id);
-        builder.HasIndex(rc => rc.Id).IsUnique();
+        
+        builder.HasIndex(rc => rc.Id)
+            .IsUnique();
 
         builder.Property(rc => rc.RequestId)
             .IsRequired();

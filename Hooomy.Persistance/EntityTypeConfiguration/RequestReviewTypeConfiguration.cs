@@ -10,8 +10,11 @@ public class RequestReviewTypeConfiguration : IEntityTypeConfiguration<RequestRe
     {
         builder.HasKey(r => r.Id);
 
-        builder.HasIndex(r => r.RequestId).IsUnique(false);
+        builder.HasIndex(r => r.RequestId)
+            .IsUnique(false);
+        
         builder.HasIndex(r => r.UserId);
+        
         builder.HasIndex(r => r.Score);
 
         builder.Property(r => r.Score)
