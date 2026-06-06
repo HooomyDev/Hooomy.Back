@@ -47,14 +47,35 @@ public class AddressRepository(HooomeDbContext dbContext)
     }
 
     public async Task<Address?> GetByCoords(double lat, double lng, CancellationToken cancellationToken = default)
-        => await _dbSet.FirstOrDefaultAsync(a =>
-                 a.Latitude == (decimal)lat &&
-                 a.Longitude == (decimal)lng, cancellationToken);
+    {
+        return await _dbSet.FirstOrDefaultAsync(a =>
+                     a.Latitude == (decimal)lat &&
+                     a.Longitude == (decimal)lng, cancellationToken);
+    }
 
-    public async Task<List<Address>> GetByQuery(string query, CancellationToken cancellationToken = default) 
-        => await _dbSet.Where(a => EF.Functions.ILike(a.Street, $"%{query}%"))
+    public async Task<List<Address>> GetByQuery(string query, CancellationToken cancellationToken = default)
+    {
+        var searchWords = query.Replace(",", "")
+                               .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                               .Select(w => w.Trim())
+                               .ToList();
+
+        var dbQuery = _dbSet.AsNoTracking();
+
+        foreach (var word in searchWords)
+        {
+            var localWord = word; 
+
+            dbQuery = dbQuery.Where(a =>
+                EF.Functions.ILike(a.Street, $"%{localWord}%") ||
+                EF.Functions.ILike(a.HouseNumber, $"%{localWord}%")
+            );
+        }
+
+        return await dbQuery
             .OrderBy(s => s.Street)
+            .ThenBy(s => s.HouseNumber)
             .Take(30)
-            .AsNoTracking()
             .ToListAsync(cancellationToken);
+    }
 }
