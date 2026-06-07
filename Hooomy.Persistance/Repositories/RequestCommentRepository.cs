@@ -35,7 +35,6 @@ public class RequestCommentRepository(HooomeDbContext dbContext)
             .OrderByDescending(c => c.CreatedAt)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            
             .ToListAsync(cancellationToken);
 
         var totalCount = await query.CountAsync(cancellationToken);

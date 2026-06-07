@@ -5,7 +5,6 @@ namespace Hooome.Application.Interfaces;
 
 public interface IPollRepository : IRepository<Poll>
 {
-    Task SubmitVote(Guid pollId, Guid vote, Guid userId, CancellationToken cancellationToken = default);
     Task<(IEnumerable<Poll> Items, int TotalCount)> GetFilteredPolls(string? title = null,
         int page = 1,
         int pageSize = 10,

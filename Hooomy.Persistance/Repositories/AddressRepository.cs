@@ -19,8 +19,8 @@ public class AddressRepository(HooomeDbContext dbContext)
     public async Task AddAddress(Guid companyId, Guid addressId, CancellationToken cancellationToken = default)
     {
         var company = await _dbContext.Companies
-                .FirstOrDefaultAsync(c => c.Id == companyId, cancellationToken)
-                ?? throw new NotFoundException(nameof(Company), companyId);
+            .FirstOrDefaultAsync(c => c.Id == companyId, cancellationToken)
+            ?? throw new NotFoundException(nameof(Company), companyId);
 
         var address = await _dbContext.Addresses
             .FirstOrDefaultAsync(a => a.Id == addressId, cancellationToken)
@@ -34,8 +34,8 @@ public class AddressRepository(HooomeDbContext dbContext)
     public async Task RemoveAddress(Guid companyId, Guid addressId, CancellationToken cancellationToken = default)
     {
         var company = await _dbContext.Companies
-        .FirstOrDefaultAsync(c => c.Id == companyId, cancellationToken)
-        ?? throw new NotFoundException(nameof(Company), companyId);
+            .FirstOrDefaultAsync(c => c.Id == companyId, cancellationToken)
+            ?? throw new NotFoundException(nameof(Company), companyId);
 
         var address = await _dbContext.Addresses
             .FirstOrDefaultAsync(a => a.Id == addressId, cancellationToken)
@@ -56,9 +56,9 @@ public class AddressRepository(HooomeDbContext dbContext)
     public async Task<List<Address>> GetByQuery(string query, CancellationToken cancellationToken = default)
     {
         var searchWords = query.Replace(",", "")
-                               .Split(' ', StringSplitOptions.RemoveEmptyEntries)
-                               .Select(w => w.Trim())
-                               .ToList();
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            .Select(w => w.Trim())
+            .ToList();
 
         var dbQuery = _dbSet.AsNoTracking();
 

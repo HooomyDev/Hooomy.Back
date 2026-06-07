@@ -63,9 +63,4 @@ public class PollRepository(HooomeDbContext dbContext)
 
         return (items, totalCount);
     }
-
-    public Task SubmitVote(Guid pollId, Guid vote, Guid userId, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
-    }
 }
