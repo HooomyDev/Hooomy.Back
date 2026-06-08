@@ -2,6 +2,7 @@
 using Hooome.Domain;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using System.Reflection.Emit;
 
 namespace Hooome.Persistance;
 
@@ -31,7 +32,10 @@ public sealed class HooomeDbContext(DbContextOptions<HooomeDbContext> options)
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        builder.HasPostgresExtension("pg_trgm");
+     
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        
         base.OnModelCreating(builder);
     }
 }

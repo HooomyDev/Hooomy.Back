@@ -10,7 +10,7 @@ public class RequestCommentImageRepository(HooomeDbContext dbContext)
     public async Task<ICollection<RequestCommentImage>> GetByCommentId(Guid commentId, CancellationToken cancellationToken = default)
     {
         return await _dbSet
-            .Where(rci => rci.RequestCommentId == commentId)
+            .Where(rci => rci.CommentId == commentId)
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }

@@ -18,7 +18,7 @@ public class CreateFavoriteAddressCommandHandler(IHooomeDbContext dbContext)
         var newFavoriteAddress = new FavoriteAddress
         {
             Id = Guid.NewGuid(),
-            UserID = request.UserId,
+            UserId = request.UserId,
             AddressId = request.AddressId,
             Pseudonym = request.Pseudonym,
             CreatedAt = DateTime.UtcNow,

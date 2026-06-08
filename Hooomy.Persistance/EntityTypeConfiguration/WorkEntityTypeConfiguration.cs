@@ -16,12 +16,20 @@ public class WorkEntityTypeConfiguration : IEntityTypeConfiguration<Work>
             .IsRequired()
             .HasMaxLength(1000);
 
-        builder.Property(w => w.Category).IsRequired();
-        builder.Property(w => w.Seriousness).IsRequired();
-        builder.Property(w => w.PlannedStartTime).IsRequired();
-        builder.Property(w => w.PlannedEndTime).IsRequired();
-        builder.Property(w => w.FactStartTime);
-        builder.Property(w => w.FactEndTime);
+        builder.Property(w => w.Category)
+            .IsRequired();
+
+        builder.Property(w => w.Seriousness)
+            .IsRequired();
+
+        builder.Property(w => w.PlannedStartTime)
+            .IsRequired();
+
+        builder.Property(w => w.PlannedEndTime)
+            .IsRequired();
+
+        builder.Property(w => w.CreatedAt)
+            .IsRequired();
 
         builder.HasMany(w => w.Notifications)
             .WithOne(wn => wn.Work)

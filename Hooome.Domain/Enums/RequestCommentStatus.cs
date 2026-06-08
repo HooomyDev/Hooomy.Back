@@ -2,7 +2,7 @@
 
 public enum RequestCommentStatus
 {
-    Unknown = 0,
+    Unknown,
     Pending,
     Approved,
     Deleted

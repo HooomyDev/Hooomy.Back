@@ -9,11 +9,22 @@ public class RequestTypeConfiguration : IEntityTypeConfiguration<Request>
     public void Configure(EntityTypeBuilder<Request> builder)
     {
         builder.HasKey(r => r.Id);
-        builder.HasIndex(r => r.Id).IsUnique();
-        builder.Property(r => r.Title).IsRequired().HasMaxLength(150);
-        builder.Property(r => r.Description).HasMaxLength(300);
-        builder.Property(r => r.Status).IsRequired();
-        builder.Property(r => r.Category).IsRequired();
+
+        builder.HasIndex(r => r.Id)
+            .IsUnique();
+
+        builder.Property(r => r.Title)
+            .IsRequired()
+            .HasMaxLength(150);
+
+        builder.Property(r => r.Description)
+            .HasMaxLength(300);
+
+        builder.Property(r => r.Status)
+            .IsRequired();
+
+        builder.Property(r => r.Category)
+            .IsRequired();
 
         builder.Property(r => r.IsDeleted)
             .IsRequired()

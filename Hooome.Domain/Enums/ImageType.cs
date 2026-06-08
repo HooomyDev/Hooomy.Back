@@ -2,7 +2,7 @@
 
 public enum ImageType
 {
-    Unknown = 0,
+    Unknown,
     Request,
     Company,
     RequestComment

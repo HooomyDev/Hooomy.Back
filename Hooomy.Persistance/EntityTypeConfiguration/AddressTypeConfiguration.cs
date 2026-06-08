@@ -1,6 +1,7 @@
 ﻿using Hooome.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Hooome.Persistance.EntityTypeConfiguration;
 
@@ -18,7 +19,14 @@ public class AddressTypeConfiguration : IEntityTypeConfiguration<Address>
             .HasMaxLength(100)
             .IsRequired();
 
-        builder.HasIndex(a => new { a.Street, a.HouseNumber });
+        builder.HasIndex(a => a.Street)
+               .HasMethod("gin")
+               .HasOperators("gin_trgm_ops"); 
+
+        builder.HasIndex(a => a.HouseNumber)
+               .HasMethod("gin")
+               .HasOperators("gin_trgm_ops");
+
         builder.HasIndex(a => new { a.Latitude, a.Longitude });
 
         builder.HasMany(a => a.FavoriteAddresses)
@@ -35,6 +43,5 @@ public class AddressTypeConfiguration : IEntityTypeConfiguration<Address>
             .WithMany(c => c.ServedAddresses)
             .HasForeignKey(a => a.ServicedByCompanyId)
             .OnDelete(DeleteBehavior.NoAction);
-
     }
 }

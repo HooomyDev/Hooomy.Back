@@ -19,7 +19,10 @@ public class GetRequestDailyStatisticQueryHandler(IRequestRepository requestRepo
 
         var requestsByDates = BuildDailyStatistics(startDate, endDate, groupedData, now);
 
-        var (requests, totalCount) = await requestRepo.GetRequestsWithPagination(companyId: request.CompanyId,
+        var (requests, totalCount) = await requestRepo.GetRequestsWithPagination(
+            page: 1,
+            pageSize: 1000,
+            companyId: request.CompanyId,
             cancellationToken: cancellationToken);
 
         var requestsByStatuses = BuildStatisticByStatuses([.. requests]);

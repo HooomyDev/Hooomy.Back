@@ -3,6 +3,7 @@ using System;
 using Hooome.Persistance;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,16 +12,17 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Hooome.Persistance.Migrations
 {
     [DbContext(typeof(HooomeDbContext))]
-    partial class HooomeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260606102703_FavoriteAddressUserId")]
+    partial class FavoriteAddressUserId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "9.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "pg_trgm");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Hooome.Domain.Address", b =>
@@ -53,22 +55,14 @@ namespace Hooome.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("HouseNumber");
-
-                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("HouseNumber"), "gin");
-                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("HouseNumber"), new[] { "gin_trgm_ops" });
-
                     b.HasIndex("RegisteredCompanyId")
                         .IsUnique();
 
                     b.HasIndex("ServicedByCompanyId");
 
-                    b.HasIndex("Street");
-
-                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Street"), "gin");
-                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("Street"), new[] { "gin_trgm_ops" });
-
                     b.HasIndex("Latitude", "Longitude");
+
+                    b.HasIndex("Street", "HouseNumber");
 
                     b.ToTable("Addresses");
                 });
@@ -255,8 +249,7 @@ namespace Hooome.Persistance.Migrations
 
                     b.Property<string>("Pseudonym")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -500,9 +493,6 @@ namespace Hooome.Persistance.Migrations
                         .HasColumnType("boolean")
                         .HasDefaultValue(false);
 
-                    b.Property<Guid?>("ReviewId")
-                        .HasColumnType("uuid");
-
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
@@ -580,9 +570,6 @@ namespace Hooome.Persistance.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("CommentId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("ContentType")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -607,12 +594,15 @@ namespace Hooome.Persistance.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
+                    b.Property<Guid>("RequestCommentId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("UploadedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CommentId");
+                    b.HasIndex("RequestCommentId");
 
                     b.ToTable("RequestCommentsImages");
                 });
@@ -761,7 +751,7 @@ namespace Hooome.Persistance.Migrations
                     b.Property<int>("Category")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
@@ -959,7 +949,7 @@ namespace Hooome.Persistance.Migrations
                 {
                     b.HasOne("Hooome.Domain.RequestComment", "Comment")
                         .WithMany("Images")
-                        .HasForeignKey("CommentId")
+                        .HasForeignKey("RequestCommentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

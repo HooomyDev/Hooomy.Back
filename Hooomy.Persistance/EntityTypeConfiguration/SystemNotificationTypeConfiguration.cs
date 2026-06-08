@@ -9,7 +9,12 @@ public class SystemNotificationTypeConfiguration : IEntityTypeConfiguration<Syst
     public void Configure(EntityTypeBuilder<SystemNotification> builder)
     {
         builder.HasKey(x => x.Id);
-        builder.Property(x => x.Text).IsRequired().HasMaxLength(500);
-        builder.Property(x => x.CreatedAt).IsRequired();
+        
+        builder.Property(x => x.Text)
+            .IsRequired()
+            .HasMaxLength(500);
+        
+        builder.Property(x => x.CreatedAt)
+            .IsRequired();
     }
 }

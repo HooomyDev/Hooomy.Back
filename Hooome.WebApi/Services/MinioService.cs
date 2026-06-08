@@ -7,7 +7,6 @@ using Minio;
 using Minio.DataModel.Args;
 using Minio.Exceptions;
 using Serilog;
-using System.Security.AccessControl;
 
 namespace Hooome.WebApi.Services;
 

@@ -9,6 +9,6 @@ public class Complaint
     public string Description { get; set; } = null!;
     public ComplaintType Type { get; set; } = ComplaintType.Unknown;
     public ComplaintStatus Status { get; set; } = ComplaintStatus.Unknown;
-    public DateTime CreatedAt { get; set; } = DateTime.Now;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
 }

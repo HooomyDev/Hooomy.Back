@@ -9,7 +9,8 @@ public class CompanyTypeConfiguration : IEntityTypeConfiguration<Company>
     public void Configure(EntityTypeBuilder<Company> builder)
     {
         builder.HasKey(c => c.Id);
-        builder.HasIndex(c => c.Id).IsUnique();
+        builder.HasIndex(c => c.Id)
+            .IsUnique();
 
         builder.Property(c => c.Name)
             .IsRequired()

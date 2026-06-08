@@ -12,7 +12,7 @@ public class GetFavoriteAddressListQueryHandler(IHooomeDbContext dbContext)
     public async Task<FavoriteAddressListVm> Handle(GetFavoriteAddressListQuery request, CancellationToken cancellationToken)
     {
         var favoriteAddresses = await dbContext.FavoriteAddresses
-            .Where(fa => fa.UserID == request.UserId)
+            .Where(fa => fa.UserId == request.UserId)
             .Include(fa => fa.Address)
             .Select(fa => new FavoriteAddressListDto
             {

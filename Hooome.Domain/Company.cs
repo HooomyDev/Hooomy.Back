@@ -10,14 +10,13 @@ public class Company
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime? UpdatedAt { get; set; }
 
-    public ICollection<Poll> Polls { get; set; } = [];
-
     public Guid? LogoId { get; set; }
     public CompanyImage? Logo { get; set; }
 
     public Guid? AddressId { get; set; }
     public Address? Address { get; set; }
 
+    public ICollection<Poll> Polls { get; set; } = [];
     public ICollection<Address> ServedAddresses { get; set; } = [];
     public ICollection<RequestComment> Comments { get; set; } = [];
 }

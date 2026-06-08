@@ -61,7 +61,7 @@ public class WorkRepository(HooomeDbContext dbContext)
     {
         return await _dbSet.Include(w => w.Address)
                 .ThenInclude(a => a.FavoriteAddresses)
-            .Where(w => w.Address.FavoriteAddresses.Any(fa => fa.UserID == userId))
+            .Where(w => w.Address.FavoriteAddresses.Any(fa => fa.UserId == userId))
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
